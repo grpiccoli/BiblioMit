@@ -1,0 +1,9 @@
+﻿<partial name="_Libs" model='new List<string> { "angular", "angular-flip-clock", "clock" }' />
+
+<div class="myApp" ng-app="myApp">
+    <div class="m-auto">
+        <dy-flip-clock time="{{time}}"></dy-flip-clock>
+    </div>
+</div>
+
+<input id="interval" value="@((int)ViewData["interval"])" class="d-none"/>

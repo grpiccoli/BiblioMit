@@ -1,0 +1,38 @@
+﻿@using BiblioMit.Models.Entities.Ads
+@model Payment
+
+<div class="container">
+    <div class="row">
+        <h1>Pay</h1>
+        <form asp-action="Pay" method="post" autocomplete="on">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" class="d-none" hidden="hidden" />
+            <div class="form-group col-sm-12 center">
+                <label asp-for="Price"></label>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">$</span>
+                    </div>
+                    <input class="form-control" type="text" value="@String.Format("{0:n0}", Model.Price)" disabled="disabled" readonly="readonly" />
+                    <input type="hidden" asp-for="Price" disabled="disabled" />
+                    <div class="input-group-append">
+                        <span class="input-group-text">CLP</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-sm-12 center">
+                <label asp-for="PeriodDate"></label>
+                <input class="form-control" type="month" value="@Model.PeriodDate.ToString("yyyy-MM")" disabled="disabled" readonly="readonly" />
+                <input type="hidden" asp-for="PeriodDate" disabled="disabled" />
+            </div>
+            <div class="form-group col-sm-12 center m-0">
+                <button type="submit" class="btn btn-primary">
+                    Confirmar y Pagar
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<partial name="_ValidationScriptsPartial" />

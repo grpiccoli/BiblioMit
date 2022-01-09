@@ -1,0 +1,317 @@
+[
+  {
+    "outputFileName": "wwwroot/css/homeFlowpaper.min.css",
+    "inputFiles": [
+      "src/styles/flowpaper/flowpaper.css",
+      "src/styles/flowpaper/popover.css",
+      "src/styles/flowpaper/popover-theme.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/rgb2hex.min.js",
+    "inputFiles": [
+      "wwwroot/js/rgb2hex.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/background.min.js",
+    "inputFiles": [
+      "wwwroot/js/background.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/statsGraph.min.js",
+    "inputFiles": [
+      "src/scripts/statsGraph.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/FlowPaperViewer.js",
+    "inputFiles": [
+      "src/scripts/flowpaper/FlowPaperViewer.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/flowpaper/js/homeFlowpaper.min.js",
+    "inputFiles": [
+      "src/scripts/flowpaper/jquery.min.js",
+      "src/scripts/flowpaper/jquery.extensions.min.js",
+      "src/scripts/flowpaper/three.min.js",
+      "src/scripts/flowpaper/flowpaper.js",
+      "src/scripts/flowpaper/flowpaper_handlers.js",
+      "src/scripts/flowpaper/flowpaperLoader.js",
+      "src/scripts/flowpaper/footerChange.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/bannersIndex.min.js",
+    "inputFiles": [
+      "src/scripts/bannersIndex.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/photosIndex.min.js",
+    "inputFiles": [
+      "src/scripts/photosIndex.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/tableFilter.min.js",
+    "inputFiles": [
+      "wwwroot/js/tableFilter.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/columnasColumnas.min.js",
+    "inputFiles": [
+      "wwwroot/js/columnasColumnas.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/homeSimac.min.js",
+    "inputFiles": [
+      "wwwroot/js/homeSimac.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/boletinBoletin.min.js",
+    "inputFiles": [
+      "src/scripts/boletinBoletin.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/flowpaper.min.js",
+    "inputFiles": [
+      "wwwroot/js/flowpaper.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/galite.min.js",
+    "inputFiles": [
+      "src/scripts/galite.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/gtag.min.js",
+    "inputFiles": [
+      "src/scripts/gtag.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/facebookChat.min.js",
+    "inputFiles": [
+      "src/scripts/facebookChat.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/ambientalGraph.min.js",
+    "inputFiles": [
+      "wwwroot/js/ambientalGraph.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/loader.min.js",
+    "inputFiles": [
+      "wwwroot/js/loader.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/gmaps.min.js",
+    "inputFiles": [
+      "wwwroot/js/gmaps.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/layout.min.js",
+    "inputFiles": [
+      "wwwroot/js/layout.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/tippy.min.js",
+    "inputFiles": [
+      "src/scripts/tippy.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/bootstrap-select-localize.min.js",
+    "inputFiles": [
+      "src/scripts/bootstrap-select-localize.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/tippyTranslate.min.js",
+    "inputFiles": [
+      "src/scripts/tippyTranslate.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modernizr-custom.min.js",
+    "inputFiles": [
+      "src/scripts/modernizr-custom.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/tablePopover.min.js",
+    "inputFiles": [
+      "src/scripts/tablePopover.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/icomoon.min.css",
+    "inputFiles": [
+      "src/styles/icomoon/style.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/flags.min.css",
+    "inputFiles": [
+      "src/styles/flags/style.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/bibico.min.css",
+    "inputFiles": [
+      "src/styles/bibico/style.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/bibmono.min.css",
+    "inputFiles": [
+      "src/styles/bibmono/style.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/home.min.js",
+    "inputFiles": [
+      "wwwroot/js/home.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/homeAnalytics.min.js",
+    "inputFiles": [
+      "wwwroot/js/homeAnalytics.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/dashboard.min.js",
+    "inputFiles": [
+      "wwwroot/js/dashboard.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/columnasColumnas.min.css",
+    "inputFiles": [
+      "wwwroot/css/dinamicTable.min.css",
+      "wwwroot/css/gridPlanilla.min.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/dinamicTable.min.js",
+    "inputFiles": [
+      "wwwroot/js/dinamicTable.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/dontSendFormOnEnter.min.js",
+    "inputFiles": [
+      "wwwroot/js/dontSendFormOnEnter.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/dragndrop.min.js",
+    "inputFiles": [
+      "wwwroot/js/dragndrop.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/entry.min.js",
+    "inputFiles": [
+      "wwwroot/js/entry.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/format-phone.min.js",
+    "inputFiles": [
+      "wwwroot/js/format-phone.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/get-sii-rut-data.min.js",
+    "inputFiles": [
+      "wwwroot/js/get-sii-rut-data.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/gmaps-address-autocomplete.min.js",
+    "inputFiles": [
+      "wwwroot/js/gmaps-address-autocomplete.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/modal.min.js",
+    "inputFiles": [
+      "wwwroot/js/modal.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/parseNumber.min.js",
+    "inputFiles": [
+      "wwwroot/js/parseNumber.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/piechart.min.js",
+    "inputFiles": [
+      "wwwroot/js/piechart.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/sendDisabledSelects.min.js",
+    "inputFiles": [
+      "wwwroot/js/sendDisabledSelects.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/translate.min.js",
+    "inputFiles": [
+      "wwwroot/js/translate.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/validation.min.js",
+    "inputFiles": [
+      "wwwroot/js/validate-localization.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/bibliomit.min.js",
+    "inputFiles": [
+      "wwwroot/js/bibliomit.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/psmbs.min.js",
+    "inputFiles": [
+      "wwwroot/js/psmbs.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/charts.min.js",
+    "inputFiles": [
+      "wwwroot/js/charts.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/chat.min.js",
+    "inputFiles": [
+      "wwwroot/js/chat.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/clock.min.js",
+    "inputFiles": [
+      "src/scripts/clock.js"
+    ]
+  }
+]

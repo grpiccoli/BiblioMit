@@ -1,0 +1,10 @@
+﻿@{
+    ViewData["Title"] = Localizer["Gallery"];
+    BiblioMit.Models.VM.CSPTag.ScriptSrcElem.Add("'sha256-ePgBExBZYOBJk8AkpBMo3BHnbgJxzof66UQID1FFsO4='");
+}
+
+<partial name="_Libs" model='new List<string> { "flowpaper" }' />
+
+@section Headers{
+    <iframe src="~/flowpaper/Gallery.html" title="@Localizer["Virtual Collection"]"></iframe>
+}

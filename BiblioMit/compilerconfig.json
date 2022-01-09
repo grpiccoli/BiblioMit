@@ -1,0 +1,98 @@
+﻿[
+  {
+    "outputFile": "wwwroot/css/tableFilter.css",
+    "inputFile": "src/styles/tableFilter.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/publicationsIndex.css",
+    "inputFile": "src/styles/publicationsIndex.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/homeSimac.css",
+    "inputFile": "src/styles/homeSimac.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/layout.css",
+    "inputFile": "src/styles/layout.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/samplings.css",
+    "inputFile": "src/styles/samplings.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/ambientalGraph.css",
+    "inputFile": "src/styles/ambientalGraph.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/chart.css",
+    "inputFile": "src/styles/chart.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/chat.css",
+    "inputFile": "src/styles/chat.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/background.css",
+    "inputFile": "src/styles/background.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/boletinBoletin.css",
+    "inputFile": "src/styles/boletinBoletin.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/dinamicTable.css",
+    "inputFile": "src/styles/dinamicTable.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/dragndrop.css",
+    "inputFile": "src/styles/dragndrop.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/dropzone.css",
+    "inputFile": "src/styles/dropzone.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/fonts.css",
+    "inputFile": "src/styles/fonts.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/gridPlanilla.css",
+    "inputFile": "src/styles/gridPlanilla.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/home.css",
+    "inputFile": "src/styles/home.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/prueba.css",
+    "inputFile": "src/styles/prueba.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/bibliomit.css",
+    "inputFile": "src/styles/bibliomit.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/loader.css",
+    "inputFile": "src/styles/loader.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/psmbs.css",
+    "inputFile": "src/styles/psmbs.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/banners.css",
+    "inputFile": "src/styles/banners.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/homeAbout.css",
+    "inputFile": "src/styles/homeAbout.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/flowpaper.css",
+    "inputFile": "src/styles/flowpaper.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/bannersIndex.css",
+    "inputFile": "src/styles/bannersIndex.scss"
+  }
+]

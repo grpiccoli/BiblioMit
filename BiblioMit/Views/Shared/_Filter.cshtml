@@ -1,0 +1,19 @@
+﻿@{ var Model = new BiblioMit.Models.ViewModels.FilterVM((string[])ViewData["val"])
+    {
+        Controller = (string)ViewData["controller"],
+        Action = (string)ViewData["action"],
+        Srt = (string)ViewData["srt"],
+        Asc = (bool)ViewData["asc"],
+        Rpp = (int)ViewData["rpp"]
+    };
+}
+
+<div id="filter" data-val="@string.Join(",",Model.Val)"
+     data-url="@Html.Raw(Url.Action(Model.Action, Model.Controller,
+                    new {
+                        rpp = Model.Rpp,
+                        srt = "SRT",
+                        asc = Model.Asc,
+                        val = "JSVAL"
+                    }))"
+     data-srt="@Model.Srt"></div>

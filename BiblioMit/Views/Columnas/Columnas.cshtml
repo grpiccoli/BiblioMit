@@ -1,0 +1,129 @@
+﻿@model IEnumerable<BiblioMit.Models.Registry>
+@using BiblioMit.Models.ViewModels
+@{
+    ViewData["Title"] = "Sernapesca";
+    ViewData["controller"] = this.ViewContext.RouteData.Values["controller"].ToString();
+    ViewData["action"] = this.ViewContext.RouteData.Values["action"].ToString();
+}
+
+<partial name="_Pg" />
+
+<div class="grid">
+    <h1 class="titulo">Columnas de datos</h1>
+    <img height="100" class="logo" align="right"
+         src="~/images/ico/mejillondechile.min.png" />
+    <div class="clear">
+        <partial name="_ClearFilters" model="@Url.RouteUrl(this.ViewContext.RouteData.Values)" />
+    </div>
+    <div id="constrainer2" data-url="@Html.Raw(Url.Action("Editar",(string)ViewData["controller"],
+                          new {
+                              id = "P0",
+                              description = "A1",
+                              headers = "C2",
+                              conversion = "C3",
+                              places = "C4",
+                              sep = "C5",
+                              negative = "C6"
+                          }))">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
+                   {
+                       Id = "ClassName",
+                       Name = Html.DisplayNameFor(model => model.InputFile.ClassName),
+                       Type = FilterType.select
+                   }' />
+                    </th>
+                    <th>
+                        <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
+                   {
+                       Id = "Attribute",
+                       Name = Html.DisplayNameFor(model => model.Attribute)
+                   }' />
+                    </th>
+                    <th>
+                        <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
+                   {
+                       Id = "Description",
+                       Name = Html.DisplayNameFor(model => model.Description)
+                   }' />
+                    </th>
+                    <th>
+                        <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
+                   {
+                       Id = "Headers",
+                       Name = Html.DisplayNameFor(model => model.Headers),
+                       Type = FilterType.select
+                   }' />
+                    </th>
+                    <th>
+                        <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
+                   {
+                       Id = "Operation",
+                       Name = Html.DisplayNameFor(model => model.Operation)
+                   }' />
+                    </th>
+                    <th>
+                        <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
+                   {
+                       Id = "DecimalPlaces",
+                       Name = Html.DisplayNameFor(model => model.DecimalPlaces)
+                   }' />
+                    </th>
+                    <th>
+                        <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
+                   {
+                       Id = "DecimalSeparator",
+                       Name = Html.DisplayNameFor(model => model.DecimalSeparator)
+                   }' />
+                    </th>
+                    <th>
+                        <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
+                   {
+                       Id = "DeleteAfter2ndNegative",
+                       Name = Html.DisplayNameFor(model => model.DeleteAfter2ndNegative)
+                   }' />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr id="@item.Id">
+                    <td>
+                        @item.InputFile.ClassName
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Attribute)
+                    </td>
+                    <td contenteditable="true">
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td contenteditable="true">
+                        @if (item.Headers.Any())
+                        {
+                            @Html.Raw(string.Join(";;", item.Headers.Select(h => h.Name)));
+                        }
+                    </td>
+                    <td contenteditable="true">
+                        @Html.DisplayFor(modelItem => item.Operation)
+                    </td>
+                    <td contenteditable="true">
+                        @Html.DisplayFor(modelItem => item.DecimalPlaces)
+                    </td>
+                    <td contenteditable="true">
+                        @Html.DisplayFor(modelItem => item.DecimalSeparator)
+                    </td>
+                    <td contenteditable="true">
+                        @Html.DisplayFor(modelItem => item.DeleteAfter2ndNegative)
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<partial name="_ValidationScriptsPartial" />
+<partial name="_Filter" view-data="@ViewData" />

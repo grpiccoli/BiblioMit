@@ -1,0 +1,18 @@
+@*@model IEnumerable<IGrouping<int, BiblioMit.Models.ViewModels.UploadPhotoViewModel>>*@
+@{
+    ViewData["Title"] = Localizer["Histopathological Image Gallery"];
+}
+<partial name="_NanoGallery2" />
+<partial name="_Pg" />
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a asp-action="Create">@Localizer["Upload New Image"]</a>
+</p>
+
+@Localizer["Search"]: <input id="ngy2search" type="text">
+<button type="button" id="btnsearch2">@Localizer["Search"]</button>
+<hr />
+
+<div id="my_nanogallery2"></div>

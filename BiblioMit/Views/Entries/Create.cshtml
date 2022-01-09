@@ -1,0 +1,63 @@
+﻿@model BiblioMit.Models.SernapescaEntry
+@{
+    ViewData["Title"] = "Create";
+}
+
+<partial name="_LibsPg" model='new List<string> { "bootstrap-select", "dragndrop", "smartwizard" }' />
+
+<div id="params" data-error="@ViewData["Error"]"></div>
+
+<form id="formCreate" asp-action="Create" class="form-horizontal" method="post" enctype="multipart/form-data">
+    <div id="smartwizard">
+        <ul>
+            <li>
+                <a href="#step-1">Paso 1:<br /><small>Subir Archivo</small></a>
+            </li>
+            <li>
+                <a href="#step-2">Paso 2:<br /><small>Tipo de reporte</small></a>
+            </li>
+        </ul>
+        <div class="sw-container tab-content">
+            <div id="step-1" class="tab-pane step-content d-block">
+                <h2>Paso 1: Subir archivo</h2>
+                <div id="form-step-0" role="form" data-toggle="validator">
+                    <div class="form-group">
+                        <div class="wrapper">
+                            <div class="drop">
+                                <div class="cont">
+                                    <div class="tit">
+                                        <span id="iconos" class="fas fa-cloud-upload-alt">
+                                            <span class="path1"></span>
+                                        </span>
+                                        <br />
+                                        <span id="name">Arrastra y Suelta</span>
+                                    </div>
+                                    <div class="desc">
+                                        <i class="far fa-file-excel fa-fw"></i><span class="display-4">un archivo Excel</span>
+                                    </div>
+                                    <div class="browse lead">
+                                        o Buscar en PC
+                                    </div>
+                                </div>
+                                <output id="list"></output><input id="files" asp-for="InputFile" multiple class="form-control" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.ms-excel.sheet.macroEnabled.12, application/vnd.ms-excel.sheet.binary.macroEnabled.12" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="step-2" class="tab-pane step-content">
+                <h2>Paso 2: Procesar archivo de reporte <u><span id="tipo"></span></u> <span id="filename"></span></h2>
+                <div id="form-step-1" role="form" data-toggle="validator">
+                    <div class="form-group">
+                        <label asp-for="DeclarationType"></label>
+                        <select asp-for="DeclarationType"
+                                asp-items="ViewBag.DeclarationType"
+                                title="Elija tipo de reporte"
+                                class="form-control selectpicker"></select>
+                        <span asp-validation-for="DeclarationType" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

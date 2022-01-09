@@ -1,0 +1,46 @@
+﻿@{
+    ViewData["Title"] = "Contact";
+    ViewData["Message"] = Localizer["Contact us for further information or technical support."];
+    BiblioMit.Models.VM.CSPTag.FrameSrc.Add("https://www.google.com/");
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <h3>@ViewData["Message"]</h3>
+            <hr />
+            <address>
+                <abbr title="@Localizer["Op Hrs"] 9:00-18:00 hrs">@Localizer["Address"]:</abbr>
+                <a target="_blank" href="https://goo.gl/maps/vbDi2BWtryv" rel="noopener">Blanco 324 of.501, Castro</a><br />
+            </address>
+            <address>
+                <strong>AmiChile</strong> (@Localizer["Guild Association of Mussel Farmers of Chile"]) <br />
+                <abbr title="@Localizer["Op Hrs"] 9:00-18:00 hrs">@Localizer["Phone"]:</abbr>
+                <a href="tel:+56652630071">+56 65 263 0071</a>
+            </address>
+            <address>
+                <strong>INTEMIT</strong> (@Localizer["Technological Institute of Mussel Farming"]) <br />
+                <abbr title="@Localizer["Op Hrs"] 9:00-18:00 hrs">@Localizer["Phone"]:</abbr>
+                <a href="tel:+56652531609">+56 65 253 1609</a>
+            </address>
+            <address>
+                <strong>@Localizer["Management"]:</strong> <a href="mailto:jefedeproyectos@intemit.cl">jefedeproyectos@intemit.cl</a><br />
+                <strong>@Localizer["Technical support"]:</strong> <a href="mailto:contacto@epicsolutions.cl">contacto@epicsolutions.cl</a>
+            </address>
+        </section>
+    </div>
+    <div class="col-md-4">
+        <section>
+            <div class="row justify-content-between h-4rem" >
+                <a href="http://www.amichile.com/" target="_blank" rel="noopener" class="col-4">
+                    <img src="~/images/ico/amichile.min.png" alt="AmiChile" class="img-fluid h-3-5rem" />
+                </a>
+                <a href="http://www.intemit.cl/" target="_blank" rel="noopener" class="col-8 align-right">
+                    <img src="~/images/ico/intemit.min.svg" alt="Intemit" class="img-fluid h-3-5rem" />
+                </a>
+            </div>
+            <hr />
+            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d5884.806780931321!2d-73.763899!3d-42.482976!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0xa56125b530f7869!2sAMICHILE%20(Asoc.%20de%20Mitilicultores%20de%20Chile%20A.G.)!5e0!3m2!1sen!2scl!4v1623560337954!5m2!1sen!2scl" width="600" height="450" class="b-0" allowfullscreen="" loading="lazy"></iframe>
+        </section>
+    </div>
+</div>

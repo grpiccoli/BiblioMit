@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "lib": [
+      "ES2015",
+      "ES5",
+      "DOM",
+      "ES6",
+      "ESNext",
+      "ES2016"
+    ],
+    "module": "commonjs",
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    //"alwaysStrict": true,
+    "outDir": "wwwroot/js",
+    //"strict": true,
+    //"strictBindCallApply": true,
+    //"strictFunctionTypes": true,
+    //"strictNullChecks": true,
+    //"strictPropertyInitialization": true,
+    "removeComments": true,
+    "rootDir": "src/scripts/",
+    "sourceMap": true,
+    "sourceRoot": "src/scripts/",
+    "target": "ES6",
+    //"allowJs": true,
+    //"checkJs": true,
+    "typeRoots": [ "node_modules/@types", "src/scripts/types" ]
+  },
+  "files": [ "node_modules/typescript/lib/lib.es6.d.ts" ],
+  "include": [ "src/scripts/*" ],
+  "exclude": [
+    "node_modules",
+    "wwwroot",
+    "*.js"
+  ],
+  "compileOnSave": true
+}

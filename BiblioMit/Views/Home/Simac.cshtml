@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Simac";
+    BiblioMit.Models.VM.CSPTag.FrameSrc.Add("https://simac.bibliomit.cl/");
+}
+
+<partial name="_Pg" />
+
+@section Headers{
+    <iframe src="https://simac.bibliomit.cl"
+            width="640" height="3163"
+            frameborder="0" marginheight="0"
+            marginwidth="0">
+        Loading…
+    </iframe>
+}

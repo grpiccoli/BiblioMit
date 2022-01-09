@@ -1,0 +1,34 @@
+﻿@model BiblioMit.Views.Components.Nav.DefaultModel
+
+<nav class="navbar navbar-expand-lg navbar-dark d-lg-block fixed-top m-0 p-0 @ViewData["navbar-bg"]">
+    <div class="container-fluid justify-content-start m-0 p-0 p-lg-0">
+        <button class="navbar-toggler p-2" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarMain" aria-controls="navbarMain"
+                aria-expanded="false" aria-label="Ver herramientas">
+            <span class="navbar-toggler-icon"></span>
+        </button> 
+        <!-- Navbar brand -->
+        <a class="navbar-brand mr-auto mr-lg-3 ml-3 ml-lg-0 p-2" href="#">
+            <span>
+                <img src="~/images/ico/bibliomit.svg"
+                     height="35" width="35"
+                     alt="bibliomit icon"
+                     loading="lazy" />
+            </span>
+            BiblioMit
+        </a>
+        <div class="overlay d-flex d-lg-none" onclick="this.parentNode.firstChild.click"></div>
+        <!-- Collapsible wrapper -->
+        <div class="collapse navbar-collapse sidebar" id="navbarMain">
+            <ul class="navbar-nav me-auto mt-lg-0">
+                @foreach (var v in Model.Navs)
+                {
+                    <partial name="_NavDDwn" model='v' />
+                }
+            </ul>
+            <ul class="navbar-nav ms-auto mt-lg-0">
+                <partial name="_LoginDropdown" model='Model.LoginModel'/>
+            </ul>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,13 @@
+﻿@model (string, List<string>)
+
+@{ 
+    var pageName = ViewContext.RouteData.Values.ContainsKey("action") ?
+        ViewContext.RouteData.Values["controller"].ToString().Replace("_", "")
+        + ViewContext.RouteData.Values["action"].ToString().Replace("_", "") :
+        ViewContext.RouteData.Values.ContainsKey("page") ?
+        ViewContext.RouteData.Values["page"].ToString().Split("/").Last().Replace("_", "") :
+        null;
+    Model.Item2.Add(pageName.Substring(0, 1).ToLowerInvariant() + pageName.Substring(1));
+}
+
+<partial name="_TagLibs" model='Model' />

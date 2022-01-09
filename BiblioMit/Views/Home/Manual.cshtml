@@ -1,0 +1,10 @@
+﻿@{
+    ViewData["Title"] = "Manual";
+    BiblioMit.Models.VM.CSPTag.ScriptSrcElem.Add("'sha256-GJEZQIls++rklF1U8TzbLzeL533WmMBxQfECyLGzoxY='");
+}
+
+<partial name="_Libs" model='new List<string> { "flowpaper" }' />
+
+@section Headers{
+    <iframe src="~/flowpaper/MANUAL_DE_USO_BIBLIOMIT.html" title="@Localizer["User Manual"]"></iframe>
+}

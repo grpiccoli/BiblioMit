@@ -1,0 +1,28 @@
+﻿<partial name="_GMaps" />
+<partial name="_ValidationScriptsPartial" />
+<partial name="_Libs" model='new List<string> { "@@google/markerclustererplus", "choices.js", "psmbs" }' />
+
+<h2 id="maintitle">@ViewData["Title"]</h2>
+<partial name="_Loader" />
+<div class="row">
+    <div class="col-6">
+        <select id="psmb" class="choice form-control" multiple></select>
+    </div>
+    <div class="col-6">
+        <select id="company" class="choice form-control" multiple></select>
+    </div>
+</div>
+<div id="map-holder" class="row" 
+     data-code="@Localizer["Code"]" 
+     data-company="@Localizer["Company"]"
+     data-locality="@Localizer["Locality"]"
+     data-commune="@Localizer["Commune"]"
+     data-province="@Localizer["Province"]"
+     data-region="@Localizer["Region"]"
+     data-area="@Localizer["Area (ha)"]"
+     data-details="@Localizer["Details"]"
+     data-sources="@Localizer["Sources"]">
+    <div class="col">
+        <div class="w-100" id="map" style="min-height:400px;"></div>
+    </div>
+</div>

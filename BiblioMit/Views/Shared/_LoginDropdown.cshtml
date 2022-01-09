@@ -1,0 +1,87 @@
+﻿@using BiblioMit.Views.Components.Nav
+@model LoginDropdownModel
+<partial name="_SelectLanguagePartial" />
+@*<vc:culture-switcher />*@
+<li class="nav-item dropdown text-lg-center m-0">
+    <a class="nav-link dropdown-toggle" href="#" role="button" id="login" data-bs-toggle="dropdown"
+       aria-expanded="false">
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <div>
+                <i class="fas fa-user m-0"></i>
+            </div>
+            <span class="small">@Localizer["Account"]</span>
+        }
+        else
+        {
+            <div>
+                <i class="fas fa-sign-in-alt m-0"></i>
+            </div>
+            <span class="small">@Localizer["Login"]</span>
+        }
+    </a>
+    <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end m-0 p-0" aria-labelledby="SignIn">
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <li>
+                    <div class="dropdown-header">
+                        <i class="fas fa-user fa-tw"></i>
+                        @User.Identity?.Name:
+                    </div>
+                </li>
+                <li>
+                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                        <i class="fas fa-user-cog fa-tw"></i>
+                        &emsp;@Localizer["Manage Profile"]
+                    </a>
+                </li>
+                <li>
+                    <form class="dropdown-item" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="btn btn-sm p-0 m-0">
+                            <i class="fas fa-times fa-tw"></i>&emsp;Logout
+                        </button>
+                    </form>
+                </li>
+@*                <form class="navbar-form nav navbar-nav" asp-area="Identity"
+                      asp-page="/Account/Logout"
+                      asp-route-returnUrl="@Url.Action("Index", "Home")"
+                      method="post" id="logoutForm">
+                    <a class="dropdown-item" asp-area="Identity"
+                       asp-page="/Account/Manage/Index" title="Manage">
+                        <i class="fas fa-cog fa-tw"></i>
+                        <span class="small">@Localizer["Manage"]</span>
+                    </a>
+                    <button type="submit" class="dropdown-item">
+                        <i class="fas fa-times fa-tw"></i>
+                        <span class="small">@Localizer["Logout"]</span>
+                    </button>
+                </form>
+*@            }
+            else
+            {
+                <li>
+                <form class="px-4 py-3" id="account" asp-controller="Home" asp-action="Login"
+                      asp-route-returnUrl="@Context.Request.Path"
+                      method="post" autocomplete="on">
+                    <div class="form-group">
+                        <label asp-for="Email">@Localizer["Email"]</label>
+                        <input asp-for="Email" class="form-control" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Password">@Localizer["Password"]</label>
+                        <input asp-for="Password" class="form-control" autocomplete="current-password">
+                    </div>
+                    <div class="form-check">
+                        <input asp-for="RememberMe" class="form-check-input">
+                        <label asp-for="RememberMe" class="form-check-label">@Localizer["Remember me"]</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">@Localizer["Sign in"]</button>
+                    <div class="dropdown-divider"></div>
+                    <a id="forgot-password" asp-area="Identity" asp-page="/Account/ForgotPassword" class="dropdown-item">@Localizer["Forgot password?"]</a>
+                    <a asp-area="Identity" asp-page="/Account/Register" asp-route-returnUrl="@Context.Request.Path" class="dropdown-item">@Localizer["Register as a new user"]</a>
+                    <a asp-area="Identity" id="resend-confirmation" asp-page="/Account/ResendEmailConfirmation" class="dropdown-item">@Localizer["Resend email confirmation"]</a>
+                </form>
+                </li>
+            }
+    </ul>
+</li>

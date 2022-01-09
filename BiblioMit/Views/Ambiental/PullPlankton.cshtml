@@ -1,0 +1,8 @@
+﻿@model string 
+@{
+    ViewData["Title"] = Localizer["Environmental Upload Errors"].Value;
+}
+
+<partial name="_Pg" />
+
+@Html.Raw(Model)

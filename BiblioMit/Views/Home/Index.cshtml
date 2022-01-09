@@ -1,0 +1,44 @@
+﻿@model Carousel
+@{
+    ViewData["Title"] = "Home";
+    ViewData["footer-text"] = "text-light";
+    ViewData["navbar-bg"] = "";
+    ViewData["footer-logo"] = "~/epic_light_hor.svg";
+
+    //carousel dynamic style
+    var styleNonce = Hash.Nonce();
+    BiblioMit.Models.VM.CSPTag.StyleSrcElem.Add($"'nonce-{styleNonce}'");
+}
+@* "signalr", "/chat.min"*@
+<partial name="_Libs" model='new List<string> { "home", "banners" }' />
+
+@section Styles{
+    <style nonce="@styleNonce">@Html.Raw(string.Join(string.Empty, Model.Styles))</style>
+}
+
+@section Headers{
+    <!-- Carousel wrapper -->
+    <div id="introCarousel" class="carousel slide carousel-fade shadow-2-strong" data-bs-ride="carousel">
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+            @Html.Raw(string.Join(string.Empty,Model.Indicators))
+        </div>
+
+        <!-- Inner -->
+        <div class="carousel-inner">
+            <!-- Single item -->
+            @Html.Raw(string.Join(string.Empty, Model.Items))
+        </div>
+        <!-- Inner -->
+        <!-- Controls -->
+        <button class="carousel-control-prev" type="button" href="#introCarousel" role="button" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" href="#introCarousel" role="button" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    <!-- Carousel wrapper -->
+}

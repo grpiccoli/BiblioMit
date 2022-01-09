@@ -1,0 +1,286 @@
+@model IEnumerable<BiblioMit.Models.VM.PublicationVM>
+@using System.Text.RegularExpressions
+@using BiblioMit.Models.VM
+
+@{
+    ViewData["Title"] = Localizer["BiblioMit Search Engine"].Value;
+    var src = (string[])ViewData["src"];
+    var asc = (bool)ViewData["asc"];
+    var trpp = (int)ViewData["trpp"];
+    var srt = (string)ViewData["srt"];
+    //BiblioMit.Models.VM.CSPTag.StyleSrcElem.Add("'sha256-Ucye6igbBXX1kfOSQeZ4ymqY8ogge1RacRAkgcaiVxc='");
+}
+<partial name="_AmCharts" model="4" />
+<partial name="_LibsPg" model='new List<string> { "bibico", "bibliomit", "bootstrap-select", "bootstrap-select-localize", "tippy.js", "tippyTranslate", "statsGraph" }' />
+
+<input id="title" class="d-none"/>
+<div class="row">
+    <div class="col-12 col-lg-9">
+        <h3>
+            @Localizer["Search"]
+            <i class="fas fa-book fa-fw"></i> @Localizer["Articles"],
+            <i class="fas fa-graduation-cap fa-fw"></i> @Localizer["Thesis"],
+            <i class="fas fa-chart-bar fa-fw"></i> @Localizer["Projects"] @Localizer["&"] <i class="fas fa-registered fa-fw"></i> @Localizer["Patents"]:
+        </h3>
+    </div>
+    @if (src.Any())
+    {
+        <div class="col-12 col-lg-3">
+            <partial name="_Clock" view-data="ViewData" />
+        </div>
+    }
+</div>
+
+<hr class="section-heading-spacer">
+<form id="search" asp-action="Index" method="get" class="form-inline">
+    <div class="input-group mb-3">
+        <select name="src" data-language="@Localizer["en"]"
+                placeholder="@Localizer["Select at least 1 repository to search"]"
+                class="custom-select selectpicker form-control" multiple data-live-search="true"
+                data-actions-box="true" data-size="5"
+                title="@Localizer["Select one or more repositories"] …" data-selected-text-format="count > 3">
+            <optgroup label="@Localizer["Thesis and Articles of Universities & Research Centres"]">
+                @foreach (var u in (Dictionary<string, string>)ViewData["ues"])
+                {
+                    <option data-tokens="university universidad thesis tesis @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key-mono" data-subtext="(@u.Key)" value="@u.Key">@u.Value</option>
+                }
+            </optgroup>
+            <optgroup label="@Localizer["Projects"]:">
+                @foreach (var u in (Dictionary<string, string>)ViewData["proj"])
+                {
+                    <option data-tokens="projects proyectos @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key.ToLower()-mono" data-subtext="(@u.Value)" value="@u.Key">@u.Key</option>
+                }
+            </optgroup>
+            <optgroup label="@Localizer["Articles"]">
+                @foreach (var u in (Dictionary<string, string>)ViewData["gs"])
+                {
+                    <option data-tokens="articles artículos @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key-mono" data-subtext="(@u.Key)" value="@u.Key">@u.Value</option>
+                }
+            </optgroup>
+            <optgroup label="@Localizer["Patents"]">
+                @foreach (var u in (Dictionary<string, string>)ViewData["gp"])
+                {
+                    <option data-tokens="patents patentes @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key-mono" data-subtext="(@u.Key)" value="@u.Key">@u.Value</option>
+                }
+            </optgroup>
+        </select>
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-sliders-h"></i>
+        </button>
+        <ul class="dropdown-menu bloc">
+            <li>
+                <label class="dropdown-header">@Localizer["Criteria"]:</label>
+                <select class="form-control w-100" name="srt" size="4">
+                    <option value="" selected="@(string.IsNullOrWhiteSpace(srt))">@Localizer["Default"]</option>
+                    <option value="score" selected="@srt.Contains("score")">@Localizer["Score"]</option>
+                    <option value="title" selected="@srt.Contains("title")">@Localizer["Title"]</option>
+                    <option value="date" selected="@srt.Contains("date")">@Localizer["Date"]</option>
+                </select>
+            </li>
+            <li><div class="dropdown-divider"></div></li>
+            <li>
+                <label class="dropdown-header">@Localizer["Order"]:</label>
+                <select class="form-control w-100" name="asc" size="2">
+                    <option value="false" selected="@(!asc)">@Localizer["Descendent"]</option>
+                    <option value="true" selected="@asc">@Localizer["Ascendent"]</option>
+                </select>
+            </li>
+            <li><div class="dropdown-divider"></div></li>
+            <li>
+                <label class="dropdown-header">@Localizer["Results per page"]:</label>
+                <select class="form-control w-100" name="trpp" size="5">
+                    <option value="5" selected="@(trpp==5)">5</option>
+                    <option value="10" selected="@(trpp==10)">10</option>
+                    <option value="20" selected="@(trpp==20)">20</option>
+                    <option value="50" selected="@(trpp==50)">50</option>
+                    <option value="100" selected="@(trpp==100)">100</option>
+                </select>
+            </li>
+        </ul>
+        <input id="q" class="form-control" type="text" name="q" placeholder="@Localizer["Search terms"] e.g. Mytilus" value="@ViewData["q"]" />
+        <button class="btn btn-primary" type="submit" value="Buscar"><i class="fas fa-search fa-fw"></i>&nbsp;@Localizer["Search"]</button>
+    </div>
+</form>
+
+@if (src.Any())
+{
+    var counts = (Dictionary<Typep, int>)ViewData["counts"];
+    int sum = counts.Sum(s => s.Value);
+    var percentages = counts.ToDictionary(c => c.Key, c => c.Value * 100 / sum);
+    var multipleRepos = src.Count() > 1;
+    var titles = new List<string> { $"{sum} Total" };
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="col-6 col-md-3 btn-group-vertical">
+                @if (multipleRepos)
+                {
+                    <button type="button" onclick="selectData(0);" class="stat btn btn-block btn-sm btn-outline-secondary">
+                        <i class="fas fa-globe-americas fa-fw"></i>
+                        <span><strong>@sum</strong> @Localizer["Results in"] <strong>@src.Length</strong> Reps.</span>
+                    </button>
+                }
+                @foreach (var count in counts)
+                {
+                    var name = count.Key.GetAttrName();
+                    <button type="button" onclick="selectData(1);" class="stat btn btn-block btn-sm btn-outline-warning">
+                        <i class="fas fa-book fa-fw"></i>
+                        <span><strong>@count.Value</strong> @name (@percentages[count.Key]%)</span>
+                    </button>
+                    titles.Add($"{count.Value} {name}");
+                }
+            </div>
+            @if (multipleRepos)
+            {
+                <div class="col-6 col-md-3">
+                    <div class="chartdiv chart" id="chartdiv"></div>
+                </div>
+                <div class="col-12 col-md-6" id="legenddiv"></div>
+                @this.Block("TOP", @<script>
+                    var chartData = @Html.Raw(ViewData["chartData"]);
+                    var titles = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(titles));
+                </script>)
+                <partial name="_AmCharts" model="3" />
+            }
+        </div>
+    </div>
+    <br />
+    <partial name="_PagingPub" view-data="ViewData" />
+    <div class="table-responsive">
+        <table class="table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th class="d-none d-sm-table-cell"></th>
+                    <th class="d-none d-sm-table-cell">
+                        @Localizer[Html.DisplayNameFor(model => model.Source)]
+                    </th>
+                    <th class="d-none d-sm-table-cell">
+                        @Localizer[Html.DisplayNameFor(model => model.Typep)]
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-src="@ViewData["srcs"]" asp-route-q="@ViewData["q"]"
+                           asp-route-srt="title" asp-route-asc="@(!(bool)ViewData["asc"])">
+                            @Localizer[Html.DisplayNameFor(model => model.Title)]
+                            @if ((string)ViewData["srt"] == "title")
+                            {
+                                <text>@Html.Raw(ViewData["arrow"])</text>
+                            }
+                        </a>  / @Localizer[Html.DisplayNameFor(model => model.Authors)] / @Localizer[Html.DisplayNameFor(model => model.Journal)] / @Localizer[Html.DisplayNameFor(model => model.DOI)]
+                    </th>
+                    <th>
+                        <a asp-action="Index" asp-route-src="@ViewData["srcs"]" asp-route-q="@ViewData["q"]"
+                           asp-route-srt="date" asp-route-asc="@(!(bool)ViewData["asc"])">
+                            @Html.DisplayNameFor(model => model.Date)
+                            @if ((string)ViewData["srt"] == "date")
+                            {
+                                <text>@Html.Raw(ViewData["arrow"])</text>
+                            }
+                        </a>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="d-none d-sm-table-cell">
+                            @*@{ var acr = string.IsNullOrWhiteSpace(item.Company.Acronym) ? "bibliomit" : item.Company.Acronym; }
+                                <img src="~/images/ico/@(acr).svg"/>*@
+                            <span class="display-4 bib-@item.Company.Acronym">
+                                <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span><span class="path6"></span>
+                            </span>
+                        </td>
+                        <td class="d-none d-sm-table-cell">
+                            <strong>@Html.DisplayFor(modelItem => item.Company.BusinessName)</strong>
+                            <p>
+                                <a asp-controller="Companies" asp-action="Details" asp-route-id="@item.Company.Id">
+                                    <small>@Localizer["Details"]</small>
+                                </a>
+                            </p>
+                        </td>
+                        <td class="d-none d-sm-table-cell">
+                            @item.Typep.GetAttrName()
+                        </td>
+                        <td>
+                            <div class="d-block d-sm-none">
+                                <div>
+                                    <div class="img-with-text">
+                                        <a asp-controller="Companies" asp-action="Details" asp-route-id="@item.Company.Id">
+                                            <span class="bib-@item.Company.Acronym">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <span class="path3"></span>
+                                                <span class="path4"></span>
+                                                <span class="path5"></span>
+                                                <span class="path6"></span>
+                                            </span>
+                                            <p>
+                                                <small>
+                                                    @item.Company.Acronym
+                                                </small>
+                                            </p>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3>
+                                        @item.Typep.GetAttrName()
+                                    </h3>
+                                </div>
+                            </div>
+                            <div>
+                                <p>
+                                    <a id="@Regex.Replace(item.Title, "[^A-Za-z]", "")"
+                                       class="title"
+                                       href="@(item.Uri == null ? "#" : item.Uri.ToString())"
+                                       data-toggle="tooltip"
+                                       data-placement="top"
+                                       data-trigger="hover">
+                                        <strong>@Html.DisplayFor(modelItem => item.Title)</strong>
+                                    </a>
+                                </p>
+                                @if (item.Authors != null && item.Authors.Any())
+                                {
+                                    var last = item.Authors.Last();
+                                    var sep = ";";
+                                    <p>
+                                        @foreach (var author in item.Authors)
+                                        {
+                                            if (author.Equals(last)) sep = ".";
+                                            <a asp-action="Index" asp-route-src="@ViewData["srcs"]"
+                                               asp-route-q="@author.Last, @author.Name"
+                                               asp-route-srt="@ViewData["srt"]" asp-route-asc="@ViewData["asc"]"
+                                               asp-route-trpp="@ViewData["trpp"]">@author.Last, @author.Name</a>@sep
+                                        }
+                                    </p>
+                                }
+                                @if (!String.IsNullOrEmpty(item.Journal))
+                                {
+                                    <p>
+                                        @Html.DisplayFor(modelItem => item.Journal)
+                                    </p>
+                                }
+                                <p>
+                                    <a target="_blank" rel="noopener" href="@Html.DisplayFor(modelItem => item.DOI)">@Html.DisplayFor(modelItem => item.DOI)</a>
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            @if (item.Date == DateTime.MinValue)
+                            {
+                                <text>&mdash;</text>
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.Date)
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <partial name="_PagingPub" view-data="ViewData" />
+}
+
+<partial name="_ValidationScriptsPartial" />

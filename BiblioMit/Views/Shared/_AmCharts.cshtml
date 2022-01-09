@@ -1,0 +1,38 @@
+﻿@model int
+@{ 
+    BiblioMit.Models.VM.CSPTag.ScriptSrcElem.Add("https://www.amcharts.com/");
+    BiblioMit.Models.VM.CSPTag.StyleSrcElem.Add("'unsafe-inline'");
+    BiblioMit.Models.VM.CSPTag.StyleSrc.Add("'unsafe-inline'");
+}
+@if (Model == 4)
+{
+    @this.Blocks("TOPScripts",
+    @<script src="https://www.amcharts.com/lib/@Model/core.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/charts.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/themes/animated.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/themes/kelly.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/lang/en_US.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/lang/es_ES.js"></script>)
+}
+else if(Model == 3)
+{
+    @this.Blocks("TOPScripts",
+    @<script src="https://www.amcharts.com/lib/@Model/amcharts.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/ammap.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/pie.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/gauge.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/themes/light.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/xy.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/serial.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/plugins/dataloader/dataloader.min.js"></script>,
+    @<script src="https://www.amcharts.com/lib/@Model/plugins/export/export.js"></script>);
+
+    var lang = Localizer["en"].Value;
+    if(lang != "en")
+    {
+    @this.Blocks("TOPScripts",
+    @<script src="https://www.amcharts.com/lib/@Model/lang/@(Localizer["en"]).js"></script>);
+
+    }
+
+}
