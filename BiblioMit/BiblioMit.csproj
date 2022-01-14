@@ -72,6 +72,23 @@
 		<EmbeddedResource Include="Pwa\ServiceWorker\Files\CacheFirstSafe.js" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Include="Views\Softs\Create.cshtml" />
+	  <None Include="Views\Softs\Delete.cshtml" />
+	  <None Include="Views\Softs\Details.cshtml" />
+	  <None Include="Views\Softs\Edit.cshtml" />
+	  <None Include="Views\Softs\Index.cshtml" />
+	  <None Include="Views\Variables\Create.cshtml" />
+	  <None Include="Views\Variables\Delete.cshtml" />
+	  <None Include="Views\Variables\Details.cshtml" />
+	  <None Include="Views\Variables\Edit.cshtml" />
+	  <None Include="Views\Variables\Index.cshtml" />
+	  <None Include="Views\VariableTypes\Create.cshtml" />
+	  <None Include="Views\VariableTypes\Delete.cshtml" />
+	  <None Include="Views\VariableTypes\Details.cshtml" />
+	  <None Include="Views\VariableTypes\Edit.cshtml" />
+	  <None Include="Views\VariableTypes\Index.cshtml" />
+	</ItemGroup>
+	<ItemGroup>
 		<ServiceWorker Include="wwwroot\serviceworker" PublishedContent="wwwroot\serviceworker" />
 	</ItemGroup>
 	<ItemGroup>

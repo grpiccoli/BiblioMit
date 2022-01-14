@@ -8,6 +8,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/js/entriesCreate.min.js",
+    "inputFiles": [
+      "src/scripts/entriesCreate.js"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/js/rgb2hex.min.js",
     "inputFiles": [
       "wwwroot/js/rgb2hex.js"
@@ -20,9 +26,10 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/js/statsGraph.min.js",
+    "outputFileName": "wwwroot/css/homeIndex.min.css",
     "inputFiles": [
-      "src/scripts/statsGraph.js"
+      "wwwroot/css/home.css",
+      "wwwroot/css/banners.css"
     ]
   },
   {
@@ -170,6 +177,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/js/publicationsIndex.min.js",
+    "inputFiles": [
+      "src/scripts/statsGraph.js"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/css/bibico.min.css",
     "inputFiles": [
       "src/styles/bibico/style.css"
@@ -182,7 +195,7 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/js/home.min.js",
+    "outputFileName": "wwwroot/js/homeIndex.min.js",
     "inputFiles": [
       "wwwroot/js/home.js"
     ]

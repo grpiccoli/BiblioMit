@@ -8,25 +8,23 @@ namespace BiblioMit.Extensions
         {
             using HttpClient client = new();
             Stream stream = await client.GetStreamAsync(url).ConfigureAwait(false);
-            using var sha = SHA512.Create();
-            //using SHA512Managed sha = new();
+            using SHA512 sha = SHA512.Create();
             byte[] checksum = sha.ComputeHash(stream);
             return "sha512-" + Convert.ToBase64String(checksum);
         }
         public static string Get512Local(string file, int bufferSize = 1_000_000)
         {
-            using var stream = new BufferedStream(File.OpenRead(file), bufferSize);
-            //using SHA512Managed sha = new();
-            using var sha = SHA512.Create();
+            using BufferedStream stream = new(File.OpenRead(file), bufferSize);
+            using SHA512 sha = SHA512.Create();
             byte[] checksum = sha.ComputeHash(stream);
             return "sha512-" + Convert.ToBase64String(checksum);
         }
         public static string Nonce()
         {
             //Allocate a buffer
-            var ByteArray = new byte[20];
+            byte[] ByteArray = new byte[20];
             //Generate a cryptographically random set of bytes
-            using var Rnd = RandomNumberGenerator.Create();
+            using RandomNumberGenerator Rnd = RandomNumberGenerator.Create();
             Rnd.GetBytes(ByteArray);
             //Base64 encode and then return
             return Convert.ToBase64String(ByteArray);

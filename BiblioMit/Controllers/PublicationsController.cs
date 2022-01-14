@@ -14,6 +14,7 @@ using System.Drawing;
 using BiblioMit.Services;
 using BiblioMit.Extensions;
 using System.Collections.ObjectModel;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BiblioMit.Controllers
 {
@@ -601,6 +602,8 @@ string dateSelect, int rpp, string acronym)
         {
             if (src.Contains(acronym))
             {
+                try
+                {
                     Regex resss = new(@"([0-9]+,)*[0-9]+");
                     Regex yr = new(@"[0-9]{4}");
                     Regex aut = new(@"\A(?:(?![0-9]{4}).)*");
@@ -609,22 +612,31 @@ string dateSelect, int rpp, string acronym)
                         Id = 55555555,
                         Address = "1600 Amphitheatre Parkway, Mountain View, CA"
                     };
-                co.SetAcronym(acronym);
-                co.SetBusinessName("Google Inc");
-                using var doc = await GetDoc(url).ConfigureAwait(false);
-                return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
-                        let t = n?.QuerySelector(titleSelect)?.TextContent
-                        select new PublicationVM()
-                        {
-                            Source = acronym,
-                            Uri = GetUri(n.QuerySelector(quriSelect)),
-                            Title = t?[(t.LastIndexOf(']')
-                            + 1)..],
-                            Typep = Typep.Article,
-                            Company = co,
-                            Date = GetDateGS(n, dateSelect),
-                            Authors = GetAuthorsGS(n, dateSelect)
-                        }, acronym, GetNoResultsGS(doc, NoResultsSelect));
+                    co.SetAcronym(acronym);
+                    co.SetBusinessName("Google Inc");
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
+                            let t = n?.QuerySelector(titleSelect)?.TextContent
+                            select new PublicationVM()
+                            {
+                                Source = acronym,
+                                Uri = GetUri(n.QuerySelector(quriSelect)),
+                                Title = t?[(t.LastIndexOf(']')
+                                + 1)..],
+                                Typep = Typep.Article,
+                                Company = co,
+                                Date = GetDateGS(n, dateSelect),
+                                Authors = GetAuthorsGS(n, dateSelect)
+                            }, acronym, GetNoResultsGS(doc, NoResultsSelect));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -636,6 +648,7 @@ string authorSelect, string dateSelect, string abstractSelect)
             var acronym = "CORFO";
             if (src.Contains(acronym))
             {
+                try {
                     var co = GetCo(60706000);
                 using var doc = await GetDoc(url).ConfigureAwait(false);
                 return (from n in doc.QuerySelectorAll(nodeSelect)
@@ -651,6 +664,15 @@ string authorSelect, string dateSelect, string abstractSelect)
                             Authors = GetAuthorsCorfo(n, authorSelect),
                             Abstract = GetAbstract(n, abstractSelect)
                         }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -661,6 +683,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect)
             var acronym = "FIPA";
             if (src.Contains(acronym))
             {
+                try {
                     var co = GetCo(60719000);
                 using var doc = await GetDoc(url).ConfigureAwait(false);
                 return (from n in doc.QuerySelectorAll(nodeSelect)
@@ -672,6 +695,15 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect)
                             Uri = GetUri(new Uri("http://www.subpesca.cl/fipa/613/w3-article-88970.html"), n),
                             Company = co,
                         }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -713,6 +745,7 @@ string acronym, string parameter, int rpp, string sortBy, string order, int? pg,
         {
             if (src.Contains(acronym))
             {
+                try {
                     var co = GetCo(60915000);
                     var url = new Uri($"http://repositorio.conicyt.cl/handle/10533/{parameter}/discover?query={q}&page={pg - 1}&rpp={rpp}&sort_by={sortBy}&order={order}");
                 using var doc = await GetDoc(url).ConfigureAwait(false);
@@ -728,6 +761,15 @@ Date = GetDate(n, "span.date"),
 Company = co,
 Journal = GetJournalConicyt(n)
 }), acronym, GetNoResults(doc, "p.pagination-info", 2));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -739,6 +781,7 @@ string dateSelect, string authorSelect)
             var acronym = "puc";
             if (src.Contains(acronym))
             {
+                try {
                     var co = GetCo(acronym);
                     var doc = await GetDocStream(url).ConfigureAwait(false);
                     return (from n in doc.QuerySelectorAll(nodeSelect)
@@ -753,6 +796,15 @@ string dateSelect, string authorSelect)
                                 Date = GetDate(n, dateSelect),
                                 Company = co,
                             }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -764,6 +816,7 @@ string quriSelect, string quriSelectAlt, string titleSelect, string authorSelect
             var acronym = "pucv";
             if (src.Contains(acronym))
             {
+                try {
                     var co = GetCo(acronym);
                 using var doc = await GetDocStream(url).ConfigureAwait(false);
                 return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
@@ -778,6 +831,15 @@ string quriSelect, string quriSelectAlt, string titleSelect, string authorSelect
                             Date = GetDate(date, date.Length - 4),
                             Company = co,
                         }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -788,9 +850,10 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             var acronym = "udec";
             if (src.Contains(acronym))
             {
+                try {
                     var co = GetCo(acronym);
                 IHtmlDocument doc = await GetDoc(url).ConfigureAwait(false);
-                if (doc == null) return (null, acronym, 0);
+                if (doc == null) return (new Collection<PublicationVM>(), acronym, 0);
                 return (
 from n in doc.QuerySelectorAll(nodeSelect)
 let m = n.QuerySelector(quriSelect)
@@ -804,6 +867,15 @@ Authors = GetAuthors(n, authorSelect),
 Company = co,
 Date = GetDate(n, dateSelect)
 }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -815,18 +887,29 @@ Date = GetDate(n, dateSelect)
             var acronym = "uach";
             if (src.Contains(acronym))
             {
-                    var co = GetCo(acronym);
-                using var doc = await GetDoc(url).ConfigureAwait(false);
-                return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
+                try
                 {
-                    Source = acronym,
-                    Title = n.QuerySelector(titleSelect)?.TextContent,
-                    Uri = GetUri(url, n.QuerySelector(quriSelect)),
-                    Authors = GetAuthors(n, authorSelect),
-                    Typep = Typep.Thesis,
-                    Company = co,
-                    Date = GetDate(n, dateSelect)
-                }), acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                    var co = GetCo(acronym);
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
+                    {
+                        Source = acronym,
+                        Title = n.QuerySelector(titleSelect)?.TextContent,
+                        Uri = GetUri(url, n.QuerySelector(quriSelect)),
+                        Authors = GetAuthors(n, authorSelect),
+                        Typep = Typep.Thesis,
+                        Company = co,
+                        Date = GetDate(n, dateSelect)
+                    }), acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -863,11 +946,11 @@ Date = GetDate(d, j.LastIndexOf(",", StringComparison.Ordinal) + 2)
                 }
                 catch (DomException de)
                 {
-                    Console.WriteLine(de);
+                    Console.WriteLine(de.Message);
                 }
                 catch (NullReferenceException ex)
                 {
-                    Console.WriteLine(ex);
+                    Console.WriteLine(ex.Message);
                 }
             }
             return (new List<PublicationVM>(), acronym, 0);
@@ -879,21 +962,32 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             var acronym = "ucsc";
             if (src.Contains(acronym))
             {
+                try
+                {
                     var co = GetCo(acronym);
-                using var doc = await GetDoc(url).ConfigureAwait(false);
-                return (
-from n in doc.QuerySelectorAll(nodeSelect)
-let m = n.QuerySelector(quriSelect)
-select new PublicationVM()
-{
-Source = acronym,
-Title = m?.TextContent,
-Uri = GetUri(url, m),
-Authors = GetAuthors(n, authorSelect),
-Typep = Typep.Thesis,
-Company = co,
-Date = GetDate(n, dateSelect)
-}, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    return (
+    from n in doc.QuerySelectorAll(nodeSelect)
+    let m = n.QuerySelector(quriSelect)
+    select new PublicationVM()
+    {
+        Source = acronym,
+        Title = m?.TextContent,
+        Uri = GetUri(url, m),
+        Authors = GetAuthors(n, authorSelect),
+        Typep = Typep.Thesis,
+        Company = co,
+        Date = GetDate(n, dateSelect)
+    }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch(DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch(NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -904,20 +998,31 @@ Date = GetDate(n, dateSelect)
             var acronym = "umag";
             if (src.Contains(acronym))
             {
+                try
+                {
                     var co = GetCo(acronym);
-                using var doc = await GetDoc(url).ConfigureAwait(false);
-                return (from n in doc.QuerySelectorAll(nodeSelect)
-                        let m = n.QuerySelector(quriSelect)
-                        select new PublicationVM()
-                        {
-                            Source = acronym,
-                            Title = m?.TextContent,
-                            Uri = GetUri(url, m),
-                            Authors = GetAuthors(n, authorSelect),
-                            Typep = Typep.Thesis,
-                            Company = co,
-                            Date = GetDate(n, dateSelect)
-                        }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    return (from n in doc.QuerySelectorAll(nodeSelect)
+                            let m = n.QuerySelector(quriSelect)
+                            select new PublicationVM()
+                            {
+                                Source = acronym,
+                                Title = m?.TextContent,
+                                Uri = GetUri(url, m),
+                                Authors = GetAuthors(n, authorSelect),
+                                Typep = Typep.Thesis,
+                                Company = co,
+                                Date = GetDate(n, dateSelect)
+                            }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -928,6 +1033,8 @@ Date = GetDate(n, dateSelect)
             var acronym = "uchile";
             if (src.Contains(acronym))
             {
+                try
+                {
                     var co = GetCo(acronym);
                 using var doc = await GetDoc(url).ConfigureAwait(false);
                 return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
@@ -941,6 +1048,15 @@ Date = GetDate(n, dateSelect)
                     Company = co,
                     Date = GetDate(n, dateSelect)
                 }), acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                }
+                catch (DomException de)
+                {
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
@@ -966,21 +1082,25 @@ Date = GetDate(n, dateSelect)
                         Company = co,
                     }), acronym, num.Length);
                 }
-                catch
+                catch (DomException de)
                 {
-                    throw;
+                    Console.WriteLine(de.Message);
+                }
+                catch (NullReferenceException ex)
+                {
+                    Console.WriteLine(ex.Message);
                 }
             }
             return (new List<PublicationVM>(), acronym, 0);
         }
 
-        public static (string, string) GetJournalDoi(IElement node, string acronym)
+        public static (string?, string?) GetJournalDoi(IElement node, string acronym)
         {
             string doi = "https://dx.doi.org/";
             switch (acronym)
             {
                 case "uchile":
-                    var titls = node?.QuerySelector("h4.discoUch span").Attributes["title"].Value;
+                    string? titls = node.QuerySelector("h4.discoUch span").Attributes["title"]?.Value;
                     Collection<int> indexes = titls.AllIndexesOf("rft_id");
                     if (indexes.Count == 3)
                     {
@@ -993,20 +1113,17 @@ Date = GetDate(n, dateSelect)
             }
         }
 
-        public static string GetJournalConicyt(IElement node)
+        public static string? GetJournalConicyt(IElement node)
         {
-            if(node != null)
+            var items = node.QuerySelectorAll("#code");
+            if (items.Any())
             {
-                var items = node.QuerySelectorAll("#code");
-                if (items.Any())
+                var journal = "N° de Proyecto: " + items[0].TextContent;
+                if (items.Length > 3)
                 {
-                    var journal = "N° de Proyecto: " + items[0].TextContent;
-                    if (items.Length > 3)
-                    {
-                        return journal + " Institución Responsable: " + items[3].TextContent;
-                    }
-                    return journal;
+                    return journal + " Institución Responsable: " + items[3].TextContent;
                 }
+                return journal;
             }
             return null;
         }

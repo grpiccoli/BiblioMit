@@ -14,6 +14,10 @@ sudo rsync -auv bin/Release/netcoreapp2.1/linux-x64/publish/* /var/bibliomit/
 sudo chown -R guillermo /var/bibliomit/
 systemctl start kestrel-bibliomit.service
 
+
+sudo apt install msodbcsql17=17.3.1.1-1 mssql-server=14.0.3192.2-2 mssql-tools=17.3.0.1-1
+sudo apt-mark hold msodbcsql17=17.3.1.1-1 mssql-server=14.0.3192.2-2 mssql-tools=17.3.0.1-1
+
 #first
 sudo rsync -auv /media/sf_E_DRIVE/WebProjects/BiblioMit guillermo@190.13.148.78:~/media/guillermo/WD3dNAND-SSD-1TB/
 rm -R obj/ bin/ Migrations/ Data/Migrations/

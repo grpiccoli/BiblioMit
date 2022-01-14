@@ -171,11 +171,11 @@ chart.events.on('validated', loadChart);
 var loadDates = function () {
     var sd = $('#start').val();
     var ed = $('#end').val();
-    var current = moment(sd);
-    var max = moment(ed);
+    var current = new Date(sd);
+    var max = new Date(ed);
     while (current <= max) {
-        chart.data.push({ date: current.format('yyyy-MM-DD') });
-        current.add(1, 'days');
+        chart.data.push({ date: current.toISOString().split("T")[0] });
+        current.setDate(current.getDate() + 1);
     }
     return chart.data;
 };

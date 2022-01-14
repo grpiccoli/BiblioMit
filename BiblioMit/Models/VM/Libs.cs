@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-namespace BiblioMit.Models.VM
+﻿namespace BiblioMit.Models.VM
 {
     public class Libs
     {
         public string? Version { get; set; }
         public string? DefaultProvider { get; set; }
-        public List<LibManLibrary> Libraries { get; set; }
+        public IEnumerable<LibManLibrary>? Libraries { get; set; }
     }
 }

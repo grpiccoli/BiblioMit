@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BiblioMit.Data;
 using BiblioMit.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BiblioMit.Controllers
 {

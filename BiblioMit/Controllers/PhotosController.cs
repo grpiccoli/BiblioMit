@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using BiblioMit.Extensions;
 using BiblioMit.Models.Entities.Histopathology;
 using System.Runtime.Serialization;
-using System.Text.Json.Serialization;
 
 namespace BiblioMit.Controllers
 {

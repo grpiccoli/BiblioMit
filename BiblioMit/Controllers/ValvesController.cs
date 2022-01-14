@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BiblioMit.Data;
 using BiblioMit.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BiblioMit.Controllers
 {
@@ -158,9 +156,12 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var valve = await _context.Valves.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            _context.Valves.Remove(valve);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
+            Valve? valve = await _context.Valves.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            if(valve != null)
+            {
+                _context.Valves.Remove(valve);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+            }
             return RedirectToAction("Index");
         }
 

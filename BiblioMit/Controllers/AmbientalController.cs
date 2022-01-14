@@ -37,8 +37,12 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult PullPlankton()
         {
-            var file = Path.Combine(_environment.ContentRootPath, "html", "PullRecords.html");
-            var htmlString = System.IO.File.ReadAllLines(file);
+            var file = Path.Combine(
+                _environment.ContentRootPath, 
+                "StaticFiles",
+                "html", 
+                "PullRecords.html");
+            string[] htmlString = System.IO.File.ReadAllLines(file);
             return View("PullPlankton", string.Join("",htmlString));
         }
         private IQueryable<ChoicesItem> CuencaChoices()

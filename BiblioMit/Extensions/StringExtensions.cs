@@ -150,9 +150,9 @@ namespace BiblioMit.Extensions
             }
             return resultado;
         }
-        public static string? RemoveDiacritics(this string text)
+        public static string RemoveDiacritics(this string text)
         {
-            if (text == null) return null;
+            if (string.IsNullOrWhiteSpace(text)) return text;
             var normalizedString = text.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
             foreach (var c in normalizedString)
@@ -163,13 +163,13 @@ namespace BiblioMit.Extensions
             }
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
-        public static string? FirstCharToUpper(this string input)
+        public static string FirstCharToUpper(this string input)
         {
             var textInfo = new CultureInfo("en-GB").TextInfo;
-            return string.IsNullOrWhiteSpace(input) ? null :
+            return string.IsNullOrWhiteSpace(input) ? input :
             input[0].ToString(CultureInfo.InvariantCulture).ToUpperInvariant() + textInfo.ToLower(input[1..]);
         }
-        public static string? CleanCell(this string text)
+        public static string CleanCell(this string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return text;
             //first toupper to gain speed
@@ -178,7 +178,7 @@ namespace BiblioMit.Extensions
             if(string.IsNullOrWhiteSpace(noDiacritics)) return noDiacritics;
             return Regex.Replace(Regex.Replace(noDiacritics.Trim(), @"\s{2,}", " "), @"[^A-Z0-9 _\.\-,\/\<\(\)\@;\:]", "");
         }
-        public static string? CleanScientificName(this string name)
+        public static string CleanScientificName(this string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return name;
             return Regex.Replace(Regex.Replace(name, @"\d|\.|\s*<.*|\s*\(.*\)|\s*ESTADO.*|PSEUDO\-|\b[\w']{1,3}\b", "").Trim(), @" {2,}", " ");

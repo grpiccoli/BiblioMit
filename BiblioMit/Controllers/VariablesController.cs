@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BiblioMit.Data;
@@ -70,7 +66,7 @@ namespace BiblioMit.Controllers
                 await _context.SaveChangesAsync().ConfigureAwait(false);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PsmbId"] = new SelectList(_context.Psmbs, "Id", "Id", variable?.PsmbId);
+            ViewData["PsmbId"] = new SelectList(_context.Psmbs, "Id", "Id", variable.PsmbId);
             ViewData["VariableTypeId"] = new SelectList(_context.VariableTypes, "Id", "Id", variable.VariableTypeId);
             return View(variable);
         }
@@ -157,9 +153,12 @@ namespace BiblioMit.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var variable = await _context.Variables.FindAsync(id).ConfigureAwait(false);
-            _context.Variables.Remove(variable);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
+            Variable? variable = await _context.Variables.FindAsync(id).ConfigureAwait(false);
+            if(variable != null)
+            {
+                _context.Variables.Remove(variable);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+            }
             return RedirectToAction(nameof(Index));
         }
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Security.Authentication;
+﻿using System.Security.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +20,7 @@ namespace BiblioMit.Controllers
                 || invariant.Contains("GENUS", StringComparison.Ordinal)
                 || invariant.Contains("TL", StringComparison.Ordinal))
             {
-                if (!User.Identity.IsAuthenticated) throw new AuthenticationException($"Please log in to view this content {name}");
+                if (User.Identity is not null && !User.Identity.IsAuthenticated) throw new AuthenticationException($"Please log in to view this content {name}");
             }
             var file = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -37,7 +35,7 @@ namespace BiblioMit.Controllers
         public IActionResult GetHtml(string name)
         {
             if (name == null) throw new ArgumentNullException($"argument name {name} cannot be null");
-            if (!User.Identity.IsAuthenticated) throw new AuthenticationException($"Please log in to view this content {name}");
+            if (User.Identity is not null && !User.Identity.IsAuthenticated) throw new AuthenticationException($"Please log in to view this content {name}");
             var file = Path.Combine(Directory.GetCurrentDirectory(), "html", name);
             //var physical = System.IO.File.Exists(file) ? file
             //    : Path.Combine(Directory.GetCurrentDirectory(), DefaultStaticMiddleware.DefaultImagePath);

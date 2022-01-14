@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BiblioMit.Models.Entities.Environmental.Plancton
+﻿namespace BiblioMit.Models.Entities.Environmental.Plancton
 {
     public class PlanktonUser
     {

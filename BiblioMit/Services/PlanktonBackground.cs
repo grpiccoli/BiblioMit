@@ -1,11 +1,11 @@
 ﻿using BiblioMit.Services.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
+//using Microsoft.Extensions.DependencyInjection;
+//using Microsoft.Extensions.Hosting;
+//using Microsoft.Extensions.Logging;
+//using System;
+//using System.Globalization;
+//using System.Threading;
+//using System.Threading.Tasks;
 
 namespace BiblioMit.Services
 {
@@ -13,13 +13,15 @@ namespace BiblioMit.Services
     {
         private bool _disposed;
         private readonly ILogger _logger;
-        private Timer _timer;
+        private readonly Timer _timer;
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new();
         public PlanktonBackground(
             IServiceProvider services,
             ILogger<PlanktonBackground> logger)
         {
+            _executingTask = Task.CompletedTask;
+            _timer = new Timer(FetchAssays, null, TimeToNextSaturdayMidnight(), TimeSpan.FromMilliseconds(-1));
             Services = services;
             _logger = logger;
         }
@@ -27,15 +29,15 @@ namespace BiblioMit.Services
         public Task StartAsync(CancellationToken cancellationToken)
         {
             LogPlanktonServiceRunning(_logger);
-            var time = TimeToNextSaturdayMidnight();
+            //TimeSpan time = TimeToNextSaturdayMidnight();
             //_timer = new Timer(FetchAssays, null, TimeSpan.FromSeconds(1), TimeSpan.FromMilliseconds(-1));
-            _timer = new Timer(FetchAssays, null, TimeToNextSaturdayMidnight(), TimeSpan.FromMilliseconds(-1));
+            //_timer = new Timer(FetchAssays, null, TimeToNextSaturdayMidnight(), TimeSpan.FromMilliseconds(-1));
 
             return Task.CompletedTask;
         }
-        private void FetchAssays(object state)
+        private void FetchAssays(object? state)
         {
-            _timer?.Change(Timeout.Infinite, 0);
+            _timer.Change(Timeout.Infinite, 0);
             _executingTask = FetchAssaysAsync(_stoppingCts.Token);
         }
         private async Task FetchAssaysAsync(CancellationToken stoppingToken)
@@ -58,7 +60,7 @@ namespace BiblioMit.Services
         public async Task StopAsync(CancellationToken cancellationToken) 
         {
             LogPlanktonServiceStopped(_logger);
-            _timer?.Change(Timeout.Infinite, 0);
+            _timer.Change(Timeout.Infinite, 0);
 
             // Stop called without start
             if (_executingTask == null)
@@ -89,7 +91,7 @@ namespace BiblioMit.Services
             if (_disposed) return;
             if (disposing)
             {
-                _timer?.Dispose();
+                _timer.Dispose();
                 _stoppingCts?.Dispose();
             }
             // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
@@ -98,36 +100,18 @@ namespace BiblioMit.Services
         }
         private static TimeSpan TimeToNextSaturdayMidnight()
         {
-            const string datePattern = "dd/MM/yyyy hh:mm:ss";
-            const string dateFormat = "{0:00}/{1:00}/{2:0000} {3:00}:{4:00}:{5:00}";
-
-            var now = DateTime.Now;
+            DateTime now = DateTime.Now;
 
             int daysUntilNextSaturday = (DayOfWeek.Saturday - now.DayOfWeek + 7) % 7;
 
-            now.AddDays(daysUntilNextSaturday);
+            if (daysUntilNextSaturday == 0) daysUntilNextSaturday = 7;
 
-            string dateString = string.Format(CultureInfo.CurrentCulture, dateFormat, now.Day + 1, now.Month, now.Year, 0, 0, 0);
-            bool valid = DateTime.TryParseExact(dateString, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime nextMidnight);
+            TimeSpan midnight = TimeSpan.FromDays(1);
 
-            if (!valid)
-            {
-                dateString = string.Format(CultureInfo.CurrentCulture, dateFormat, 1, now.Month + 1, now.Year, 0, 0, 0);
-                valid = DateTime.TryParseExact(dateString, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out nextMidnight);
-            }
+            TimeSpan TimeSpanTilmidnight = midnight - now.TimeOfDay;
 
-            if (!valid)
-            {
-                dateString = string.Format(CultureInfo.CurrentCulture, dateFormat, 1, 1, now.Year + 1, 0, 0, 0);
-                DateTime.TryParseExact(dateString, datePattern, CultureInfo.InvariantCulture, DateTimeStyles.None, out nextMidnight);
-            }
-
-            return nextMidnight.Subtract(DateTime.Now);
+            return TimeSpan.FromDays(daysUntilNextSaturday) + TimeSpanTilmidnight;
         }
-        //private static DateTime LocalizeTime(DateTime input)
-        //{
-        //    return TimeZoneInfo.ConvertTime(input, TimeZoneInfo.FindSystemTimeZoneById("Pacific SA Standard Time"));
-        //}
         [LoggerMessage(27, LogLevel.Information, "Plankton Service running is working.")]
         static partial void LogPlanktonServiceRunning(ILogger logger);
         [LoggerMessage(28, LogLevel.Information, "Plankton Service stopped.")]

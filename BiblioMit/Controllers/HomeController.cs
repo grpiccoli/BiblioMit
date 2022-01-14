@@ -259,6 +259,11 @@ namespace BiblioMit.Controllers
         }
 
         [HttpGet]
+        public IActionResult UserManage()
+        {
+            return RedirectToPage("/Account/Manage", new { area = "Identity" });
+        }
+        [HttpGet]
         public IActionResult Forum()
         {
             var model = BuildHomeIndexModel();

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BiblioMit.Data;
 using BiblioMit.Models.Entities.Variables;
@@ -144,9 +139,12 @@ namespace BiblioMit.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var variableType = await _context.VariableTypes.FindAsync(id).ConfigureAwait(false);
-            _context.VariableTypes.Remove(variableType);
-            await _context.SaveChangesAsync().ConfigureAwait(false);
+            VariableType? variableType = await _context.VariableTypes.FindAsync(id).ConfigureAwait(false);
+            if(variableType != null)
+            {
+                _context.VariableTypes.Remove(variableType);
+                await _context.SaveChangesAsync().ConfigureAwait(false);
+            }
             return RedirectToAction(nameof(Index));
         }
 

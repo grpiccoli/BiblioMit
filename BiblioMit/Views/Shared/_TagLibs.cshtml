@@ -1,102 +1,59 @@
-﻿@model (string, List<string>)
+﻿@model (string, List<string>, bool)
 
 @using BiblioMit.Services
+@using Microsoft.AspNetCore.Html
 
 @{
+    if (Model.Item3)
+    {
+        string? pageName = ViewContext.RouteData.Values.ContainsKey("action") ?
+        ViewContext.RouteData.Values["controller"]?.ToString()?.Replace("_", "")
+        + ViewContext.RouteData.Values["action"]?.ToString()?.Replace("_", "") :
+        ViewContext.RouteData.Values.ContainsKey("page") ?
+        ViewContext.RouteData.Values["page"]?.ToString()?.Split("/").Last().Replace("_", "") :
+        null;
+        if(pageName != null)
+            Model.Item2.Add(pageName[..1].ToLowerInvariant() + pageName[1..]);
+    }
+
     string style = $"{Model.Item1}Styles";
     string script = $"{Model.Item1}Scripts";
     foreach (string lib in Model.Item2)
     {
-        var bundles = Bundler.GetBundles(lib);
-        var continuar = false;
-        if (bundles != null && bundles.Any())
+        HashSet<SourcesModel> l = Libman.GetLibs(lib);
+        foreach (SourcesModel file in l)
         {
-            foreach (var bundle in bundles)
+            Tuple<HtmlString, bool> test = file.LibType switch
             {
-                string file = bundle.OutputFileName.Replace("wwwroot", "~");
-                string ext = System.IO.Path.GetExtension(file);
-                switch (ext)
-                {
-                    case ".css":
-                        this.Block(style, @<link href="@file" rel="stylesheet" asp-append-version="true" />);
-                    break;
-                case ".js":
-                    this.Block(script, @<script src="@file" asp-append-version="true"></script>);
-                    break;
-                case ".woff2":
-                case ".woff":
-                case ".ttf":
-                    this.Block(style, @<link href="@file" rel="preload" as="font" type="font/@ext.TrimStart('.')" asp-append-version="true" />);
-                        break;
-            }
-            continuar = true;
-        }
-    }
-    var compiles = WebCompiler.GetBundles(lib);
-    if (compiles != null && compiles.Any())
-    {
-        foreach (var compile in compiles)
-        {
-            string file = compile.OutputFile.Replace("wwwroot", "~").Replace(".css",".min.css");
-            this.Block(style, @<link href="@file" rel="stylesheet" asp-append-version="true" />);
-                continuar = true;
-            }
-        }
-        if (continuar) { continue; }
-        var l = Libman.GetLibs(lib);
-        if (l != null && l.Files.Any())
-        {
-            foreach (var file in l.Files)
-            {
-                var url = string.Empty;
-                var provider = l.Provider ?? "jsdelivr";
-                switch (provider)
-                {
-                    case "cdnjs":
-                        l.Library = l.Library.Replace("@", "/");
-                        url = "cdnjs.cloudflare.com/ajax/libs";
-                        break;
-                    case "unpkg":
-                        url = "unpkg.com";
-                        break;
-                    case "jsdelivr":
-                        url = "cdn.jsdelivr.net/npm";
-                        break;
-                    default:
-                        break;
-                }
-                var f = $"{l.Destination}/{file}";
-                var href = $"{Context.Request.Scheme}://{url}/{l.Library}/{file}";
-                var ext = System.IO.Path.GetExtension(file);
-                string hash;
-                if (!BiblioMit.Models.VM.CSPTag.Files.ContainsKey(href))
-                {
-                    hash = await Hash.Get512Async(new Uri(href)).ConfigureAwait(false);
-                    BiblioMit.Models.VM.CSPTag.Files.Add(href,hash);
-                }
-                else
-                {
-                    hash = BiblioMit.Models.VM.CSPTag.Files[href];
-                }
-                switch (ext)
-                {
-                    case ".css":
-                        this.Block(style, @<link href="@href" rel="stylesheet" crossorigin="anonymous" integrity="@hash" asp-fallback-href="@f"/>);
-                        BiblioMit.Models.VM.CSPTag.StyleSrcElem.Add(href);
-                        break;
-                    case ".js":
-                        this.Block(script, @<script src="@href" crossorigin="anonymous" integrity="@hash" asp-fallback-src="@f" ></script>);
-                        BiblioMit.Models.VM.CSPTag.ScriptSrcElem.Add(href);
-                        break;
-                    case ".woff2":
-                    case ".woff":
-                    case ".ttf":
-                        //font/@ext.TrimStart('.')
-                        this.Block(style, @<link href="@href" rel="preload" as="font" type="font/@ext.TrimStart('.')" crossorigin="anonymous" />);
-                        BiblioMit.Models.VM.CSPTag.FontSrc.Add(href);
-                        break;
-                }
-            }
+                LibType.cssLocal => 
+                Tuple.Create(
+                this.Block(style, @<link href="@file.Href" rel="stylesheet" asp-append-version="true" />),
+                true),
+                LibType.cssRemote => 
+                Tuple.Create(
+                this.Block(style, @<link href="@file.Href" rel="stylesheet" crossorigin="anonymous" integrity="@file.Hash" asp-fallback-href="@file.Fallback"/>),
+                BiblioMit.Models.VM.CSPTag.StyleSrcElem.Add(file.Href)),
+                LibType.jsLocal => 
+                Tuple.Create(
+                this.Block(script, @<script src="@file.Href" asp-append-version="true"></script>),
+                true),
+                LibType.jsRemote => 
+                Tuple.Create(
+                this.Block(script, @<script src="@file.Href" crossorigin="anonymous" integrity="@file.Hash" asp-fallback-src="@file.Fallback" ></script>),
+                BiblioMit.Models.VM.CSPTag.ScriptSrcElem.Add(file.Href)),
+                LibType.fontLocal => 
+                Tuple.Create(
+                this.Block(style, @<link href="@file.Href" rel="preload" as="font" type="font/@file.Extension" asp-append-version="true" />),
+                true),
+                LibType.fontRemote => 
+                Tuple.Create(
+                this.Block(style, @<link href="@file.Href" type="font/@file.Extension" crossorigin="anonymous" />),
+                BiblioMit.Models.VM.CSPTag.FontSrc.Add(file.Href)),
+                _ => 
+                Tuple.Create(
+                this.Block(style, @<link href="@file.Href" rel="preload" as="font" type="font/@file.Extension" crossorigin="anonymous" />),
+                BiblioMit.Models.VM.CSPTag.FontSrc.Add(file.Href))
+            };
         }
     }
 }

@@ -1,17 +1,19 @@
-﻿@{
-    var body = RenderBody();
+﻿@using Microsoft.AspNetCore.Html
+
+@{
+    IHtmlContent body = RenderBody();
 
     #region scripts
-    var topScript = this.WriteBlocks("TOPScripts");
-    var script = this.WriteBlocks("Scripts");
+    HtmlString topScript = this.WriteBlocks("TOPScripts");
+    HtmlString script = this.WriteBlocks("Scripts");
     #endregion scripts
 
-    var serviceWorkerNonce = Hash.Nonce();
+    string serviceWorkerNonce = Hash.Nonce();
     BiblioMit.Models.VM.CSPTag.ScriptSrcElem.Add($"'nonce-{serviceWorkerNonce}'");
     if (!ViewData.Keys.Contains("Title"))
     {
-        ViewData["controller"] = this.ViewContext.RouteData.Values["controller"].ToString();
-        ViewData["action"] = this.ViewContext.RouteData.Values["action"].ToString();
+        ViewData["controller"] = this.ViewContext.RouteData.Values["controller"]?.ToString();
+        ViewData["action"] = this.ViewContext.RouteData.Values["action"]?.ToString();
         ViewData["Title"] = ViewData["controller"] + " " + ViewData["action"];
     }
     if (!ViewData.Keys.Contains("footer-text"))
@@ -41,17 +43,16 @@
         new Uri($"{Context.Request.Scheme}://{Context.Request.Host}/android-chrome-512x512.png"),
         "image/png",
         1200,
-        630))"
-                        determiner="@OpenGraphDeterminer.Blank" />
+        630))" determiner="@OpenGraphDeterminer.Blank" />
     <script type="application/ld+json">
         @{
-            var website = new WebSite()
+            WebSite website = new()
             {
                 AlternateName = Localizer["Library and digital repository for Mytilus chilensis Mussel species"].Value,
                 Name = "BiblioMit - " + ViewData["Title"],
                 Url = new Uri($"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}{Context.Request.QueryString}")
             };
-            var jsonLd = website.ToString();
+            string jsonLd = website.ToString();
         }
         @Html.Raw(jsonLd)
     </script>
@@ -94,7 +95,7 @@
 
     <link rel="stylesheet preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" as="style" crossorigin="anonymous" type="text/css" />
 
-    <partial name="_TagLibs" model='("TOP", new List<string> { "bootstrap", "@@fortawesome/fontawesome-free", "flags", "jquery", "modernizr-custom", "layout" })' />
+    <partial name="_TagLibs" model='("TOP", new List<string> { "bootstrap", "@fortawesome/fontawesome-free", "flags", "jquery", "modernizr-custom", "layout" }, false)' />
 
     @this.WriteBlocks("TOPStyles")
     @this.WriteBlocks("Styles")

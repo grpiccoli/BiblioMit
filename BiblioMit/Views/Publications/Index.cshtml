@@ -4,14 +4,16 @@
 
 @{
     ViewData["Title"] = Localizer["BiblioMit Search Engine"].Value;
-    var src = (string[])ViewData["src"];
-    var asc = (bool)ViewData["asc"];
-    var trpp = (int)ViewData["trpp"];
-    var srt = (string)ViewData["srt"];
+    string[]? src = (string[]?)ViewData["src"];
+    bool? asc = (bool?)ViewData["asc"];
+    int? trpp = (int?)ViewData["trpp"];
+    string? srt = (string?)ViewData["srt"];
+    if (src is null) src = new string[0];
+    if (srt is null) srt = string.Empty;
     //BiblioMit.Models.VM.CSPTag.StyleSrcElem.Add("'sha256-Ucye6igbBXX1kfOSQeZ4ymqY8ogge1RacRAkgcaiVxc='");
 }
 <partial name="_AmCharts" model="4" />
-<partial name="_LibsPg" model='new List<string> { "bibico", "bibliomit", "bootstrap-select", "bootstrap-select-localize", "tippy.js", "tippyTranslate", "statsGraph" }' />
+<partial name="_LibsPg" model='new List<string> { "bibico", "bibliomit", "bootstrap-select", "bootstrap-select-localize", "@popperjs/core", "tippy.js", "tippyTranslate" }' />
 
 <input id="title" class="d-none"/>
 <div class="row">
@@ -40,28 +42,44 @@
                 data-actions-box="true" data-size="5"
                 title="@Localizer["Select one or more repositories"] …" data-selected-text-format="count > 3">
             <optgroup label="@Localizer["Thesis and Articles of Universities & Research Centres"]">
-                @foreach (var u in (Dictionary<string, string>)ViewData["ues"])
-                {
-                    <option data-tokens="university universidad thesis tesis @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key-mono" data-subtext="(@u.Key)" value="@u.Key">@u.Value</option>
+                @{
+                    Dictionary<string, string>? ues = (Dictionary<string, string>?)ViewData["ues"];
+                    if(ues is not null)
+                    foreach (KeyValuePair<string,string> u in ues)
+                    {
+                        <option data-tokens="university universidad thesis tesis @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key-mono" data-subtext="(@u.Key)" value="@u.Key">@u.Value</option>
+                    }
                 }
             </optgroup>
             <optgroup label="@Localizer["Projects"]:">
-                @foreach (var u in (Dictionary<string, string>)ViewData["proj"])
+            @{
+                Dictionary<string, string>? proj = (Dictionary<string, string>?)ViewData["proj"];
+                if(proj is not null)
+                foreach (KeyValuePair<string,string> u in proj)
                 {
                     <option data-tokens="projects proyectos @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key.ToLower()-mono" data-subtext="(@u.Value)" value="@u.Key">@u.Key</option>
                 }
+            }
             </optgroup>
             <optgroup label="@Localizer["Articles"]">
-                @foreach (var u in (Dictionary<string, string>)ViewData["gs"])
+            @{
+                Dictionary<string, string>? gs = (Dictionary<string, string>?)ViewData["gs"];
+                if(gs is not null)
+                foreach (KeyValuePair<string,string> u in gs)
                 {
                     <option data-tokens="articles artículos @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key-mono" data-subtext="(@u.Key)" value="@u.Key">@u.Value</option>
                 }
+            }
             </optgroup>
             <optgroup label="@Localizer["Patents"]">
-                @foreach (var u in (Dictionary<string, string>)ViewData["gp"])
+            @{
+                Dictionary<string, string>? gp = (Dictionary<string, string>?)ViewData["gp"];
+                if(gp is not null)
+                foreach (KeyValuePair<string,string> u in gp)
                 {
                     <option data-tokens="patents patentes @u.Key" selected="@src.Contains(u.Key)" data-icon="bib-@u.Key-mono" data-subtext="(@u.Key)" value="@u.Key">@u.Value</option>
                 }
+            }
             </optgroup>
         </select>
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -104,7 +122,14 @@
 
 @if (src.Any())
 {
-    var counts = (Dictionary<Typep, int>)ViewData["counts"];
+    Dictionary<Typep, int>? counts = (Dictionary<Typep, int>?)ViewData["counts"];
+    if (counts is null) counts = new Dictionary<Typep, int> { 
+        { Typep.Article, 0 }, 
+        { Typep.Book, 0 },
+        { Typep.Patent, 0 }, 
+        { Typep.Project, 0 }, 
+        { Typep.Thesis, 0 } 
+    };
     int sum = counts.Sum(s => s.Value);
     var percentages = counts.ToDictionary(c => c.Key, c => c.Value * 100 / sum);
     var multipleRepos = src.Count() > 1;

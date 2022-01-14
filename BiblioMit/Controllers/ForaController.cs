@@ -1,11 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using BiblioMit.Models;
 using BiblioMit.Models.ForumViewModels;
 using BiblioMit.Models.PostViewModels;
-using Microsoft.AspNetCore.Http;
 //using Amazon.S3;
 //using Amazon.S3.Model;
 using Microsoft.AspNetCore.Authorization;

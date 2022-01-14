@@ -1,16 +1,11 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BiblioMit.Data;
 using BiblioMit.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Localization;
-using System;
 using Microsoft.Extensions.Localization;
 using BiblioMit.Models.ViewModels;
-using System.Collections.Generic;
 using System.Globalization;
 using BiblioMit.Extensions;
 using BiblioMit.Models.Entities.Histopathology;

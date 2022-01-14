@@ -135,6 +135,9 @@
   <data name="Companies and Institutions" xml:space="preserve">
     <value>Compañías e instituciones</value>
   </data>
+  <data name="Configuration" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
   <data name="Contact" xml:space="preserve">
     <value>Contáctanos</value>
   </data>
@@ -146,6 +149,9 @@
   </data>
   <data name="Create Forum" xml:space="preserve">
     <value>Crear Foro</value>
+  </data>
+  <data name="Custom Variables" xml:space="preserve">
+    <value>Variables personalizadas</value>
   </data>
   <data name="Databases" xml:space="preserve">
     <value>Bases de datos</value>
@@ -284,6 +290,9 @@
   </data>
   <data name="Users and claims" xml:space="preserve">
     <value>Permisos de usuarios</value>
+  </data>
+  <data name="Variable Types" xml:space="preserve">
+    <value>Tipos de variables</value>
   </data>
   <data name="Web Analytics" xml:space="preserve">
     <value>Estadísticas de visitas</value>

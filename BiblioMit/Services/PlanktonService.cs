@@ -1,23 +1,37 @@
 ﻿using BiblioMit.Data;
-using BiblioMit.Extensions;
-using BiblioMit.Models.Entities.Environmental.Plancton;
+//using BiblioMit.Extensions;
+//using BiblioMit.Models;
+//using BiblioMit.Models.Entities.Environmental.Plancton;
 using BiblioMit.Services.Interfaces;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+//using Microsoft.AspNetCore.Hosting;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.Extensions.Logging;
+//using System;
+//using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
+//using System.IO;
 using System.Net;
-using System.Net.Http;
+//using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
+//using System.Threading;
+//using System.Threading.Tasks;
 using System.Web;
 
 namespace BiblioMit.Services
 {
+    public class UserQueryableModel
+    {
+        private readonly DateTime _mindate = new(2003,1,1);
+        public UserQueryableModel(string name, string password, DateTime? maxDate)
+        {
+            Name = name;
+            Password = password;
+            MaxDate = maxDate ?? _mindate;
+        }
+        public string Name { get; }
+        public string Password { get; }
+        public DateTime MaxDate { get; set; }
+    }
     public partial class PlanktonService : IPlanktonService
     {
         private readonly ILogger _logger;
@@ -38,13 +52,14 @@ namespace BiblioMit.Services
         }
         public async Task PullRecordsAsync(CancellationToken stoppingToken)
         {
-            var file = Path.Combine(_environment.ContentRootPath, "html", "PullRecords.html");
-            using var streamWriter = new StreamWriter(file);
-            await streamWriter.WriteLineAsync("FECHA: " + DateTime.Now.ToShortDateString()).ConfigureAwait(false);
-            await streamWriter.WriteLineAsync("<br />").ConfigureAwait(false);
-            streamWriter.Close();
+            string file = Path.Combine(_environment.ContentRootPath, "StaticFiles", "html", "PullRecords.html");
+            using StreamWriter sw = new(file);
+            await sw.WriteLineAsync("<hr />").ConfigureAwait(false);
+            await sw.WriteLineAsync("FECHA: " + DateTime.Now.ToShortDateString()).ConfigureAwait(false);
+            await sw.WriteLineAsync("<br />").ConfigureAwait(false);
+            await sw.WriteLineAsync("<hr />").ConfigureAwait(false);
 
-            var dateQueryFormat = "dd/MM/yyyy";
+            string dateQueryFormat = "dd/MM/yyyy";
             CookieContainer cookieJar = new();
             using HttpClientHandler handler = new()
             {
@@ -55,10 +70,13 @@ namespace BiblioMit.Services
                 CheckCertificateRevocationList = true
             };
             using HttpClient client = new(handler);
-            foreach (PlanktonUser user in await _context.PlanktonUsers.ToListAsync(stoppingToken).ConfigureAwait(false))
+            List<UserQueryableModel> users = _context.PlanktonUsers
+                .Select(u => new UserQueryableModel(u.Name, u.Password, u.Assays.Max(a => a.SamplingDate))).ToList();
+            HashSet<string> assayIds = new(_context.PlanktonAssays.Select(p => p.Id.ToString()).ToList(), null);
+            foreach (UserQueryableModel user in users)
             {
                 Uri login = new("http://sispal.plancton.cl/clientes/clipal_validausuario.asp");
-                using FormUrlEncodedContent credentials = 
+                using FormUrlEncodedContent credentials =
                     new(
                         new Dictionary<string, string>
                         {
@@ -66,21 +84,16 @@ namespace BiblioMit.Services
                             { "passwd", user.Password },
                             { "B1", "Entrar" }
                         });
-                var signinResponse = await client.PostAsync(login, credentials, stoppingToken).ConfigureAwait(false);
-                if (signinResponse.Headers.Location.OriginalString == "clipal_inicio.asp")
+                HttpResponseMessage signinResponse = await client.PostAsync(login, credentials, stoppingToken).ConfigureAwait(false);
+                if (signinResponse.Headers.Location?.OriginalString == "clipal_inicio.asp")
                 {
-                    //bool hasAssays = _context.PlanktonAssays.Any(p => p.PlanktonUserId == user.Id);
-                    var month = 
-                    //    hasAssays ?
-                    //_context.PlanktonAssays.Where(p => p.PlanktonUserId == user.Id).Max(p => p.SamplingDate) :
-                    //min date plankton 
-                    new DateTime(2003, 1, 1);
-                    while (month <= DateTime.Now)
-                    {
-                        var searcher = new Uri("http://sispal.plancton.cl/clientes/psmb_buscamuestra.asp");
-                        var from = month.ToString(dateQueryFormat, CultureInfo.CurrentCulture);
-                        var to = month.GetLastDayOfMonth().ToString(dateQueryFormat, CultureInfo.CurrentCulture);
-                        using var query = new FormUrlEncodedContent(
+                    //while (user.MaxDate <= DateTime.Now)
+                    //{
+                    Uri searcher = new("http://sispal.plancton.cl/clientes/psmb_buscamuestra.asp");
+                    string from = user.MaxDate.ToString(dateQueryFormat, CultureInfo.CurrentCulture);
+                    //string to = user.MaxDate.GetLastDayOfMonth().ToString(dateQueryFormat, CultureInfo.CurrentCulture);
+                    string to = DateTime.Now.ToString(dateQueryFormat, CultureInfo.CurrentCulture);
+                    using FormUrlEncodedContent query = new(
                             new Dictionary<string, string>
                             {
                                 { "D1", "todo" },
@@ -89,64 +102,66 @@ namespace BiblioMit.Services
                                 { "T3", to },
                                 { "B1", "Buscar" }
                             });
-                        var response = await client.PostAsync(searcher, query, stoppingToken).ConfigureAwait(false);
-                        var html = await response.Content.ReadAsStringAsync(stoppingToken).ConfigureAwait(false);
-                        var regex = new Regex(@"psmb_informe_ue_xls\.asp\?codigo\=([0-9]+)");
-                        foreach (Match match in regex.Matches(html))
+                    HttpResponseMessage response = await client.PostAsync(searcher, query, stoppingToken).ConfigureAwait(false);
+                    string html = await response.Content.ReadAsStringAsync(stoppingToken).ConfigureAwait(false);
+                    Regex regex = new(@"psmb_informe_ue_xls\.asp\?codigo\=([0-9]+)");
+
+                    foreach (Match match in regex.Matches(html))
+                    {
+                        string fma = match.Groups[1].Value;
+                        bool inDB = assayIds.Contains(fma);
+                        if (!inDB)
                         {
-                            var fma = int.Parse(match.Groups[1].Value, CultureInfo.CurrentCulture);
-                            var record = await _context.PlanktonAssays.FirstOrDefaultAsync(p => p.Id == fma, stoppingToken).ConfigureAwait(false);
-                            if (record == null)
+                            Uri assayurl = new($"http://sispal.plancton.cl/clientes/psmb_informe_uesf.asp?codigo={fma}");
+                            HttpResponseMessage assayhtml = await client.GetAsync(assayurl, stoppingToken).ConfigureAwait(false);
+                            try
                             {
-                                var assayurl = new Uri($"http://sispal.plancton.cl/clientes/psmb_informe_uesf.asp?codigo={fma}");
-                                var assayhtml = await client.GetAsync(assayurl, stoppingToken).ConfigureAwait(false);
-                                try
+                                Task import = await _import.AddAsync(await assayhtml.Content.ReadAsStreamAsync(stoppingToken).ConfigureAwait(false)).ConfigureAwait(false);
+                                if (import.IsCompletedSuccessfully)
                                 {
-                                    var import = await _import.AddAsync(await assayhtml.Content.ReadAsStreamAsync(stoppingToken).ConfigureAwait(false)).ConfigureAwait(false);
-                                    if (import.IsCompletedSuccessfully)
-                                    {
-                                        Console.WriteLine($"Added Plankton Assay FMA:{fma}");
-                                    }
-                                }
-                                catch (FormatException ex)
-                                {
-                                    if(!ex.Message.Contains("El archivo ingresado no contiene registros ni tablas", StringComparison.Ordinal))
-                                    {
-                                        using var sw = new StreamWriter(file, true);
-                                        await sw.WriteLineAsync(HttpUtility.HtmlEncode($"Usuario Plancton: {user.Name}")).ConfigureAwait(false);
-                                        await sw.WriteLineAsync("<br />").ConfigureAwait(false);
-                                        await sw.WriteLineAsync(HttpUtility.HtmlEncode($"FMA:{fma}")).ConfigureAwait(false);
-                                        await sw.WriteLineAsync("<br />").ConfigureAwait(false);
-                                        await sw.WriteLineAsync(HttpUtility.HtmlEncode($"Mes/Año Muestreo:{month.ToString("MM/yyyy", CultureInfo.CurrentCulture)}")).ConfigureAwait(false);
-                                        await sw.WriteLineAsync("<br />").ConfigureAwait(false);
-                                        await sw.WriteLineAsync("ERROR:").ConfigureAwait(false);
-                                        await sw.WriteLineAsync("<br />").ConfigureAwait(false);
-                                        await sw.WriteLineAsync(HttpUtility.HtmlEncode(ex.Message)).ConfigureAwait(false);
-                                        await sw.WriteLineAsync("<br />").ConfigureAwait(false);
-                                        await sw.WriteLineAsync(ex.StackTrace).ConfigureAwait(false);
-                                        await sw.WriteLineAsync("<br />").ConfigureAwait(false);
-                                        sw.Close();
-                                    }
+                                    Console.WriteLine($"Added Plankton Assay FMA:{fma}");
                                 }
                             }
-                            else
+                            catch (FormatException ex)
                             {
-                                if(record.PlanktonUserId != user.Id)
+                                if (!ex.Message.Contains("El archivo ingresado no contiene registros ni tablas", StringComparison.Ordinal))
                                 {
-                                    record.PlanktonUserId = user.Id;
-                                    _context.PlanktonAssays.Update(record);
-                                    _context.SaveChanges();
+                                    await sw.WriteLineAsync(HttpUtility.HtmlEncode($"Usuario Plancton: {user.Name}")).ConfigureAwait(false);
+                                    await sw.WriteLineAsync("<br />").ConfigureAwait(false);
+                                    await sw.WriteLineAsync(HttpUtility.HtmlEncode($"FMA:{fma}")).ConfigureAwait(false);
+                                    //await sw.WriteLineAsync("<br />").ConfigureAwait(false);
+                                    //await sw.WriteLineAsync(HttpUtility.HtmlEncode($"Mes/Año Muestreo:{user.MaxDate.ToString("MM/yyyy", CultureInfo.CurrentCulture)}")).ConfigureAwait(false);
+                                    await sw.WriteLineAsync("<br />").ConfigureAwait(false);
+                                    await sw.WriteLineAsync("ERROR:").ConfigureAwait(false);
+                                    await sw.WriteLineAsync("<br />").ConfigureAwait(false);
+                                    await sw.WriteLineAsync(HttpUtility.HtmlEncode(ex.Message)).ConfigureAwait(false);
+                                    await sw.WriteLineAsync("<br />").ConfigureAwait(false);
+                                    await sw.WriteLineAsync(ex.StackTrace).ConfigureAwait(false);
+                                    await sw.WriteLineAsync("<br />").ConfigureAwait(false);
+                                    await sw.WriteLineAsync("<hr />").ConfigureAwait(false);
                                 }
                             }
                         }
-                        month = new DateTime(month.Year, month.Month, 1).AddMonths(1);
+                        //else if (.PlanktonUserId != user.Id)
+                        //{
+                        //    record.PlanktonUserId = user.Id;
+                        //    _context.PlanktonAssays.Update(record);
+                        //    _context.SaveChanges();
+                        //}
                     }
+                    //user.MaxDate = user.MaxDate.AddMonths(1);
+                    //}
                 }
                 else
                 {
+                    await sw.WriteLineAsync(HttpUtility.HtmlEncode($"Usuario Plancton: {user.Name}"));
+                    await sw.WriteLineAsync("<br />").ConfigureAwait(false);
+                    await sw.WriteLineAsync(HttpUtility.HtmlEncode($"ERROR: Inicio de sesión inválido, verificar credenciales"));
+                    await sw.WriteLineAsync("<hr />").ConfigureAwait(false);
                     LogCouldnotLogIn(_logger, user.Name);
                 }
             }
+            sw.Close();
             return;
         }
         [LoggerMessage(0, LogLevel.Error, "User {UserName} could not login, Check password.")]

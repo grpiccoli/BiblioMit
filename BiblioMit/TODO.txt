@@ -1,0 +1,7 @@
+﻿### Entries/Create
+errors on load
+
+### Boletin/Boletin
+not working, no automated boletin
+
+### Buscadores Bibliomit and fondos not working

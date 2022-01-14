@@ -117,52 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EN" xml:space="preserve">
-    <value>ES</value>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
   </data>
-  <data name="es" xml:space="preserve">
-    <value>en</value>
-  </data>
-  <data name="gb" xml:space="preserve">
-    <value>cl</value>
-  </data>
-  <data name="Hello" xml:space="preserve">
-    <value>¡Hola</value>
-  </data>
-  <data name="Login" xml:space="preserve">
-    <value>Ingreso</value>
-  </data>
-  <data name="Logout" xml:space="preserve">
-    <value>Salir</value>
-  </data>
-  <data name="Register" xml:space="preserve">
-    <value>Registro</value>
-  </data>
-  <data name="English" xml:space="preserve">
-    <value>Español</value>
-  </data>
-  <data name="Account" xml:space="preserve">
-    <value>Cuenta</value>
-  </data>
-  <data name="Email" xml:space="preserve">
-    <value>Correo</value>
-  </data>
-  <data name="Forgot password?" xml:space="preserve">
-    <value>¿Recuperar contraseña?</value>
-  </data>
-  <data name="Password" xml:space="preserve">
-    <value>Contraseña</value>
-  </data>
-  <data name="Remember me" xml:space="preserve">
-    <value>Recordarme</value>
-  </data>
-  <data name="Sign in" xml:space="preserve">
-    <value>Ingresar</value>
-  </data>
-  <data name="cl" xml:space="preserve">
-    <value>gb</value>
-  </data>
-  <data name="Español" xml:space="preserve">
-    <value>English</value>
+  <data name="Units" xml:space="preserve">
+    <value>Unidades</value>
   </data>
 </root>

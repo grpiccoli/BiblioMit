@@ -264,8 +264,8 @@ namespace BiblioMit.Views.Components.Nav
                         {
                             new Link
                             {
-                                Controller = "Manage",
-                                Action = "Index",
+                                Controller = "Home",
+                                Action = "UserManage",
                                 Name = _localizer["Profile"],
                                 Icon = "fas fa-user-edit"
                             },

@@ -14,8 +14,8 @@ namespace BiblioMit.Extensions
         //Get MultiSelect from Enum with selected / disabled values
         #region MultiSelect
         public static MultiSelectList Enum2MultiSelect<TEnum>(this TEnum @enum,
-            IEnumerable<string> selectedValues = null,
-            string name = null)
+            IEnumerable<string>? selectedValues = null,
+            string? name = null)
             where TEnum : struct, IConvertible, IFormattable => name switch
             {
                 "Name" => @enum.Name2MultiSelect(selectedValues),
@@ -23,7 +23,7 @@ namespace BiblioMit.Extensions
                 _ => @enum.Flag2MultiSelect(selectedValues)
             };
         public static MultiSelectList Description2MultiSelect<TEnum>(this TEnum _,
-            IEnumerable<string> selectedValues = null)
+            IEnumerable<string>? selectedValues = null)
             where TEnum : struct, IConvertible, IFormattable => 
             new(((TEnum[])Enum.GetValues(typeof(TEnum)))
                 .Select(s => new SelectListItem
@@ -31,7 +31,7 @@ namespace BiblioMit.Extensions
                     Value = s.ToString("d", null),
                     Text = s.GetAttrDescription()
                 }), selectedValues);
-        public static IEnumerable<ChoicesGroup> Enum2ChoicesGroup<TEnum>(this TEnum _, string prefix = null)
+        public static IEnumerable<ChoicesGroup> Enum2ChoicesGroup<TEnum>(this TEnum _, string? prefix = null)
             where TEnum : struct, IConvertible, IFormattable =>
             ((TEnum[])Enum.GetValues(typeof(TEnum))).GroupBy(e => e.GetAttrGroupName())
             .OrderBy(g => g.Key)
@@ -45,7 +45,7 @@ namespace BiblioMit.Extensions
                     })
                 });
     public static MultiSelectList Name2MultiSelect<TEnum>(this TEnum _,
-            IEnumerable<string> selectedValues = null)
+            IEnumerable<string>? selectedValues = null)
             where TEnum : struct, IConvertible, IFormattable =>
             new(((TEnum[])Enum.GetValues(typeof(TEnum)))
                 .Select(s => new SelectListItem
@@ -54,7 +54,7 @@ namespace BiblioMit.Extensions
                     Text = s.GetAttrName()
                 }), selectedValues);
         public static MultiSelectList Flag2MultiSelect<TEnum>(this TEnum _,
-            IEnumerable<string> selectedValues = null)
+            IEnumerable<string>? selectedValues = null)
             where TEnum : struct, IConvertible, IFormattable =>
             new(((TEnum[])Enum.GetValues(typeof(TEnum)))
                 .Select(s => new SelectListItem
@@ -65,7 +65,7 @@ namespace BiblioMit.Extensions
         #endregion
         //Get SelectList of Attributes from Enum
         #region Enum2Select
-        public static IEnumerable<SelectListItem> Enum2Select<TEnum>(this TEnum @enum, string name = null)
+        public static IEnumerable<SelectListItem> Enum2Select<TEnum>(this TEnum @enum, string? name = null)
     where TEnum : struct, IConvertible, IFormattable => name switch
             {
                 "Name" => @enum.Name2Select(),
@@ -105,7 +105,8 @@ namespace BiblioMit.Extensions
         #region EnumAttributes
         public static string GetAttribute<TEnum>(this TEnum e, string attr)
         {
-            var display = e.GetType().GetMember(e.ToString())
+            if(e == null) return string.Empty;
+            DisplayAttribute? display = e.GetType().GetMember(e.ToString())
                   .FirstOrDefault()?.GetCustomAttribute<DisplayAttribute>(false);
             try
             {

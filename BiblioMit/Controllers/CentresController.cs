@@ -28,7 +28,8 @@ namespace BiblioMit.Controllers
                 PsmbType.ResearchCentre => GetEntitiesAsync<ResearchCentre>(c, i),
                 _ => GetEntitiesAsync<Psmb>(c, i)
             };
-            return Json(list.Select(f =>
+            return Json(list
+                .Select(f =>
                     new GMapPolygonCentre
                     {
                         Id = f.Code,
@@ -91,7 +92,7 @@ namespace BiblioMit.Controllers
                 .Include(c => c.Polygon)
                 .Include(c => c.Contacts)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if (centre == null) return NotFound();
+            if (centre is null) return NotFound();
             return View(centre);
         }
 
@@ -114,7 +115,7 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Create([Bind("Id,ComunaId,Type,Url,Acronym,CompanyId,Name,Address")] ResearchCentre centre)
         {
-            if (centre == null) return NotFound();
+            if (centre is null) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -133,7 +134,7 @@ namespace BiblioMit.Controllers
         {
             if (id == null) return NotFound();
             var centre = await _context.Farms.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if (centre == null) return NotFound();
+            if (centre is null) return NotFound();
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", centre.CompanyId);
             ViewData["ComunaId"] = new SelectList(_context.Communes, "Id", "Name", centre.CommuneId);
             //var values = from CentreType e in Enum.GetValues(typeof(CentreType))
@@ -183,7 +184,7 @@ namespace BiblioMit.Controllers
                     .ThenInclude(c => c.Province)
                     .ThenInclude(c => c.Region)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if (centre == null) return NotFound();
+            if (centre is null) return NotFound();
             return View(centre);
         }
 

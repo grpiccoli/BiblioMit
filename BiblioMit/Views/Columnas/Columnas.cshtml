@@ -2,8 +2,8 @@
 @using BiblioMit.Models.ViewModels
 @{
     ViewData["Title"] = "Sernapesca";
-    ViewData["controller"] = this.ViewContext.RouteData.Values["controller"].ToString();
-    ViewData["action"] = this.ViewContext.RouteData.Values["action"].ToString();
+    ViewData["controller"] = this.ViewContext.RouteData.Values["controller"]?.ToString();
+    ViewData["action"] = this.ViewContext.RouteData.Values["action"]?.ToString();
 }
 
 <partial name="_Pg" />
@@ -15,7 +15,7 @@
     <div class="clear">
         <partial name="_ClearFilters" model="@Url.RouteUrl(this.ViewContext.RouteData.Values)" />
     </div>
-    <div id="constrainer2" data-url="@Html.Raw(Url.Action("Editar",(string)ViewData["controller"],
+    <div id="constrainer2" data-url="@Html.Raw(Url.Action("Editar", "Columnas",
                           new {
                               id = "P0",
                               description = "A1",

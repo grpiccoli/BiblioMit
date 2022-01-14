@@ -30,7 +30,7 @@ namespace BiblioMit.Extensions
         }
         public static ViewDataDictionary ViewData<TSource>(this IEnumerable<TSource> contexto,
             IQueryable<TSource> pre, int? pg = 1, int? rpp = 20, string srt = "Id",
-            bool? asc = true, string[] val = null)
+            bool? asc = true, string[]? val = null)
         {
             Dictionary<string, List<string>> Filters = new() { };
 
@@ -68,7 +68,7 @@ namespace BiblioMit.Extensions
             return ViewData;
         }
 
-        public static IDictionary<string, List<string>> Filters<TSource>(this IEnumerable<TSource> contexto, IQueryable<TSource> pre, string val = null)
+        public static IDictionary<string, List<string>> Filters<TSource>(this IEnumerable<TSource> contexto, IQueryable<TSource> pre, string? val = null)
         {
             if (contexto is null)
             {

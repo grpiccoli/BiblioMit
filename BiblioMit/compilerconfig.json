@@ -4,6 +4,10 @@
     "inputFile": "src/styles/tableFilter.scss"
   },
   {
+    "outputFile": "wwwroot/css/contactsIndex.css",
+    "inputFile": "src/styles/contactsIndex.scss"
+  },
+  {
     "outputFile": "wwwroot/css/publicationsIndex.css",
     "inputFile": "src/styles/publicationsIndex.scss"
   },

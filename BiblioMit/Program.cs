@@ -147,8 +147,6 @@ builder.Services.AddSignalR(options =>
     options.EnableDetailedErrors = true;
 });
 Libman.LoadJson();
-Bundler.LoadJson();
-WebCompiler.LoadJson();
 
 bool seed = args.Any(a => a == "seed");
 if (seed)

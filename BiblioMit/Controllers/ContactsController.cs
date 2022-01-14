@@ -1,7 +1,6 @@
 using BiblioMit.Data;
 using BiblioMit.Models;
 using BiblioMit.Models.ViewModels;
-using BiblioMit.Views;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
