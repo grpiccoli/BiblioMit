@@ -143,7 +143,7 @@ namespace BiblioMit.Services
             {
                 foreach (Compile compile in compiles)
                 {
-                    string key = Regex.Replace(compile.OutputFile, @"^wwwroot/.*/(.*).css$", "$1");
+                    string key = Regex.Replace(compile.OutputFile, @"^wwwroot/.*/(.*).css$", "$1")
 #if !DEBUG
                     .Replace(".css", ".min.css")
 #endif
