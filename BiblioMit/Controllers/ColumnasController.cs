@@ -22,21 +22,14 @@ namespace BiblioMit.Controllers
             _localizer = localizer;
         }
         [HttpGet]
-        public IActionResult Index(int? pg, int? rpp, string srt, bool? asc, string[] val) =>
+        public IActionResult Index(string srt, string[] val, int? pg, int? rpp, bool? asc) =>
             RedirectToAction(nameof(Columnas), new { pg, rpp, srt, asc, val });
         // GET: Columnas
         [HttpGet]
-        public async Task<IActionResult> Columnas(int? pg, int? rpp, string srt,
-            bool? asc, string[] val)
+        public async Task<IActionResult> Columnas(
+            string[] val, int pg = 1, int rpp = 20, bool asc = false, string srt = "ExcelId")
         {
-            if (pg == null) pg = 1;
-            if (rpp == null) rpp = 20;
-            if (string.IsNullOrEmpty(srt)) srt = "ExcelId";
-            if (asc == null) asc = true;
-
-            //bool _asc = asc.Value;
-
-            var pre = _context.Registries.Pre();
+            IQueryable<Registry> pre = _context.Registries.Pre();
             //var sort = _context.Registries.FilterSort(srt);
             ViewData = _context.Registries.ViewData(pre, pg, rpp, srt, asc, val);
             ViewData["ExcelId"] = new MultiSelectList(
@@ -49,11 +42,11 @@ namespace BiblioMit.Controllers
             //var applicationDbContext = _asc ?
             //    pre
             //    .OrderBy(x => sort.GetValue(x))
-            //    //.Skip((pg.Value - 1) * rpp.Value).Take(rpp.Value)
+            //    //.Skip((pgNN - 1) * rppNN).Take(rppNN)
             //    .Include(c => c.InputFile) :
             //    pre
             //    .OrderByDescending(x => sort.GetValue(x))
-            //    //.Skip((pg.Value - 1) * rpp.Value).Take(rpp.Value)
+            //    //.Skip((pgNN - 1) * rppNN).Take(rppNN)
             //    .Include(c => c.InputFile);
 
             var regs = _context.Registries.Include(r => r.InputFile).Include(r => r.Headers);
@@ -83,15 +76,16 @@ namespace BiblioMit.Controllers
         {
             if (string.IsNullOrWhiteSpace(sep)) throw new ArgumentException(_localizer["error"]);
             var separator = sep[0];
-            var model = await _context.Registries
+            Registry? model = await _context.Registries
                 .FindAsync(id).ConfigureAwait(false);
+            if(model == null) throw new ArgumentOutOfRangeException(nameof(id));
             var heads = _context.Headers.Where(h => h.RegistryId == id);
-            model.Description = string.IsNullOrWhiteSpace(description) ? null : description;
-            model.Operation = string.IsNullOrWhiteSpace(conversion) ? null : conversion;
+            model.Description = string.IsNullOrWhiteSpace(description) ? string.Empty : description;
+            model.Operation = string.IsNullOrWhiteSpace(conversion) ? string.Empty : conversion;
             model.DecimalPlaces = places;
             model.DecimalSeparator = separator;
             model.DeleteAfter2ndNegative = negative;
-            var all = headers?.Split(";;");
+            string[] all = headers.Split(";;");
             if (all.Any())
             {
                 _context.Headers.RemoveRange(heads);

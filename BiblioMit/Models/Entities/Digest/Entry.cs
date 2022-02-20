@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BiblioMit.Models
 {
@@ -7,14 +6,14 @@ namespace BiblioMit.Models
     {
         public int Id { get; set; }
         [Display(Name = "User")]
-        public string ApplicationUserId { get; set; }
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public string? ApplicationUserId { get; set; }
+        public virtual ApplicationUser? ApplicationUser { get; set; }
         [Display(Name = "Date of Upload")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy hh:mm}", ApplyFormatInEditMode = true)]
         public DateTime Date { get; set; }
-        public string OutPut { get; set; }
-        public string IP { get; set; }
+        public string? OutPut { get; set; }
+        public string? IP { get; set; }
         public int Updated { get; set; }
         public int Added { get; set; }
         public int Observations { get; set; }

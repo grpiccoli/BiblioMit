@@ -74,6 +74,7 @@ namespace BiblioMit.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Login([Bind("Email,Password,RememberMe")] LoginDropdownModel Input)
         {
             var returnUrl = HttpContext.Request.Path.Value ?? "~/";
@@ -309,6 +310,7 @@ namespace BiblioMit.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Search(string searchQuery)
         {
             return RedirectToAction("Results", new { searchQuery });
@@ -398,10 +400,5 @@ namespace BiblioMit.Controllers
 
             return LocalRedirect(returnUrl.ToString());
         }
-    }
-    public class VisitCount
-    {
-        public string Date { get; set; }
-        public int Views { get; set; }
     }
 }

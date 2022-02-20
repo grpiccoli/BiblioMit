@@ -1,5 +1,4 @@
 ﻿using BiblioMit.Models.Entities.Digest;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BiblioMit.Models
@@ -19,9 +18,9 @@ namespace BiblioMit.Models
             }
         }
         [NotMapped]
-        public string OriginPsmbName { get; set; }
+        public string? OriginPsmbName { get; set; }
         [NotMapped]
-        public string RawOrProd { get; set; }
+        public string? RawOrProd { get; set; }
         [NotMapped]
         public Item ItemType { get; set; }
         [NotMapped]

@@ -9,6 +9,7 @@ using BiblioMit.Extensions;
 using Microsoft.EntityFrameworkCore;
 using BiblioMit.Models.VM;
 using BiblioMit.Models;
+using BiblioMit.Models.Entities.Centres;
 
 namespace BiblioMit.Services
 {
@@ -98,33 +99,36 @@ namespace BiblioMit.Services
                             .AsNoTracking()
                             .ToList();
 
-            List<NanoGalleryElement> gallery = photos.Select(photo => new NanoGalleryElement
+            List<NanoGalleryElement> gallery = photos.Select(photo => 
+            new NanoGalleryElement(
+                $"Photos/GetImg?f={photo.Key}&d=DB",
+                $"Photos/GetImg?f={photo.Key}&d=DB/Thumbs",
+                photo.Comment,
+                $"{photo.IndividualId}{photo.Id}")
             {
-                Src = $"Photos/GetImg?f={photo.Key}&d=DB",
-                Srct = $"Photos/GetImg?f={photo.Key}&d=DB/Thumbs",
-                Title = photo.Comment,
-                Id = $"{photo.IndividualId}{photo.Id}",
                 AlbumId = photo.IndividualId.ToString(CultureInfo.InvariantCulture)
             }).ToList();
 
             gallery.AddRange(photos.Select(p => p.Individual)
-            .Select(i => new NanoGalleryElement
+            .Select(i => new NanoGalleryElement(
+                $"Photos/GetImg?f={i.Photos.First().Key}&d=DB",
+                $"Photos/GetImg?f={i.Photos.First().Key}&d=DB/Thumbs",
+                i.Id.ToString(CultureInfo.InvariantCulture),
+                i.Id.ToString(CultureInfo.InvariantCulture)
+                )
             {
-                Src = $"Photos/GetImg?f={i.Photos.First().Key}&d=DB",
-                Srct = $"Photos/GetImg?f={i.Photos.First().Key}&d=DB/Thumbs",
-                Title = i.Id.ToString(CultureInfo.InvariantCulture),
-                Id = i.Id.ToString(CultureInfo.InvariantCulture),
                 AlbumId = i.SamplingId.ToString(CultureInfo.InvariantCulture),
                 Kind = "album"
             }));
 
             gallery.AddRange(photos.Select(p => p.Individual.Sampling)
-            .Select(s => new NanoGalleryElement
+            .Select(s => new NanoGalleryElement(
+                $"Photos/GetImg?f={s.Individuals.First().Photos.First().Key}&d=DB",
+                $"Photos/GetImg?f={s.Individuals.First().Photos.First().Key}&d=DB/Thumbs",
+                s.Id.ToString(CultureInfo.InvariantCulture),
+                s.Id.ToString(CultureInfo.InvariantCulture)
+                )
             {
-                Src = $"Photos/GetImg?f={s.Individuals.First().Photos.First().Key}&d=DB",
-                Srct = $"Photos/GetImg?f={s.Individuals.First().Photos.First().Key}&d=DB/Thumbs",
-                Title = s.Id.ToString(CultureInfo.InvariantCulture),
-                Id = s.Id.ToString(CultureInfo.InvariantCulture),
                 Kind = "album"
             }));
 
@@ -496,13 +500,13 @@ namespace BiblioMit.Services
             {
                 Id = c.Id,
                 Name = c.Name + " (" + c.Acronym + ")",
-                Comuna = c.Commune.Name,
-                ComunaId = c.CommuneId.Value,
-                Provincia = c.Commune.Province.Name,
-                Region = c.Commune.Province.Region.Name,
-                BusinessName = c.Company.BusinessName,
-                Rut = c.Company.Id,
-                Position = c.Polygon
+                Comuna = c.CommuneNN.Name,
+                ComunaId = c.CommuneIdNN,
+                Provincia = c.CommuneNN.Province.Name,
+                Region = c.CommuneNN.Province.Region.Name,
+                BusinessName = c.CompanyNN.BusinessName,
+                Rut = c.CompanyIdNN,
+                Position = c.PolygonNN
                 .Vertices.Select(o => new GMapCoordinate
                 {
                     Lat = o.Latitude,
@@ -516,13 +520,13 @@ namespace BiblioMit.Services
     {
         Id = c.Id,
         Name = c.Code + " " + c.Name ?? "",
-        Comuna = c.Commune.Name,
-        ComunaId = c.CommuneId.Value,
-        Provincia = c.Commune.Province.Name,
+        Comuna = c.CommuneNN.Name,
+        ComunaId = c.CommuneIdNN,
+        Provincia = c.CommuneNN.Province.Name,
         Code = c.Code,
     //BusinessName = c.Company.BusinessName ?? "",
     //Rut = c.CompanyId.Value,
-    Position = c.Polygon
+    Position = c.PolygonNN
                 .Vertices.Select(o => new GMapCoordinate
                 {
                     Lat = o.Latitude,
@@ -531,16 +535,16 @@ namespace BiblioMit.Services
     }), JsonCase.CamelMin);
         public string PsmbData() => JsonSerializer.Serialize(SelectPsmbs(_context.PsmbAreas
             .AsNoTracking()
-            .Where(c => c.Commune.CatchmentAreaId.HasValue && c.PolygonId.HasValue && c.PlanktonAssays.Any())), JsonCase.CamelMin);
+            .Where(c => c.CommuneNN.CatchmentAreaId.HasValue && c.PolygonId.HasValue && c.PlanktonAssays.Any())), JsonCase.CamelMin);
         private static IQueryable<GMapPolygon> SelectPsmbs(IQueryable<PsmbArea> psmbs) =>
     psmbs.Select(c => new GMapPolygon
     {
         Id = c.Id,
         Name = c.Code + " " + c.Name,
-        Comuna = c.Commune.Name,
-        Provincia = c.Commune.Province.Name,
+        Comuna = c.CommuneNN.Name,
+        Provincia = c.CommuneNN.Province.Name,
         Code = c.Code,
-        Position = c.Polygon
+        Position = c.PolygonNN
                 .Vertices.Select(o => new GMapCoordinate
                 {
                     Lat = o.Latitude,

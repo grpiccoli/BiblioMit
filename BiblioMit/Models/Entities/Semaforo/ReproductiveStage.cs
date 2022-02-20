@@ -7,7 +7,7 @@ namespace BiblioMit.Models
     {
         public int Id { get; set; }
         public int SpawningId { get; set; }
-        public virtual Spawning Spawning { get; set; }
+        public virtual Spawning? Spawning { get; set; }
         public Stage Stage { get; set; }
         [Range(0,100)]
         [Display(Description = "%")]

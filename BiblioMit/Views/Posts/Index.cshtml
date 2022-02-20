@@ -36,7 +36,7 @@
     </div>
     <div class="row" id="replyDivider"></div>
 
-    @if (User.Identity.IsAuthenticated)
+    @if (User.Identity is not null && User.Identity.IsAuthenticated)
     {
         <div class="row" id="postReplyRow">
             <span>

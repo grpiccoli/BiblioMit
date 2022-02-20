@@ -13,8 +13,9 @@ namespace BiblioMit.Models
         public int Id { get; set; }
         [Display(Name = "Business Name")]
         public string? BusinessName { get; private set; }
-        public void SetBusinessName(string value)
+        public void SetBusinessName(string? value)
         {
+            if (value == null) return;
             NormalizedBusinessName = value.RemoveDiacritics().ToUpperInvariant();
             BusinessName = value;
         }

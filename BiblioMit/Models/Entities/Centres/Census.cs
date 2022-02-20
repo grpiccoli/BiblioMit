@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BiblioMit.Models
+﻿namespace BiblioMit.Models
 {
     public class Census
     {
@@ -8,6 +6,6 @@ namespace BiblioMit.Models
         public DateTime Year { get; set; }
         public int Count { get; set; }
         public int LocationId { get; set; }
-        public virtual Locality Locality { get; set; }
+        public virtual Locality? Locality { get; set; }
     }
 }

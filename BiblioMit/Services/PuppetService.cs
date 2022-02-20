@@ -57,7 +57,7 @@ namespace BiblioMit.Services
 //        }
         public static async Task<RevisionInfo> FetchAsync()
         {
-            using var fetcher = new BrowserFetcher();
+            using BrowserFetcher fetcher = new();
             return await fetcher
                 .DownloadAsync(BrowserFetcher.DefaultChromiumRevision)
                 .ConfigureAwait(false);
@@ -74,16 +74,16 @@ namespace BiblioMit.Services
         }
         public async Task<Page> GetPageAsync(string WebSocketEndpoint)
         {
-            var browser = await Puppeteer
+            Browser browser = await Puppeteer
                 .ConnectAsync(new ConnectOptions { BrowserWSEndpoint = WebSocketEndpoint })
                 .ConfigureAwait(false);
-            var pages = await browser.PagesAsync().ConfigureAwait(false);
+            Page[] pages = await browser.PagesAsync().ConfigureAwait(false);
             return pages[0];
         }
-        public async Task<Page> ForceGetPageAsync(Uri uri, ICollection<string> block)
+        public async Task<Page?> ForceGetPageAsync(Uri uri, ICollection<string>? block)
         {
-            var open = true;
-            Page page = null;
+            bool open = true;
+            Page? page = null;
             while (open)
             {
                 try
@@ -95,16 +95,17 @@ namespace BiblioMit.Services
                 catch (TimeoutException ex)
                 {
                     Console.WriteLine(ex);
+                    if(page != null)
                     await page.Browser.CloseAsync().ConfigureAwait(false);
                 }
             };
             return page;
         }
-        public async Task<Page> GetPageAsync(Uri uri, ICollection<string> block)
+        public async Task<Page> GetPageAsync(Uri uri, ICollection<string>? block)
         {
-            var browser = await GetBrowserAsync().ConfigureAwait(false);
-            var pages = await browser.PagesAsync().ConfigureAwait(false);
-            var page = pages[0];
+            Browser browser = await GetBrowserAsync().ConfigureAwait(false);
+            Page[] pages = await browser.PagesAsync().ConfigureAwait(false);
+            Page page = pages[0];
             if(block != null)
             {
                 await page.SetRequestInterceptionAsync(true).ConfigureAwait(false);
@@ -117,7 +118,7 @@ namespace BiblioMit.Services
                 };
             }
             await page.GoToAsync(
-                uri?.AbsoluteUri,
+                uri.AbsoluteUri,
                 new NavigationOptions
                 {
                     WaitUntil = new WaitUntilNavigation[]
@@ -129,7 +130,7 @@ namespace BiblioMit.Services
         }
         private string[] GetArgs()
         {
-            var args = new List<string>
+            List<string> args = new()
                 {
                     "--disable-accelerated-2d-canvas",
                     "--disable-background-timer-throttling",

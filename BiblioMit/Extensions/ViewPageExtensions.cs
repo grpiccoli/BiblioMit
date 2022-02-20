@@ -24,13 +24,13 @@ namespace BiblioMit.Extensions
             if (Libs.Contains(template)) return new HtmlString(string.Empty);
             StringBuilder sb = new();
             using TextWriter tw = new StringWriter(sb);
-            var encoder = (HtmlEncoder)webPage?.ViewContext.HttpContext.RequestServices.GetService(typeof(HtmlEncoder));
-
+            HtmlEncoder? encoder = (HtmlEncoder?)webPage.ViewContext.HttpContext.RequestServices.GetService(typeof(HtmlEncoder));
+            if (encoder == null) throw new InvalidOperationException();
             if (webPage.ViewContext.HttpContext.Request.Headers["x-requested-with"] != "XMLHttpRequest")
             {
                 StringBuilder scriptBuilder = webPage.ViewContext.HttpContext.Items[name + BLOCK_BUILDER] as StringBuilder ?? new();
 
-                template?.Invoke(null).WriteTo(tw, encoder);
+                template.Invoke(null).WriteTo(tw, encoder);
                 scriptBuilder.Append(sb);
 
                 webPage.ViewContext.HttpContext.Items[name + BLOCK_BUILDER] = scriptBuilder;
@@ -38,7 +38,7 @@ namespace BiblioMit.Extensions
                 return new HtmlString(string.Empty);
             }
 
-            template?.Invoke(null).WriteTo(tw, encoder);
+            template.Invoke(null).WriteTo(tw, encoder);
 
             return new HtmlString(sb.ToString());
         }

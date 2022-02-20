@@ -7,6 +7,6 @@ namespace BiblioMit.Models
     {
         public int Id { get; set; }
         [Required, DisallowNull]
-        public string Number { get; set; }
+        public string? Number { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using BiblioMit.Extensions;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
@@ -9,9 +8,9 @@ namespace BiblioMit.Models.Entities.Environmental
     {
         public int Id { get; set; }
         [DisallowNull, Required]
-        public string Name { get; private set; }
+        public string? Name { get; private set; }
         [Required, DisallowNull]
-        public string NormalizedName { get; private set; }
+        public string? NormalizedName { get; private set; }
         public void SetName([DisallowNull]string value)
         {
             NormalizedName = value;
@@ -19,7 +18,7 @@ namespace BiblioMit.Models.Entities.Environmental
         }
         [Required]
         public int GroupId { get; set; }
-        public virtual PhylogeneticGroup Group { get; set; }
+        public virtual PhylogeneticGroup? Group { get; set; }
         public virtual ICollection<SpeciesPhytoplankton> SpeciesPhytoplanktons { get; } = new List<SpeciesPhytoplankton>();
     }
 }

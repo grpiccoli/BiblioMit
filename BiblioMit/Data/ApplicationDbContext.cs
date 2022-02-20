@@ -216,86 +216,86 @@ namespace BiblioMit.Data
                 .HasForeignKey(p => p.PostId)
                 .OnDelete(DeleteBehavior.NoAction);
         }
-        public DbSet<VariableType> VariableTypes { get; set; }
-        public DbSet<Variable> Variables { get; set; }
-        public DbSet<Payment> Payments { get; set; }
-        public DbSet<Banner> Banners { get; set; }
-        public DbSet<Btn> Btns { get; set; }
-        public DbSet<Caption> Captions { get; set; }
-        public DbSet<Img> Imgs { get; set; }
-        public DbSet<Rgb> Rgbs { get; set; }
-        public DbSet<DeclarationDate> DeclarationDates { get; set; }
-        public DbSet<SupplyDeclaration> SupplyDeclarations { get; set; }
-        public DbSet<HarvestDeclaration> HarvestDeclarations { get; set; }
-        public DbSet<Entry> Entries { get; set; }
-        public DbSet<ProductionDeclaration> ProductionDeclarations { get; set; }
-        public DbSet<SeedDeclaration> SeedDeclarations { get; set; }
-        public DbSet<IdentityUserClaim<string>> IdentityUserClaims { get; set; }
-        public DbSet<IdentityUserRole<string>> IdentityUserRoles { get; set; }
-        public DbSet<ApplicationRole> ApplicationRoles { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; }
-        public DbSet<Analist> Analists { get; set; }
-        public DbSet<Analysis> Analyses { get; set; }
-        public DbSet<AreaCode> AreaCodes { get; set; }
-        public DbSet<AreaCodeProvince> AreaCodeProvinces { get; set; }
-        public DbSet<Psmb> Psmbs { get; set; }
-        public DbSet<PsmbArea> PsmbAreas { get; set; }
-        public DbSet<Farm> Farms { get; set; }
-        public DbSet<ResearchCentre> ResearchCentres { get; set; }
-        public DbSet<NaturalBed> NaturalBeds { get; set; }
-        public DbSet<Craft> Crafts { get; set; }
-        public DbSet<Plant> Plants { get; set; }
-        public DbSet<PlantProduct> PlantProducts { get; set; }
-        public DbSet<Registry> Registries { get; set; }
-        public DbSet<Header> Headers { get; set; }
-        public DbSet<Company> Companies { get; set; }
-        public DbSet<Commune> Communes { get; set; }
-        public DbSet<Contact> Contacts { get; set; }
-        public DbSet<Coordinate> Coordinates { get; set; }
-        public DbSet<Census> Census { get; set; }
-        public DbSet<CatchmentArea> CatchmentAreas { get; set; }
-        public DbSet<Email> Emails { get; set; }
-        public DbSet<PlanktonAssayEmail> PlanktonAssayEmails { get; set; }
-        public DbSet<PlanktonAssay> PlanktonAssays { get; set; }
-        public DbSet<SamplingEntity> SamplingEntities { get; set; }
-        public DbSet<Station> Stations { get; set; }
-        public DbSet<InputFile> InputFiles { get; set; }
-        public DbSet<Forum> Forums { get; set; }
-        public DbSet<PhylogeneticGroup> PhylogeneticGroups { get; set; }
-        public DbSet<GenusPhytoplankton> GenusPhytoplanktons { get; set; }
-        public DbSet<IdentityUserClaim<string>> IdentityUserClaim { get; set; }
-        public DbSet<IdentityUserRole<string>> IdentityUserRole { get; set; }
-        public DbSet<PlanktonUser> PlanktonUsers { get; set; }
-        public DbSet<Individual> Individuals { get; set; }
-        public DbSet<Laboratory> Laboratories { get; set; }
-        public DbSet<Larva> Larvas { get; set; }
-        public DbSet<Larvae> Larvaes { get; set; }
-        public DbSet<Locality> Localities { get; set; }
-        public DbSet<Origin> Origins { get; set; }
-        public DbSet<Photo> Photos { get; set; }
-        public DbSet<Phytoplankton> Phytoplanktons { get; set; }
-        public DbSet<SernapescaEntry> SernapescaEntries { get; set; }
-        public DbSet<SernapescaDeclaration> SernapescaDeclarations { get; set; }
+        public DbSet<VariableType> VariableTypes { get; set; } = null!;
+        public DbSet<Variable> Variables { get; set; } = null!;
+        public DbSet<Payment> Payments { get; set; } = null!;
+        public DbSet<Banner> Banners { get; set; } = null!;
+        public DbSet<Btn> Btns { get; set; } = null!;
+        public DbSet<Caption> Captions { get; set; } = null!;
+        public DbSet<Img> Imgs { get; set; } = null!;
+        public DbSet<Rgb> Rgbs { get; set; } = null!;
+        public DbSet<DeclarationDate> DeclarationDates { get; set; } = null!;
+        public DbSet<SupplyDeclaration> SupplyDeclarations { get; set; } = null!;
+        public DbSet<HarvestDeclaration> HarvestDeclarations { get; set; } = null!;
+        public DbSet<Entry> Entries { get; set; } = null!;
+        public DbSet<ProductionDeclaration> ProductionDeclarations { get; set; } = null!;
+        public DbSet<SeedDeclaration> SeedDeclarations { get; set; } = null!;
+        public DbSet<IdentityUserClaim<string>> IdentityUserClaims { get; set; } = null!;
+        public DbSet<IdentityUserRole<string>> IdentityUserRoles { get; set; } = null!;
+        public DbSet<ApplicationRole> ApplicationRoles { get; set; } = null!;
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; } = null!;
+        public DbSet<ApplicationUserRole> ApplicationUserRoles { get; set; } = null!;
+        public DbSet<Analist> Analists { get; set; } = null!;
+        public DbSet<Analysis> Analyses { get; set; } = null!;
+        public DbSet<AreaCode> AreaCodes { get; set; } = null!;
+        public DbSet<AreaCodeProvince> AreaCodeProvinces { get; set; } = null!;
+        public DbSet<Psmb> Psmbs { get; set; } = null!;
+        public DbSet<PsmbArea> PsmbAreas { get; set; } = null!;
+        public DbSet<Farm> Farms { get; set; } = null!;
+        public DbSet<ResearchCentre> ResearchCentres { get; set; } = null!;
+        public DbSet<NaturalBed> NaturalBeds { get; set; } = null!;
+        public DbSet<Craft> Crafts { get; set; } = null!;
+        public DbSet<Plant> Plants { get; set; } = null!;
+        public DbSet<PlantProduct> PlantProducts { get; set; } = null!;
+        public DbSet<Registry> Registries { get; set; } = null!;
+        public DbSet<Header> Headers { get; set; } = null!;
+        public DbSet<Company> Companies { get; set; } = null!;
+        public DbSet<Commune> Communes { get; set; } = null!;
+        public DbSet<Contact> Contacts { get; set; } = null!;
+        public DbSet<Coordinate> Coordinates { get; set; } = null!;
+        public DbSet<Census> Census { get; set; } = null!;
+        public DbSet<CatchmentArea> CatchmentAreas { get; set; } = null!;
+        public DbSet<Email> Emails { get; set; } = null!;
+        public DbSet<PlanktonAssayEmail> PlanktonAssayEmails { get; set; } = null!;
+        public DbSet<PlanktonAssay> PlanktonAssays { get; set; } = null!;
+        public DbSet<SamplingEntity> SamplingEntities { get; set; } = null!;
+        public DbSet<Station> Stations { get; set; } = null!;
+        public DbSet<InputFile> InputFiles { get; set; } = null!;
+        public DbSet<Forum> Forums { get; set; } = null!;
+        public DbSet<PhylogeneticGroup> PhylogeneticGroups { get; set; } = null!;
+        public DbSet<GenusPhytoplankton> GenusPhytoplanktons { get; set; } = null!;
+        public DbSet<IdentityUserClaim<string>> IdentityUserClaim { get; set; } = null!;
+        public DbSet<IdentityUserRole<string>> IdentityUserRole { get; set; } = null!;
+        public DbSet<PlanktonUser> PlanktonUsers { get; set; } = null!;
+        public DbSet<Individual> Individuals { get; set; } = null!;
+        public DbSet<Laboratory> Laboratories { get; set; } = null!;
+        public DbSet<Larva> Larvas { get; set; } = null!;
+        public DbSet<Larvae> Larvaes { get; set; } = null!;
+        public DbSet<Locality> Localities { get; set; } = null!;
+        public DbSet<Origin> Origins { get; set; } = null!;
+        public DbSet<Photo> Photos { get; set; } = null!;
+        public DbSet<Phytoplankton> Phytoplanktons { get; set; } = null!;
+        public DbSet<SernapescaEntry> SernapescaEntries { get; set; } = null!;
+        public DbSet<SernapescaDeclaration> SernapescaDeclarations { get; set; } = null!;
         //public DbSet<PlataformaUser> PlataformaUser { get; set; }
         //public DbSet<Platform> Platform { get; set; }
-        public DbSet<Polygon> Polygons { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<PostReply> PostReplies { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Province> Provinces { get; set; }
-        public DbSet<Region> Regions { get; set; }
-        public DbSet<ReproductiveStage> ReproductiveStages { get; set; }
-        public DbSet<Sampling> Samplings { get; set; }
-        public DbSet<Seed> Seeds { get; set; }
-        public DbSet<Soft> Softs { get; set; }
-        public DbSet<Spawning> Spawnings { get; set; }
-        public DbSet<Specie> Species { get; set; }
-        public DbSet<SpecieSeed> SpecieSeeds { get; set; }
-        public DbSet<SpeciesPhytoplankton> SpeciesPhytoplanktons { get; set; }
-        public DbSet<Talla> Tallas { get; set; }
-        public DbSet<Phone> Phones { get; set; }
-        public DbSet<Valve> Valves { get; set; }
+        public DbSet<Polygon> Polygons { get; set; } = null!;
+        public DbSet<Post> Posts { get; set; } = null!;
+        public DbSet<PostReply> PostReplies { get; set; } = null!;
+        public DbSet<Product> Products { get; set; } = null!;
+        public DbSet<Province> Provinces { get; set; } = null!;
+        public DbSet<Region> Regions { get; set; } = null!;
+        public DbSet<ReproductiveStage> ReproductiveStages { get; set; } = null!;
+        public DbSet<Sampling> Samplings { get; set; } = null!;
+        public DbSet<Seed> Seeds { get; set; } = null!;
+        public DbSet<Soft> Softs { get; set; } = null!;
+        public DbSet<Spawning> Spawnings { get; set; } = null!;
+        public DbSet<Specie> Species { get; set; } = null!;
+        public DbSet<SpecieSeed> SpecieSeeds { get; set; } = null!;
+        public DbSet<SpeciesPhytoplankton> SpeciesPhytoplanktons { get; set; } = null!;
+        public DbSet<Talla> Tallas { get; set; } = null!;
+        public DbSet<Phone> Phones { get; set; } = null!;
+        public DbSet<Valve> Valves { get; set; } = null!;
         public override int SaveChanges() => base.SaveChanges();
     }
 }

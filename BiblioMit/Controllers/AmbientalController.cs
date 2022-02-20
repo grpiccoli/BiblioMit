@@ -30,14 +30,14 @@ namespace BiblioMit.Controllers
             _dateFormat = "yyyy-MM-dd";
         }
         [HttpGet]
-        public IActionResult GetContent([Bind("Name,Code,Commune,Province,Area,Lang")]Content model)
+        public IActionResult GetContent([Bind("Name,Code,Commune,Province,Area")] Content model)
         {
             return PartialView("_GetContent", model);
         }
         [HttpGet]
         public IActionResult PullPlankton()
         {
-            var file = Path.Combine(
+            string file = Path.Combine(
                 _environment.ContentRootPath, 
                 "StaticFiles",
                 "html", 
@@ -47,7 +47,7 @@ namespace BiblioMit.Controllers
         }
         private IQueryable<ChoicesItem> CuencaChoices()
         {
-            var singlabel = _localizer["Catchment Area"] + " ";
+            string singlabel = _localizer["Catchment Area"] + " ";
             return _context.CatchmentAreas
                 .AsNoTracking()
                 .Select(c => new ChoicesItemSelected
@@ -239,9 +239,9 @@ namespace BiblioMit.Controllers
             var plankton = _context.PlanktonAssays.Where(p => p.SamplingDate >= i && p.SamplingDate <= f);
             plankton = order switch
             {
-                0 => plankton.Where(e => e.Psmb.Commune.CatchmentAreaId == id),
+                0 => plankton.Where(e => e.Psmb != null && e.Psmb.Commune != null && e.Psmb.Commune.CatchmentAreaId == id),
                 1 => plankton.Where(e => e.PsmbId == id),
-                _ => plankton.Where(e => e.Psmb.CommuneId == id)
+                _ => plankton.Where(e => e.Psmb != null && e.Psmb.CommuneId == id)
             };
             return Json(plankton.Select(p => new { p.Id, SamplingDate = p.SamplingDate.ToShortDateString(), p.Temperature, p.Oxigen, p.Ph, p.Salinity }));
         }
@@ -286,9 +286,9 @@ namespace BiblioMit.Controllers
                 };
                 phyto = order switch
                 {
-                    0 => phyto.Where(e => e.PlanktonAssay.Psmb.Commune.CatchmentAreaId == area),
+                    0 => phyto.Where(e => e.PlanktonAssay.Psmb != null && e.PlanktonAssay.Psmb.Commune != null && e.PlanktonAssay.Psmb.Commune.CatchmentAreaId == area),
                     1 => phyto.Where(e => e.PlanktonAssay.PsmbId == area),
-                    _ => phyto.Where(e => e.PlanktonAssay.Psmb.CommuneId == area)
+                    _ => phyto.Where(e => e.PlanktonAssay.Psmb != null && e.PlanktonAssay.Psmb.CommuneId == area)
                 };
                 return Json(phyto
                     .GroupBy(e => e.PlanktonAssay.SamplingDate.Date)
@@ -304,9 +304,9 @@ namespace BiblioMit.Controllers
                     .Where(e => e.SamplingDate >= start && e.SamplingDate <= end);
                 assays = order switch
                 {
-                    0 => assays.Where(e => e.Psmb.Commune.CatchmentAreaId == area),
+                    0 => assays.Where(e => e.Psmb != null && e.Psmb.Commune != null && e.Psmb.Commune.CatchmentAreaId == area),
                     1 => assays.Where(e => e.PsmbId == area),
-                    _ => assays.Where(e => e.Psmb.CommuneId == area)
+                    _ => assays.Where(e => e.Psmb != null && e.Psmb.CommuneId == area)
                 };
                 return Json(id switch
                 {

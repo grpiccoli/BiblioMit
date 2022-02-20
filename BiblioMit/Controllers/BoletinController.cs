@@ -53,7 +53,7 @@ namespace BiblioMit.Views
                 _ => GetDates(reg).Where(a => a.SernapescaDeclaration.Discriminator == tp)
             };
         private IQueryable<DeclarationDate> GetDates(int reg) =>
-            _context.DeclarationDates.Where(a => a.SernapescaDeclaration.OriginPsmb.Commune.Province.RegionId == reg);
+            _context.DeclarationDates.Where(a => a.SernapescaDeclaration.OriginPsmb.CommuneNN.Province.RegionId == reg);
         private IQueryable<DeclarationDate> GetDates(DeclarationType tp, int reg, DateTime start_dt, DateTime end_dt, DateTime start_dt_1, DateTime end_dt_1) =>
             GetDates(tp, reg).Where(a => (a.Date >= start_dt && a.Date <= end_dt) || (a.Date >= start_dt_1 && a.Date <= end_dt_1));
         private IQueryable<DeclarationDate> GetDates(DeclarationType tp, int reg, DateTime start_dt, DateTime end_dt) =>
@@ -64,10 +64,10 @@ namespace BiblioMit.Views
             GetDates(tp, config.Reg, config.Start, config.End);
         private IQueryable<IGrouping<string, DeclarationDate>> GetDatesCommunes(DeclarationType tp, Config config) =>
             GetDates(tp, config)
-            .GroupBy(c => c.SernapescaDeclaration.OriginPsmb.Commune.Name)
+            .GroupBy(c => c.SernapescaDeclaration.OriginPsmb.CommuneNN.Name)
             .OrderBy(g => g.Key);
         private IQueryable<IGrouping<string, DeclarationDate>> GetDatesProvinces(DeclarationType tp, Config config) =>
-            GetDates(tp, config).GroupBy(c => c.SernapescaDeclaration.OriginPsmb.Commune.Province.Name)
+            GetDates(tp, config).GroupBy(c => c.SernapescaDeclaration.OriginPsmb.CommuneNN.Province.Name)
             .OrderBy(g => g.Key);
         private IQueryable<IGrouping<int, DeclarationDate>> GetDatesMonths(DeclarationType tp, Config config) =>
             GetDates(tp, config).GroupBy(c => c.Date.Month).OrderBy(g => g.Key);
@@ -101,14 +101,14 @@ namespace BiblioMit.Views
                     .Select(comuna => new Dictionary<string, object>
                     {
                     { co, comuna.Key },
-                    { pro, comuna.FirstOrDefault().SernapescaDeclaration.OriginPsmb.Commune.Province.Name },
+                    { pro, comuna.FirstOrDefault().SernapescaDeclaration.OriginPsmb.CommuneNN.Province.Name },
                     { $"{pre} {config.YearBefore}", (int)Math.Round(comuna.Sum(a => a.Date.Year == config.YearBefore ? a.Weight : 0)) },
                     { $"{pre} {year}", (int)Math.Round(comuna.Sum(a => a.Date.Year == year ? a.Weight : 0)) }
                     })));
 
             var tmp = await GetAssays(config).ToListAsync().ConfigureAwait(false);
 
-            var comunas = tmp.GroupBy(c => c.Psmb.Commune).OrderBy(o => o.Key.Name);
+            var comunas = tmp.GroupBy(c => c.Psmb.CommuneNN).OrderBy(o => o.Key.Name);
 
             foreach (var comuna in comunas)
             {
@@ -122,13 +122,13 @@ namespace BiblioMit.Views
                     {
                         cyr = Math.Round(comuna
                             .Where(a => a.SamplingDate.Year == year && a.Temperature.HasValue)
-                            .Average(a => a.Temperature.Value), 2);
+                            .Average(a => a.TemperatureNN), 2);
                     }
                     if (comuna.Any(c => c.Salinity.HasValue))
                     {
                         scyr = Math.Round(comuna
                             .Where(a => a.SamplingDate.Year == year && a.Salinity.HasValue)
-                        .Average(a => a.Salinity.Value), 2);
+                        .Average(a => a.SalinityNN), 2);
                     }
                 }
                 if (comuna.Any(c => c.SamplingDate.Year == config.YearBefore))
@@ -136,12 +136,12 @@ namespace BiblioMit.Views
                     if (comuna.Any(c => c.Temperature.HasValue))
                     {
                         scyr_1 = Math.Round(comuna.Where(a => a.SamplingDate.Year == config.YearBefore && a.Salinity.HasValue)
-                        .Average(a => a.Salinity.Value), 2);
+                        .Average(a => a.SalinityNN), 2);
                     }
                     if (comuna.Any(c => c.Salinity.HasValue))
                     {
                         cyr_1 = Math.Round(comuna.Where(a => a.SamplingDate.Year == config.YearBefore && a.Temperature.HasValue)
-                        .Average(a => a.Temperature.Value), 2);
+                        .Average(a => a.TemperatureNN), 2);
                     }
                 }
                 temp.Add(new Dictionary<string, object>
@@ -174,24 +174,24 @@ namespace BiblioMit.Views
             {
                 (int)DeclarationType.Temperature => Json(GetAssays(config)
                 .Where(a => a.Temperature.HasValue)
-                    .GroupBy(c => c.Psmb.Commune.Province.Name)
+                    .GroupBy(c => c.Psmb.CommuneNN.Province.Name)
                     .OrderBy(o => o.Key)
                     .Select(provincia => new
                     {
                         provincia = provincia.Key,
                         ton = Math.Round(provincia
-                        .Average(a => a.Temperature.Value), 2)
+                        .Average(a => a.TemperatureNN), 2)
                     })),
 
                 (int)DeclarationType.Salinity => Json(GetAssays(config)
                 .Where(a => a.Salinity.HasValue)
-                    .GroupBy(c => c.Psmb.Commune.Province.Name)
+                    .GroupBy(c => c.Psmb.CommuneNN.Province.Name)
                     .OrderBy(o => o.Key)
                     .Select(provincia => new
                     {
                         provincia = provincia.Key,
                         ton = Math.Round(provincia
-                        .Average(a => a.Salinity.Value), 2)
+                        .Average(a => a.SalinityNN), 2)
                     })),
 
                 (int)DeclarationType.Production => Json(GetDatesProvinces((DeclarationType)tipo, config)
@@ -243,14 +243,18 @@ namespace BiblioMit.Views
                 Json(GetAssays(config)
                 .Where(c => c.SamplingDate.Year == year || c.SamplingDate.Year == config.YearBefore)
                 .Where(c => c.Temperature.HasValue)
-                .GroupBy(c => c.Psmb.Commune.Name).OrderBy(o => o.Key)
+                .GroupBy(c => c.Psmb.CommuneNN.Name).OrderBy(o => o.Key)
                 .Select(comuna =>
                     new
                     {
                         comuna = comuna.Key,
                         lastyr =
-                            Math.Round(comuna.Average(a => a.SamplingDate.Year == config.YearBefore ? a.Temperature : null).Value, 2),
-                        year = Math.Round(comuna.Average(a => a.SamplingDate.Year == year ? a.Temperature : null).Value, 2)
+                            Math.Round(comuna
+                            .Where(a => a.SamplingDate.Year == config.YearBefore)
+                            .Average(a => a.TemperatureNN), 2),
+                        year = Math.Round(comuna
+                        .Where(a => a.SamplingDate.Year == year)
+                        .Average(a => a.TemperatureNN), 2)
                     })),
 
                 (int)DeclarationType.Salinity =>
@@ -258,13 +262,17 @@ namespace BiblioMit.Views
                 Json(GetAssays(config)
                 .Where(c => c.SamplingDate.Year == year || c.SamplingDate.Year == config.YearBefore)
                 .Where(c => c.Salinity.HasValue)
-                .GroupBy(c => c.Psmb.Commune.Name).OrderBy(o => o.Key)
+                .GroupBy(c => c.Psmb.CommuneNN.Name).OrderBy(o => o.Key)
                 .Select(comuna =>
                     new
                     {
                         comuna = comuna.Key,
-                        lastyr = Math.Round(comuna.Average(a => a.SamplingDate.Year == config.YearBefore ? a.Salinity : null).Value, 2),
-                        year = Math.Round(comuna.Average(a => a.SamplingDate.Year == year ? a.Salinity : null).Value, 2)
+                        lastyr = Math.Round(comuna
+                        .Where(a => a.SamplingDate.Year == config.YearBefore)
+                        .Average(a => a.SalinityNN), 2),
+                        year = Math.Round(comuna
+                        .Where(a => a.SamplingDate.Year == year)
+                        .Average(a => a.SalinityNN), 2)
                     })),
 
                 (int)DeclarationType.Production =>
@@ -317,7 +325,7 @@ namespace BiblioMit.Views
                     .Select(month => new
                     {
                         date = $"{year}-{month.Key}",
-                        value = Math.Round(month.Average(a => a.Temperature.Value), 2)
+                        value = Math.Round(month.Average(a => a.TemperatureNN), 2)
                     })),
 
                 (int)DeclarationType.Salinity => Json(GetAssays(config)
@@ -327,7 +335,7 @@ namespace BiblioMit.Views
                 .Select(month => new
                 {
                     date = $"{year}-{month.Key}",
-                    value = Math.Round(month.Average(a => a.Salinity.Value), 2)
+                    value = Math.Round(month.Average(a => a.SalinityNN), 2)
                 })),
 
                 (int)DeclarationType.Production => Json(GetDatesMonths(DeclarationType.Production, config)
@@ -362,16 +370,17 @@ namespace BiblioMit.Views
             if (!ver.HasValue) ver = 3;
             if (!tp.HasValue) tp = 1;
 
-            var years = _context.DeclarationDates.Select(a => a.Date.Year).Distinct();
+            IQueryable<int> years = _context.DeclarationDates.Select(a => a.Date.Year).Distinct();
 
             if (!yr.HasValue && years != null) yr = years.Max();
-            var months = _context.DeclarationDates.Where(a => a.Date.Year == yr).Select(a => a.Date.Month).Distinct();
+            IQueryable<int> months = _context.DeclarationDates.Where(a => a.Date.Year == yr).Select(a => a.Date.Month).Distinct();
             if (!start.HasValue) start = months.Min();
             if (!end.HasValue) end = months.Max();
 
-            ViewData["Year"] = new SelectList(
-                from int y in years
-                select new { Id = y, Name = y }, "Id", "Name", yr.Value);
+            if(years is not null)
+                ViewData["Year"] = new SelectList(
+                    from int y in years
+                    select new { Id = y, Name = y }, "Id", "Name", yr);
 
             var meses = DateTimeFormatInfo.CurrentInfo.MonthNames;
 

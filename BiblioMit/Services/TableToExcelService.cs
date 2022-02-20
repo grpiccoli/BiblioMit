@@ -13,9 +13,10 @@ namespace BiblioMit.Services
         public TableToExcelService(IStringLocalizer<ImportService> localizer)
         {
             _localizer = localizer;
+            Matrix = new();
         }
         private int maxRow;
-        private ExcelWorksheet sheet;
+        private ExcelWorksheet? sheet;
         private Dictionary<(int, int), string> Matrix { get; set; }
         private int RowIndex;
         private int ColumnIndex;
@@ -39,6 +40,7 @@ namespace BiblioMit.Services
         }
         private void ProcessRows(IElement row)
         {
+            if (sheet == null) return;
             int rowIndex = 1;
             int colIndex;
             if (maxRow > 0)
@@ -70,7 +72,7 @@ namespace BiblioMit.Services
         }
         public async Task<Dictionary<(int, int), string>> HtmlTable2Matrix(Stream html)
         {
-            Matrix = new Dictionary<(int, int), string>();
+            Matrix = new();
             RowIndex = 1;
             var parser = new HtmlParser();
             var document = await parser.ParseDocumentAsync(html).ConfigureAwait(false);
@@ -85,10 +87,10 @@ namespace BiblioMit.Services
         private void ProcessRowsString(IElement row)
         {
             ColumnIndex = 1;
-            var tds = row.QuerySelectorAll("td");
+            IHtmlCollection<IElement> tds = row.QuerySelectorAll("td");
             foreach (var td in tds)
             {
-                var content = td.TextContent.CleanCell();
+                string content = td.TextContent.CleanCell();
                 if(!string.IsNullOrWhiteSpace(content))
                     Matrix.Add(
                         (ColumnIndex, RowIndex), content

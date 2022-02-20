@@ -86,7 +86,6 @@ namespace BiblioMit.Models
             && Ph == q.Ph
             && Salinity == q.Salinity;
         }
-
         public static bool operator ==(PlanktonAssay x, PlanktonAssay y)
         {
             if (x is null) return y is null;
@@ -119,5 +118,11 @@ namespace BiblioMit.Models
             && Ph.Equals(other.Ph)
             && Salinity.Equals(other.Salinity);
         }
+        [NotMapped]
+        public int FarmCodeNN { get => FarmCode ?? 0; }
+        [NotMapped]
+        public double TemperatureNN { get => Temperature ?? 0; }
+        [NotMapped]
+        public double SalinityNN { get => Salinity ?? 0; }
     }
 }

@@ -6,7 +6,7 @@ namespace BiblioMit.Models
     public class HarvestDeclaration : NotProduction
     {
         [NotMapped]
-        public string CompanyName { get; set; }
+        public string? CompanyName { get; set; }
         [NotMapped]
         public int CompanyId { get; set; }
     }

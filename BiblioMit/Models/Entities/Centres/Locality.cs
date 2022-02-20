@@ -1,10 +1,8 @@
 ﻿using BiblioMit.Extensions;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq;
 
 namespace BiblioMit.Models
 {
@@ -15,7 +13,7 @@ namespace BiblioMit.Models
         public int Id { get; set; }
         [DisallowNull]
         [Required]
-        public string Name { get; private set; }
+        public string? Name { get; private set; }
         public void SetName([DisallowNull] string value)
         {
             Name = value;
@@ -24,7 +22,7 @@ namespace BiblioMit.Models
         public LocalityType Discriminator { get; set; }
         [DisallowNull]
         [Required]
-        public string NormalizedName { get; private set; }
+        public string? NormalizedName { get; private set; }
         public virtual ICollection<Polygon> Polygons { get; } = new List<Polygon>();
         public virtual ICollection<Census> Censuses { get; } = new List<Census>();
         public double GetSurface() =>

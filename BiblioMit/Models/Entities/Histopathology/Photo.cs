@@ -8,10 +8,10 @@ namespace BiblioMit.Models
         //Parent Id
         public int IndividualId { get; set; }
         //Related Parent Entities
-        public virtual Individual Individual { get; set; }
+        public virtual Individual? Individual { get; set; }
         //ATT
-        public string Key { get; set; }
-        public string Comment { get; set; }
+        public string? Key { get; set; }
+        public string? Comment { get; set; }
         public Magnification Magnification { get; set; }
     }
 }

@@ -24,19 +24,19 @@ namespace BiblioMit.Services
 {
     public class ImportService : IImport
     {
-        private string Declaration { get; set; }
-        private List<string> Headers { get; set; }
-        private Registry? PhytoStart { get; set; }
-        private Registry? PhytoEnd { get; set; }
-        private int StartRow { get; set; }
-        private Tdata PhytoTData { get; set; }
+        private string Declaration { get; set; } = string.Empty;
+        private List<string> Headers { get; set; } = new();
+        private Registry PhytoStart { get; set; } = new();
+        private Registry PhytoEnd { get; set; } = new();
+        private int StartRow { get; set; } = 0;
+        private Tdata PhytoTData { get; set; } = new();
         private Dictionary<string, Dictionary<string, int>> InSet { get; set; } = new Dictionary<string, Dictionary<string, int>>();
         private MethodInfo? FirstOrDefaultAsyncMethod { get; set; }
-        private InputFile? InputFile { get; set; }
-        private List<Tdata?> Tdatas { get; set; }
+        private InputFile InputFile { get; set; } = new();
+        private List<Tdata> Tdatas { get; set; } = new();
         private static readonly BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Public;
-        private List<PropertyInfo> FieldInfos { get; } = new List<PropertyInfo>();
-        private List<Commune> Communes { get; set; }
+        private List<PropertyInfo> FieldInfos { get; } = new();
+        private List<Commune> Communes { get; set; } = new();
         //private const string encoding = "Windows-1252";
         private readonly ApplicationDbContext _context;
         private readonly IEntryHub _hubContext;
@@ -83,7 +83,7 @@ namespace BiblioMit.Services
         {
             try
             {
-                var resultInit = await Init<PlanktonAssay>().ConfigureAwait(false);
+                Task resultInit = await Init<PlanktonAssay>().ConfigureAwait(false);
                 if (resultInit.IsCompletedSuccessfully)
                 {
                     Dictionary<(int, int), string> matrix = await _tableToExcel.HtmlTable2Matrix(file).ConfigureAwait(false);
@@ -117,7 +117,7 @@ namespace BiblioMit.Services
                 Task response1 = await AddRangeAsync(pwd, files).ConfigureAwait(false);
                 if (!response1.IsCompletedSuccessfully) throw new InvalidOperationException(_localizer["Error when adding Plankton records"]);
             }
-            var context = _httpContext.HttpContext;
+            HttpContext? context = _httpContext.HttpContext;
             string userId = string.Empty;
             if (context != null)
             {
@@ -203,7 +203,7 @@ namespace BiblioMit.Services
                 if (worksheet == null) continue;
                 int rowCount = worksheet.Dimension.Rows;
                 ExcelRange headers = worksheet.Cells["1:1"];
-                Headers = headers.Select(s => s.Value.ToString().CleanCell()).ToList();
+                Headers = headers.Select(s => s.Value?.ToString()?.CleanCell() ?? string.Empty).ToList();
                 for (int row = 2; row <= rowCount; row++)
                 {
                     if (worksheet.Cells[row, 1].Value == null)
@@ -221,7 +221,7 @@ namespace BiblioMit.Services
                     item.EntryId = entry.Id;
                     for (int d = 0; d < last; d++)
                     {
-                        object value = await GetValue(worksheet, d, row, item).ConfigureAwait(false);
+                        object? value = await GetValue(worksheet, d, row, item).ConfigureAwait(false);
                         if (value == null)
                         {
                             if (Tdatas[d].Name == nameof(SeedDeclaration.Origin)) continue;
@@ -244,7 +244,7 @@ namespace BiblioMit.Services
                         }
                     }
                     //Psmb
-                    object psmb = await GetValue(worksheet, last, row, item).ConfigureAwait(false);
+                    object? psmb = await GetValue(worksheet, last, row, item).ConfigureAwait(false);
                     //Discriminator
                     item.Discriminator = entry.DeclarationType;
                     DbSet<T> dbSet = _context.Set<T>();
@@ -353,7 +353,7 @@ namespace BiblioMit.Services
             Type type = typeof(T);
             Declaration = type.Name;
             InputFile = await _context.InputFiles
-                .FirstOrDefaultAsync(e => e.ClassName == Declaration).ConfigureAwait(false);
+                .FirstOrDefaultAsync(e => e.ClassName == Declaration).ConfigureAwait(false) ?? new();
             if (InputFile is null)
                 throw new MissingFieldException(_localizer[$"ExcelFile {Declaration} not present in DataBase"]);
             FieldInfos.AddRangeOverride(type.GetProperties(BindingFlags)
@@ -361,11 +361,11 @@ namespace BiblioMit.Services
                 f.GetCustomAttribute<ParseSkipAttribute>() == null));
             Tdatas = FieldInfos.Select(async dt =>
             {
-                var r = await _context.Registries
+                Registry r = await _context.Registries
                 .Include(r => r.Headers)
                 .Where(c => c.InputFileId == InputFile.Id)
                 .FirstOrDefaultAsync(c => c.NormalizedAttribute == dt.Name.ToUpperInvariant())
-                .ConfigureAwait(false);
+                .ConfigureAwait(false) ?? new();
                 if (r == null)
                     throw new Exception(dt.Name);
                 if (string.IsNullOrWhiteSpace(r.Description))
@@ -398,7 +398,7 @@ namespace BiblioMit.Services
                     DeleteAfter2ndNegative = r.DeleteAfter2ndNegative
                 };
                 return data;
-            }).Select(t => t.Result).Where(t => t != null).ToList();
+            }).Select(t => t.Result).Where(t => t != null).ToList() ?? new();
             FirstOrDefaultAsyncMethod = typeof(EntityFrameworkQueryableExtensions).GetMethods(BindingFlags.Static | BindingFlags.Public)
                 .FirstOrDefault(m => m.Name == nameof(EntityFrameworkQueryableExtensions.FirstOrDefaultAsync) && m.GetParameters().Length == 3);
             if (FirstOrDefaultAsyncMethod is null)
@@ -408,11 +408,11 @@ namespace BiblioMit.Services
                 PhytoStart = await _context.Registries
                     .Include(r => r.Headers)
                     .FirstOrDefaultAsync(r => r.NormalizedAttribute == nameof(PhytoStart).ToUpperInvariant())
-                    .ConfigureAwait(false);
+                    .ConfigureAwait(false) ?? new();
                 PhytoEnd = await _context.Registries
                     .Include(r => r.Headers)
                     .FirstOrDefaultAsync(r => r.NormalizedAttribute == nameof(PhytoEnd).ToUpperInvariant())
-                    .ConfigureAwait(false);
+                    .ConfigureAwait(false) ?? new();
                 if (PhytoStart is null || PhytoEnd is null)
                     throw new MissingFieldException(_localizer[$"Columna Inicio or Fin not defined in DataBase"]);
                 InSet[nameof(Email)] = new Dictionary<string, int>();
@@ -698,7 +698,7 @@ namespace BiblioMit.Services
                     item.PsmbId = pareaId.Value;
                     return null;
                 }
-                newFarm.Code = item.AreaCode ?? item.FarmCode.Value;
+                newFarm.Code = item.AreaCode ?? item.FarmCodeNN;
             }
             if (newFarm.Code != 0)
             {
@@ -790,19 +790,19 @@ namespace BiblioMit.Services
                 PlanktonAssay item = Activator.CreateInstance<PlanktonAssay>();
                 //GET Id
                 int d = 0;
-                var id = await GetValue(matrix, d).ConfigureAwait(false);
+                object? id = await GetValue(matrix, d).ConfigureAwait(false);
                 if (id == null) throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Id {string.Join("; ", Tdatas[d].Q)}"]);
                 item.Id = (int)id;
                 d++;
                 //GET Sampling Date
-                var samplingDate = await GetValue(matrix, d).ConfigureAwait(false);
+                object? samplingDate = await GetValue(matrix, d).ConfigureAwait(false);
                 if (samplingDate == null)
                     throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Fecha de Muestreo en {id} {string.Join("; ", Tdatas[d].Q)}"]);
                 item.SamplingDate = (DateTime)samplingDate;
                 //get other values
                 for (d++; d < Tdatas.Count; d++)
                 {
-                    var value = await GetValue(matrix, d, item).ConfigureAwait(false);
+                    object? value = await GetValue(matrix, d, item).ConfigureAwait(false);
                     if (value != null) item[Tdatas[d].Name] = value;
                 }
                 //check db for centre || psmb
@@ -833,7 +833,7 @@ namespace BiblioMit.Services
                         {
                             if (!InSet[nameof(GenusPhytoplankton)].ContainsKey(genusSp[0]))
                             {
-                                var genus = await _context.GenusPhytoplanktons
+                                GenusPhytoplankton? genus = await _context.GenusPhytoplanktons
                                     .FirstOrDefaultAsync(s => s.NormalizedName == genusSp[0]).ConfigureAwait(false);
                                 if (genus == null)
                                 {
@@ -913,7 +913,7 @@ namespace BiblioMit.Services
                         string grp = genusSp[0];
                         if (!InSet[nameof(PhylogeneticGroup)].ContainsKey(grp))
                         {
-                            var group = await _context.PhylogeneticGroups
+                            PhylogeneticGroup? group = await _context.PhylogeneticGroups
                             .FirstOrDefaultAsync(g => g.NormalizedName == grp).ConfigureAwait(false);
                             if (group == null)
                             {
@@ -994,33 +994,33 @@ namespace BiblioMit.Services
         }
         private void AddToInset<T>(PlanktonAssay item, string key) where T : IHasBasicIndexer
         {
-            var name = typeof(T).Name;
-            var id = (int?)item[$"{name}Id"];
+            string name = typeof(T).Name;
+            int? id = (int?)item[$"{name}Id"];
             T entity = (T)item[name];
             if (!InSet[name].ContainsKey(GetKey(entity, key)) && id.HasValue)
                 InSet[name].Add(GetKey(entity, key), id.Value);
         }
         private static string GetKey<T>(T item, string key) where T : IHasBasicIndexer => item[key] as string;
-        private async Task<TEntity> FindParsedAsync<TEntity>(Indexed item, string attribute, string normalized) where TEntity : class, IHasBasicIndexer
+        private async Task<TEntity?> FindParsedAsync<TEntity>(Indexed? item, string attribute, string normalized) where TEntity : class, IHasBasicIndexer
         {
             //return null if arguments null
             if (string.IsNullOrWhiteSpace(normalized)) return null;
             //if inset saved Id only and return null
-            var entityType = typeof(TEntity);
-            var name = entityType.Name;
-            if (InSet[name].ContainsKey(normalized))
+            Type entityType = typeof(TEntity);
+            string name = entityType.Name;
+            if (InSet[name].ContainsKey(normalized) && item != null)
             {
                 item[$"{name}Id"] = InSet[name][normalized];
                 return null;
             }
             //get dbset
-            var dbSet = _context.Set<TEntity>();
+            DbSet<TEntity> dbSet = _context.Set<TEntity>();
             if (dbSet == null)
             {
                 throw new InvalidOperationException($"{entityType} DB Contexts doesn't contains collection for this type.");
             }
             //get method
-            var firstOrDefaultAsyncMethod = FirstOrDefaultAsyncMethod.MakeGenericMethod(entityType);
+            MethodInfo? firstOrDefaultAsyncMethod = FirstOrDefaultAsyncMethod?.MakeGenericMethod(entityType);
             //build expression
             ParameterExpression parameter = Expression.Parameter(entityType, "x");
             MemberExpression property = Expression.Property(parameter, attribute);
@@ -1029,23 +1029,27 @@ namespace BiblioMit.Services
             Type delegateType = typeof(Func<,>).MakeGenericType(entityType, typeof(bool));
             LambdaExpression predicate = Expression.Lambda(delegateType, operation, parameter);
 
-            TEntity element = (TEntity)await firstOrDefaultAsyncMethod.InvokeAsync(null, new object[] { dbSet, predicate, default }).ConfigureAwait(false);
+            if(firstOrDefaultAsyncMethod != null)
+            {
+                TEntity element = (TEntity)await firstOrDefaultAsyncMethod.InvokeAsync(null, new object[] { dbSet, predicate, default }).ConfigureAwait(false);
 
-            if (element == null)
-            {
-                element = Activator.CreateInstance<TEntity>();
-                element[attribute] = normalized;
-                return element;
+                if (element == null)
+                {
+                    element = Activator.CreateInstance<TEntity>();
+                    element[attribute] = normalized;
+                    return element;
+                }
+                else
+                {
+                    int id = (int)element["Id"];
+                    InSet[name].Add(normalized, id);
+                    item[$"{name}Id"] = id;
+                    return null;
+                }
             }
-            else
-            {
-                var id = (int)element["Id"];
-                InSet[name].Add(normalized, id);
-                item[$"{name}Id"] = id;
-                return null;
-            }
+            return null;
         }
-        private async Task<Station> ParseEstacion(string text, Indexed item)
+        private async Task<Station?> ParseEstacion(string text, Indexed? item)
         {
             if (text == null) return null;
             text = Regex.Replace(text, @"[^A-Z0-9 ]|ESTA?C?I?O?N? *", "");
@@ -1054,7 +1058,7 @@ namespace BiblioMit.Services
             text = Regex.Replace(text, @"\s{,2}", " ").Trim();
             return await FindParsedAsync<Station>(item, nameof(Station.NormalizedName), text).ConfigureAwait(false);
         }
-        private async Task<Origin> ParseOrigin(string text, Indexed item)
+        private async Task<Origin?> ParseOrigin(string text, Indexed item)
         {
             if (text == null) return null;
             int id = (int)item[nameof(SeedDeclaration.OriginId)];
@@ -1076,22 +1080,22 @@ namespace BiblioMit.Services
             }
             return null;
         }
-        private async Task<SamplingEntity> ParseEntidadMuestreadora(string text, Indexed item)
+        private async Task<SamplingEntity?> ParseEntidadMuestreadora(string text, Indexed item)
         {
             if (text == null) return null;
             text = Regex.Replace(text, @"[^A-Z\s]", "");
             return await FindParsedAsync<SamplingEntity>(item, nameof(SamplingEntity.NormalizedName), text).ConfigureAwait(false);
         }
-        private async Task<Laboratory> ParseLaboratorio(string text, Indexed item)
+        private async Task<Laboratory?> ParseLaboratorio(string text, Indexed item)
         {
             if (text == null) return null;
             text = Regex.Replace(text, @"[^A-Z\s]", "");
             return await FindParsedAsync<Laboratory>(item, nameof(Laboratory.NormalizedName), text).ConfigureAwait(false);
         }
-        private async Task<Analist> ParseAnalista(string text, Indexed item)
+        private async Task<Analist?> ParseAnalista(string text, Indexed item)
         {
             text = Regex.Replace(text, @"[^A-Z\s]|\b[\w']{1,3}\b", "");
-            var names = text.SplitSpaces();
+            string[] names = text.SplitSpaces();
             if (!names.Any() || names.Length == 1)
                 return new Analist();
             if (names.Length == 3)
@@ -1105,9 +1109,9 @@ namespace BiblioMit.Services
             return await FindParsedAsync<Analist>(item, nameof(Analist.NormalizedName), text)
                 .ConfigureAwait(false);
         }
-        private async Task<Psmb> ParseOriginPsmb(string text, SernapescaDeclaration item)
+        private async Task<Psmb?> ParseOriginPsmb(string text, SernapescaDeclaration item)
         {
-            var id = text.ParseInt();
+            int? id = text.ParseInt();
             if (id.HasValue)
             {
                 Psmb? psmb = await _context.Psmbs.FirstOrDefaultAsync(p => p.Code == id)
@@ -1117,7 +1121,7 @@ namespace BiblioMit.Services
                     item.OriginPsmbId = psmb.Id;
                     return null;
                 }
-                var newpsmb = new Craft
+                Craft newpsmb = new()
                 {
                     Code = id.Value
                 };
@@ -1142,7 +1146,7 @@ namespace BiblioMit.Services
                 }
                 else
                 {
-                    var comuna = _context.Communes.FirstOrDefault(c =>
+                    Commune? comuna = _context.Communes.FirstOrDefault(c =>
                     c.NormalizedName == item.CommuneName);
                     if (comuna != null)
                     {
@@ -1155,57 +1159,60 @@ namespace BiblioMit.Services
             }
             return null;
         }
-        private async Task<Phone> ParseTelefono(string text, Indexed item)
+        private async Task<Phone?> ParseTelefono(string text, Indexed item)
         {
             if (text == null) return null;
             text = Regex.Replace(text, @"[^0-9\-\/\(\)\s]", "");
             text = Regex.Replace(text, @"\(\)", "");
             return await FindParsedAsync<Phone>(item, nameof(Phone.Number), text).ConfigureAwait(false);
         }
-        private async Task<List<PlanktonAssayEmail>> ParseEmails(string text, Indexed item)
+        private async Task<List<PlanktonAssayEmail>?> ParseEmails(string text, Indexed item)
         {
-            var results = new List<PlanktonAssayEmail>();
-            var i = item[nameof(PlanktonAssay.Id)];
-            var id = i as int?;
+            List<PlanktonAssayEmail> results = new();
+            object i = item[nameof(PlanktonAssay.Id)];
+            int? id = i as int?;
             if (text == null || !id.HasValue) return null;
-            var normalizedList = Regex.Replace(text, @"[^A-Z0-9_\-\.\@;]", "")
+            string[] normalizedList = Regex.Replace(text, @"[^A-Z0-9_\-\.\@;]", "")
                 .Split(";");
-            foreach (var email in normalizedList)
+            foreach (string email in normalizedList)
             {
                 if (!Regex.IsMatch(email, @"^([A-Z0-9_\-\.]+)@([A-Z0-9_\-\.]+)\.([A-Z]{2,5})$")) continue;
-                var emailensayo = new PlanktonAssayEmail
+                PlanktonAssayEmail emailensayo = new()
                 {
                     PlanktonAssayId = id.Value
                 };
-                emailensayo.Email = await FindParsedAsync<Email>(emailensayo, nameof(Email.Address), email).ConfigureAwait(false);
+                emailensayo.Email = await FindParsedAsync<Email>(emailensayo, nameof(Email.Address), email).ConfigureAwait(false) ?? new();
                 results.Add(emailensayo);
             }
             return results;
         }
-        private async Task<object> GetValue(ExcelWorksheet worksheet, int d, int row, Indexed? item = null)
+        private async Task<object?> GetValue(ExcelWorksheet worksheet, int d, int row, Indexed item)
         {
-            var data = Tdatas[d];
+            Tdata data = Tdatas[d];
             if (worksheet == null || !data.Q.Any()) return null;
             if (data.LastColumn == -1 || Headers.Count <= data.LastColumn + 1 || !data.Q.Contains(Headers[data.LastColumn]))
             {
                 data.LastColumn = Headers.GetColumnByNames(data.Q);
             }
             ExcelRange vl = worksheet.Cells[row, data.LastColumn + 1];
-            if (vl != null && vl.Value != null)
+            string? value = vl.Value.ToString();
+            if(value != null)
             {
-                string value = vl.Value.ToString().CleanCell();
+                value = value.CleanCell();
                 return await GetValue(value, data, item)
                     .ConfigureAwait(false);
             }
             return null;
         }
-        private async Task<object> GetValue(Dictionary<(int, int), string> matrix, int d, PlanktonAssay? item = null)
+        private async Task<object?> GetValue(Dictionary<(int, int), string> matrix, int d) =>
+            await GetValue(matrix, d, new PlanktonAssay()).ConfigureAwait(false);
+        private async Task<object?> GetValue(Dictionary<(int, int), string> matrix, int d, PlanktonAssay item)
         {
-            var data = Tdatas[d];
+            Tdata data = Tdatas[d];
             if (matrix == null || !data.Q.Any()) return null;
             if (data.LastPosition != (0, 0) && matrix.ContainsKey(data.LastPosition))
             {
-                var lpHeader = matrix[data.LastPosition];
+                string lpHeader = matrix[data.LastPosition];
                 if (!data.Q.Any(r => r == lpHeader))
                 {
                     data.LastPosition = matrix.SearchHeaders(data.Q);
@@ -1215,7 +1222,7 @@ namespace BiblioMit.Services
             {
                 data.LastPosition = matrix.SearchHeaders(data.Q);
             }
-            var valuePos = (data.LastPosition.Item1 + 1, data.LastPosition.Item2);
+            (int,int) valuePos = (data.LastPosition.Item1 + 1, data.LastPosition.Item2);
             if (matrix.ContainsKey(valuePos))
             {
                 string value = matrix[valuePos];
@@ -1223,7 +1230,7 @@ namespace BiblioMit.Services
             }
             return null;
         }
-        private async Task<object> GetValue(string val, Tdata data, Indexed item)
+        private async Task<object?> GetValue(string val, Tdata data, Indexed item)
         {
             if (data.FieldName == null) return null;
             return data.FieldName switch
@@ -1255,10 +1262,10 @@ namespace BiblioMit.Services
         {
             Q = q;
         }
-        public string Name { get; set; }
-        public string FieldName { get; set; }
-        public IEnumerable<string> Q { get; internal set; }
-        public string Operation { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string FieldName { get; set; } = string.Empty;
+        public IEnumerable<string> Q { get; internal set; } = new List<string>();
+        public string Operation { get; set; } = string.Empty;
         public int? DecimalPlaces { get; set; }
         public char? DecimalSeparator { get; set; }
         public bool? DeleteAfter2ndNegative { get; set; }

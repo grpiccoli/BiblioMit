@@ -14,7 +14,7 @@ namespace BiblioMit.Controllers
         private readonly IPost _postService;
         private readonly IApplicationUser _userService;
         private readonly IForum _forumService;
-        private static UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public PostsController(
             IPost postService,
@@ -34,20 +34,21 @@ namespace BiblioMit.Controllers
 
             var replies = BuildPostReplies(post.Replies);
 
-            var model = new PostIndexModel
+            var model = new PostIndexModel(
+                post.Title,
+                post.User.Id,
+                post.User.Email,
+                post.User.UserName,
+                post.Forum.Title,
+                post.User.ProfileImageUrl,
+                replies
+                )
             {
                 Id = post.Id,
-                Title = post.Title,
-                AuthorId = post.User.Id,
-                AuthorEmail = post.User.Email,
-                AuthorName = post.User.UserName,
                 AuthorRating = post.User.Rating,
                 Created = post.Created,
                 PostContent = post.Content,
-                Replies = replies,
                 ForumId = post.ForumId,
-                ForumName = post.Forum.Title,
-                AuthorImageUrl = post.User.ProfileImageUrl
             };
             return View(model);
         }
@@ -57,12 +58,13 @@ namespace BiblioMit.Controllers
         public IActionResult Create(int id)
         {
             var forum = _forumService.GetbyId(id);
-            var model = new NewPostModel
-            {
-                ForumName = forum.Title,
-                ForumId = forum.Id,
-                ForumImageUrl = forum.ImageUrl,
-                AuthorName = User.Identity.Name
+            var model = new NewPostModel(
+                forum.Title,
+                forum.ImageUrl
+            )
+            { 
+                AuthorName = User.Identity?.Name,
+                ForumId = forum.Id
             };
             return View(model);
         }

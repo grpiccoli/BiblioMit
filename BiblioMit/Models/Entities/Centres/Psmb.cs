@@ -2,6 +2,7 @@
 using BiblioMit.Models.Entities.Centres;
 using BiblioMit.Models.Entities.Variables;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
@@ -39,14 +40,14 @@ namespace BiblioMit.Models
                 && q.Id == Id
                 && q.Discriminator == Discriminator;
         }
-        public static bool operator ==([AllowNull] Psmb x, [AllowNull] Psmb y)
+        public static bool operator ==([AllowNull] Psmb? x, [AllowNull] Psmb? y)
         {
             if (x is null) return y is null;
             return x.Equals(y);
         }
-        public static bool operator !=([AllowNull] Psmb x, [AllowNull] Psmb y) => (x is null && y is null) || ((x is not null && y is not null) && (x != y));
+        public static bool operator !=([AllowNull] Psmb? x, [AllowNull] Psmb? y) => (x is null && y is null) || ((x is not null && y is not null) && (x != y));
         public override int GetHashCode() => HashCode.Combine(Id, Discriminator);
-        public bool Equals([AllowNull] Psmb other)
+        public bool Equals([AllowNull] Psmb? other)
         {
             if (other is null) return this is null;
             if (this is null) return false;
@@ -81,5 +82,31 @@ namespace BiblioMit.Models
         public virtual ICollection<Sampling> Samplings { get; } = new List<Sampling>();
         public virtual ICollection<Variable> Variables { get; } = new List<Variable>();
         public string GetFullName() => string.Join(",", new string?[] { Code.ToString(), Name, Commune?.GetFullName() });
+        [NotMapped]
+        public Company CompanyNN
+        {
+            get => Company ?? new();
+        }
+        [NotMapped]
+        public int CommuneIdNN
+        {
+            get => CompanyId ?? 0;
+        }
+        [NotMapped]
+        public Commune CommuneNN
+        {
+            get => Commune ?? new();
+        }
+        [NotMapped]
+        public int CompanyIdNN
+        {
+            get => CompanyId ?? 0;
+        }
+        [NotMapped]
+        public Polygon PolygonNN
+        {
+            get => Polygon ?? new();
+        }
+
     }
 }

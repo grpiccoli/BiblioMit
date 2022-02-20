@@ -6,8 +6,8 @@ namespace BiblioMit.Models
     public class SeedDeclaration : NotProduction
     {
         public int OriginId { get; set; }
-        public virtual Origin Origin { get; set; }
+        public virtual Origin? Origin { get; set; }
         [NotMapped]
-        public string CompanyName { get; set; }
+        public string? CompanyName { get; set; }
     }
 }

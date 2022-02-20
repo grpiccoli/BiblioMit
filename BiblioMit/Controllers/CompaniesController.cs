@@ -104,12 +104,10 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Company? company = await _context.Companies.FindAsync(id).ConfigureAwait(false);
             if (company == null)
-            {
                 return NotFound();
-            }
-            var comp = new CompanyViewModel
+            CompanyViewModel comp = new()
             {
                 RUT = company.Id.RUTFormat(),
                 BsnssName = company.BusinessName
@@ -182,7 +180,8 @@ namespace BiblioMit.Controllers
         [Authorize(Roles = nameof(RoleData.Administrator))]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var company = await _context.Companies.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Company? company = await _context.Companies.FindAsync(id).ConfigureAwait(false);
+            if(company == null) return NotFound();
             _context.Companies.Remove(company);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");

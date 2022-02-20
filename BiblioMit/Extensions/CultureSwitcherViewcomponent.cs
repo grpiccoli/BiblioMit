@@ -1,8 +1,8 @@
 ﻿using BiblioMit.Models;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace BiblioMit.Extensions
 {
@@ -13,12 +13,8 @@ namespace BiblioMit.Extensions
             _localizationOptions = localizationOptions;
         public IViewComponentResult Invoke()
         {
-            var cultureFeature = HttpContext.Features.Get<IRequestCultureFeature>();
-            var model = new CultureSwitcherModel 
-            { 
-                CurrentUICulture = cultureFeature.RequestCulture.UICulture
-            };
-            model.SupportedCultures.AddRangeOverride(_localizationOptions.Value.SupportedUICultures);
+            CultureInfo cultureFeature = HttpContext.Features.Get<IRequestCultureFeature>()?.RequestCulture.UICulture ?? _localizationOptions.Value.DefaultRequestCulture.UICulture;
+            CultureSwitcherModel model = new(cultureFeature, _localizationOptions.Value.SupportedUICultures ?? new List<CultureInfo>());
             return View(model);
         }
     }

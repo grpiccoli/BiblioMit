@@ -33,7 +33,7 @@ namespace BiblioMit.Controllers
                     Id = f.Id,
                     Name = f.Title,
                     Description = f.Description,
-                    NumberOfPosts = f.Posts?.Count() ?? 0,
+                    NumberOfPosts = f.Posts?.Count ?? 0,
                     NumberOfUsers = _forumService.GetActiveUsers(f.Id).Count(),
                     ImageUrl = f.ImageUrl,
                     HasRecentPost = _forumService.HasRecentPost(f.Id)

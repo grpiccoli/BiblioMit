@@ -34,14 +34,14 @@ namespace BiblioMit.Controllers
                     {
                         Id = f.Code,
                         Name = f.Name,
-                        BusinessName = f.Company.BusinessName,
-                        Rut = f.Company.Id,
-                        Comuna = f.Commune.Name,
-                        ComunaId = f.CommuneId.Value,
-                        Provincia = f.Commune.Province.Name,
-                        Region = f.Commune.Province.Region.Name,
+                        BusinessName = f.CompanyNN.BusinessName,
+                        Rut = f.CompanyIdNN,
+                        Comuna = f.CommuneNN.Name,
+                        ComunaId = f.CommuneIdNN,
+                        Provincia = f.CommuneNN.Province.Name,
+                        Region = f.CommuneNN.Province.Region.Name,
                         Code = f.Code,
-                        Position = f.Polygon.Vertices.OrderBy(o => o.Order).Select(o =>
+                        Position = f.PolygonNN.Vertices.OrderBy(o => o.Order).Select(o =>
                         new GMapCoordinate
                         {
                             Lat = o.Latitude,
@@ -61,7 +61,6 @@ namespace BiblioMit.Controllers
         {
             var centres = _context.Set<TEntity>()
                         .Where(a => a.PolygonId.HasValue
-                && a.CommuneId.HasValue
                 && a.CompanyId.HasValue);
             //if (map) centres = centres.Include(a => a.Polygon).ThenInclude(a => a.Vertices);
             //var list = await centres.ToListAsync().ConfigureAwait(false);
@@ -180,7 +179,7 @@ namespace BiblioMit.Controllers
             if (id == null) return NotFound();
             Farm? centre = await _context.Farms
                 .Include(c => c.Company)
-                .Include(c => c.Commune)
+                .Include(c => c.CommuneNN)
                     .ThenInclude(c => c.Province)
                     .ThenInclude(c => c.Region)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);

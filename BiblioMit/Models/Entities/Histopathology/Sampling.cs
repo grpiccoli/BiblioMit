@@ -1,6 +1,4 @@
 ﻿using CustomDataAnnotations;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -18,7 +16,7 @@ namespace BiblioMit.Models
         //Parent
         //public virtual Submitter Submitter { get; set; }
         [Display(Name = "Farm")]
-        public virtual Psmb Centre { get; set; }
+        public virtual Psmb? Centre { get; set; }
         //ATT
         [Display(Name = "Date")]
         [DataType(DataType.Date)]

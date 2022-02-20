@@ -1,5 +1,4 @@
 ﻿using BiblioMit.Extensions;
-using System.Collections.Generic;
 
 namespace BiblioMit.Models
 {

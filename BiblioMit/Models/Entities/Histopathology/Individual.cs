@@ -1,5 +1,4 @@
 ﻿using BiblioMit.Models.Entities.Histopathology;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,7 +14,7 @@ namespace BiblioMit.Models
         public int SamplingId { get; set; }
         //Parent
         [Display(Name = "Sample")]
-        public virtual Sampling Sampling { get; set; }
+        public virtual Sampling? Sampling { get; set; }
         //ATT
         [Display(Name = "Sex")]
         public Sex Sex { get; set; }
@@ -24,11 +23,11 @@ namespace BiblioMit.Models
         [Display(Name = "Length (mm)")]
         public int Length { get; set; }
         [Display(Name = "Comment")]
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
         [Display(Name = "Number")]
         public int Number { get; set; }
         [Display(Name = "Tag")]
-        public string Tag { get; set; }
+        public string? Tag { get; set; }
         [Display(Name = "Depth")]
         public int? Depth { get; set; }
         [Display(Name = "Adipogranular cells")]

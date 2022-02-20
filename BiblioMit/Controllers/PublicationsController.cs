@@ -14,7 +14,6 @@ using System.Drawing;
 using BiblioMit.Services;
 using BiblioMit.Extensions;
 using System.Collections.ObjectModel;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BiblioMit.Controllers
 {
@@ -37,24 +36,20 @@ namespace BiblioMit.Controllers
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Index(
-            int? pg, //page
-            int? trpp, //results per page
-            string srt, //value to sort by
-            bool? asc, //ascending or descending sort
             //string[] val, //array of filter:value
             string[] src, //List of engines to search
-            string q //search value
+            string q, //search value
+            string srt = "source", //value to sort by
+            int pg = 1, //page
+            int trpp = 20, //results per page
+            bool asc = false //ascending or descending sort
             )
         {
             Stopwatch stopWatch = new();
             stopWatch.Start();
 
             #region Variables
-            if (!pg.HasValue) pg = 1;
-            if (!trpp.HasValue) trpp = 20;
-            if (!asc.HasValue) asc = true;
-            if (srt == null) srt = "source";
-            var order = asc.Value ? "asc" : "desc";
+            string order = asc ? "asc" : "desc";
 
             ViewData[nameof(srt)] = srt;
             ViewData[nameof(pg)] = pg;
@@ -64,7 +59,7 @@ namespace BiblioMit.Controllers
             IEnumerable<PublicationVM> publications = new List<PublicationVM>();
             #endregion
             #region universities dictionary
-            var ues = new Dictionary<string, string>
+            Dictionary<string, string> ues = new()
                 {
                     {"uchile", "Universidad de Chile"},
                     {"ula", "Universidad Los Lagos"},
@@ -80,7 +75,7 @@ namespace BiblioMit.Controllers
                 };
             #endregion
             #region diccionario Proyectos conicyt
-            var conicyt = new Dictionary<string, string>
+            Dictionary<string, string> conicyt = new()
                 {
                     {"FONDECYT","Fondo Nacional de Desarrollo Cient\u00EDfico y Tecnol\u00F3gico"},
                     {"FONDEF","Fondo de Fomento al Desarrollo Cient\u00EDfico y Tecnol\u00F3gico"},
@@ -93,25 +88,25 @@ namespace BiblioMit.Controllers
                 };
             #endregion
             #region diccionario de Proyectos
-            var proj = conicyt.Concat(new Dictionary<string, string>() {
+            Dictionary<string, string> proj = conicyt.Concat(new Dictionary<string, string>() {
                     //{"FAP","Fondo de Administración Pesquero"},//"subpesca"
                     {"FIPA","Fondo de Investigaci\u00F3n Pesquera y de Acuicultura"},//"subpesca"
                     {"CORFO","Corporaci\u00F3n de Fomento a la Producci\u00F3n"}//"corfo"
                 }).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             #endregion
             #region Artículos Indexados
-            var gs = new Dictionary<string, string>()
+            Dictionary<string, string> gs = new()
                 {{"gscholar","Google Acad\u00E9mico"}};
             #endregion
             #region Patentes
-            var gp = new Dictionary<string, string>()
+            Dictionary<string, string> gp = new()
                 {{"gpatents","Google Patentes" }};
             #endregion
             ViewData[nameof(ues)] = ues;
             ViewData[nameof(proj)] = proj;
             ViewData[nameof(gs)] = gs;
             ViewData[nameof(gp)] = gp;
-            var repos = ues.Concat(proj).Concat(gs).Concat(gp).ToDictionary(x => x.Key, x => x.Value);
+            Dictionary<string, string> repos = ues.Concat(proj).Concat(gs).Concat(gp).ToDictionary(x => x.Key, x => x.Value);
             if (src != null && src.Any())
             {
                 ViewData["srcs"] = src;
@@ -120,7 +115,7 @@ namespace BiblioMit.Controllers
 
                 if (!string.IsNullOrWhiteSpace(q))
                 {
-                    int ggl, rpp = (int)Math.Ceiling((double)trpp.Value / src.Length);
+                    int ggl, rpp = (int)Math.Ceiling((double)trpp / src.Length);
                     string sort_by, srt_uach, srt_utal = srt;
 
                     switch (srt)
@@ -142,7 +137,7 @@ namespace BiblioMit.Controllers
                             srt_uach = "sdxscore";
                             break;
                     }
-                    var pubs = await GetPubsAsync(src, q, rpp, pg, sort_by, order, srt_uach, ggl).ConfigureAwait(false);
+                    (IEnumerable<PublicationVM>, string, int)[]? pubs = await GetPubsAsync(src, q, rpp, pg, sort_by, order, srt_uach, ggl).ConfigureAwait(false);
                     var Publications = pubs.SelectMany(x => x.Item1);
                     //repositories where any results
                     Dictionary<Typep, Dictionary<string, int>> Results = pubs.Where(x => x.Item1.Any())
@@ -188,24 +183,20 @@ namespace BiblioMit.Controllers
 
                     ViewData["counts"] = counts;
                     ViewData["chartData"] = System.Text.Json.JsonSerializer.Serialize(chartData);
-                    ViewData["arrow"] = asc.Value ? "&#x25BC;" : "&#x25B2;";
+                    ViewData["arrow"] = asc ? "&#x25BC;" : "&#x25B2;";
                     ViewData["prevDisabled"] = pg == 1 ? "disabled" : "";
                     ViewData["nextDisabled"] = pg == NoPages ? "disabled" : "";
-                    ViewData["low"] = low1 = pg.Value > 6 ? pg.Value - 5 : 1;
+                    ViewData["low"] = low1 = pg > 6 ? pg - 5 : 1;
                     ViewData["high"] = NoPages > low1 + 6 ? low1 + 6 : NoPages;
 
-                    publications = srt switch
+                    publications = $"{srt}{order}" switch
                     {
-                        "date" =>
-                            asc.Value ?
-                                Publications.OrderBy(p => p.Date.Year) :
-                                Publications.OrderByDescending(p => p.Date.Year),
-                        "title" =>
-                            asc.Value ?
-                                Publications.OrderBy(p => p.Title) :
-                                Publications.OrderByDescending(p => p.Title),
+                        "dateasc" => Publications.OrderBy(p => p.Date.Year),
+                        "datedesc" => Publications.OrderByDescending(p => p.Date.Year),
+                        "titleasc" => Publications.OrderBy(p => p.Title),
+                        "titledesc" => Publications.OrderByDescending(p => p.Title),
                         _ =>
-                            asc.Value ?
+                            asc ?
                                 Publications.OrderBy(p => p.Source) :
                                 Publications.OrderByDescending(p => p.Source)
                     };
@@ -281,7 +272,8 @@ namespace BiblioMit.Controllers
             {
                 foreach (string fondo in conicyt1_funds)
                 {
-                    using IHtmlDocument bc_doc = await GetDoc(conicyt1[fondo]).ConfigureAwait(false);
+                    using IHtmlDocument? bc_doc = await GetDoc(conicyt1[fondo]).ConfigureAwait(false);
+                    if(bc_doc == null) continue;
                     var co = GetCo("conicyt");
                     Agendas.AddRange(from n in bc_doc.QuerySelectorAll("div.lista_concurso")
                                      let cells = n.Children
@@ -419,10 +411,9 @@ namespace BiblioMit.Controllers
             return View(Agendas);
         }
 
-        private Task<(IEnumerable<PublicationVM>, string, int)[]>? GetPubsAsync(
-            string[] src, string q, int rpp, int? pg, string sortBy, string order, string srtUach, int ggl)
+        private Task<(IEnumerable<PublicationVM>, string, int)[]> GetPubsAsync(
+            string[] src, string q, int rpp, int pg, string sortBy, string order, string srtUach, int ggl)
         {
-            if (sortBy == null || order == null) return null;
             var uchile = GetUchileAsync
                 (
                 src,
@@ -614,7 +605,8 @@ string dateSelect, int rpp, string acronym)
                     };
                     co.SetAcronym(acronym);
                     co.SetBusinessName("Google Inc");
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
                             let t = n?.QuerySelector(titleSelect)?.TextContent
                             select new PublicationVM()
@@ -651,7 +643,8 @@ string authorSelect, string dateSelect, string abstractSelect)
                 try {
                     var co = GetCo(60706000);
                 using var doc = await GetDoc(url).ConfigureAwait(false);
-                return (from n in doc.QuerySelectorAll(nodeSelect)
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    return (from n in doc.QuerySelectorAll(nodeSelect)
                         let t = n?.QuerySelector(quriSelect)
                         select new PublicationVM()
                         {
@@ -686,7 +679,8 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect)
                 try {
                     var co = GetCo(60719000);
                 using var doc = await GetDoc(url).ConfigureAwait(false);
-                return (from n in doc.QuerySelectorAll(nodeSelect)
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    return (from n in doc.QuerySelectorAll(nodeSelect)
                         select new PublicationVM()
                         {
                             Source = acronym,
@@ -749,7 +743,8 @@ string acronym, string parameter, int rpp, string sortBy, string order, int? pg,
                     var co = GetCo(60915000);
                     var url = new Uri($"http://repositorio.conicyt.cl/handle/10533/{parameter}/discover?query={q}&page={pg - 1}&rpp={rpp}&sort_by={sortBy}&order={order}");
                 using var doc = await GetDoc(url).ConfigureAwait(false);
-                return (doc.QuerySelectorAll("div.row.ds-artifact-item")
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    return (doc.QuerySelectorAll("div.row.ds-artifact-item")
 .Select(n => new PublicationVM()
 {
 Source = acronym,
@@ -852,8 +847,8 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             {
                 try {
                     var co = GetCo(acronym);
-                IHtmlDocument doc = await GetDoc(url).ConfigureAwait(false);
-                if (doc == null) return (new Collection<PublicationVM>(), acronym, 0);
+                IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                 return (
 from n in doc.QuerySelectorAll(nodeSelect)
 let m = n.QuerySelector(quriSelect)
@@ -891,6 +886,7 @@ Date = GetDate(n, dateSelect)
                 {
                     var co = GetCo(acronym);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
                     {
                         Source = acronym,
@@ -925,8 +921,8 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                     var co = GetCo(acronym);
                     Regex regex = new("[a-zA-Z]");
                 using var doc = await GetDoc(url).ConfigureAwait(false);
-
-                return (
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    return (
 from n in doc.QuerySelectorAll(nodeSelect)
 let m = n.QuerySelector(quriSelect)
 let j = n.QuerySelector(journalSelect)?.TextContent
@@ -966,6 +962,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (
     from n in doc.QuerySelectorAll(nodeSelect)
     let m = n.QuerySelector(quriSelect)
@@ -1002,6 +999,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (from n in doc.QuerySelectorAll(nodeSelect)
                             let m = n.QuerySelector(quriSelect)
                             select new PublicationVM()
@@ -1037,10 +1035,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                 using var doc = await GetDoc(url).ConfigureAwait(false);
-                return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
+                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
                 {
                     Source = acronym,
-                    Title = n?.TextContent,
+                    Title = n.TextContent,
                     Uri = GetUri(url, n.QuerySelector(quriSelect)),
                     Authors = GetAuthors(n, authorSelect),
                     //Typep = GetTypep(n.QuerySelector("span.tipo_obra").Text().ToLower()),
@@ -1064,7 +1063,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetUlaAsync(string[] src,
     Uri url, string nodeSelect, string quriSelect, string authorSelect, int? pg, int rpp)
         {
-            var acronym = "ula";
+            string acronym = "ula";
             if (src.Contains(acronym))
             {
                 try
@@ -1072,11 +1071,12 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                     var co = GetCo(acronym);
                     using var doc = await GetDocStream(url).ConfigureAwait(false);
                     var num = doc.QuerySelectorAll(nodeSelect);
+                    if (pg == null) pg = 1;
                     return (num.Skip(rpp * (pg.Value - 1)).Take(rpp).Select(n => new PublicationVM()
                     {
                         Typep = Typep.Thesis,
                         Source = acronym,
-                        Title = n.QuerySelector(quriSelect).TextContent,
+                        Title = n.QuerySelector(quriSelect)?.TextContent ?? string.Empty,
                         Uri = GetUri(url, n.QuerySelector(quriSelect)),
                         Authors = GetAuthors(n, authorSelect),
                         Company = co,
@@ -1100,8 +1100,8 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             switch (acronym)
             {
                 case "uchile":
-                    string? titls = node.QuerySelector("h4.discoUch span").Attributes["title"]?.Value;
-                    Collection<int> indexes = titls.AllIndexesOf("rft_id");
+                    string titls = node.QuerySelector("h4.discoUch span")?.Attributes["title"]?.Value ?? string.Empty;
+                    Collection<int> indexes = titls.AllIndexesOf("rft_id") ?? new Collection<int>();
                     if (indexes.Count == 3)
                     {
                         return (QueryHelpers.ParseQuery(titls[indexes[0]..indexes[1]])["rft_id"],
@@ -1138,29 +1138,29 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             };
         }
 
-        public static Uri GetUri(Uri rep, IElement link)
+        public static Uri GetUri(Uri rep, IElement? link)
         {
             if(link != null)
             {
-                return new Uri(rep, link.Attributes["href"].Value);
+                return new Uri(rep, link?.Attributes["href"]?.Value ?? string.Empty);
             }
             else
             {
-                return null;
+                return new Uri("");
             }
         }
 
-        public static Uri GetUri(Uri rep, IElement link, IElement backlink)
+        public static Uri GetUri(Uri rep, IElement? link, IElement? backlink)
         {
-            return backlink != null ? new Uri(rep, link == null ? backlink.Attributes["href"].Value : link.Attributes["href"].Value) : null;
+            return new Uri(rep, backlink?.Attributes["href"]?.Value ?? link?.Attributes["href"]?.Value ?? string.Empty);
         }
 
-        public static Uri GetUri(IElement link)
+        public static Uri GetUri(IElement? link)
         {
-            return link != null ? new Uri(link.Attributes["href"].Value) : null;
+            return new Uri(link?.Attributes["href"]?.Value ?? string.Empty);
         }
 
-        public static async Task<IHtmlDocument> GetDoc(Uri rep)
+        public static async Task<IHtmlDocument?> GetDoc(Uri rep)
         {
             try
             {
@@ -1191,66 +1191,62 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             using HttpClient hc = new();
             return await parser.ParseDocumentAsync(await hc.GetStreamAsync(rep).ConfigureAwait(false)).ConfigureAwait(false);
         }
-        private Company GetCo(string u)
-        {
-            return _context.Companies.FirstOrDefault(c => c.Acronym == u);
-        }
+        private Company GetCo(string u) =>
+            _context.Companies.FirstOrDefault(c => c.Acronym == u) ?? new Company();
 
-        private Company GetCo(int rut)
-        {
-            return _context.Companies.FirstOrDefault(c => c.Id == rut);
-        }
+        private Company GetCo(int rut) =>
+            _context.Companies.FirstOrDefault(c => c.Id == rut) ?? new Company();
 
         public static int GetNoResultsGS(IHtmlDocument doc, string selector)
         {
-            if(doc != null)
-            {
-                Regex res = new(@"([0-9]+,)*[0-9]+");
-                var parsed = int.TryParse(res.Match(doc.QuerySelector(selector).TextContent).Value.Replace(",", "", StringComparison.Ordinal), out int result);
-                if (parsed) return result;
-            }
-            return 0;
+            Regex res = new(@"([0-9]+,)*[0-9]+");
+            string? match = doc.QuerySelector(selector)?.TextContent;
+            if (match is null) return 0;
+            bool parsed = int.TryParse(res.Match(match).Value.Replace(",", "", StringComparison.Ordinal), out int result);
+            return parsed ? result : 0;
         }
 
         public static int GetNoResults(IHtmlDocument doc, string selector, int pos)
         {
-            if (doc != null)
-            {
-                Regex res = new(@"[\d\.,]+");
-                var parsed = int.TryParse(res.Matches(doc.QuerySelector(selector).TextContent)[pos].Value, out int result);
-                if (parsed) return result;
-            }
-            return 0;
+            Regex res = new(@"[\d\.,]+");
+            string? match = doc.QuerySelector(selector)?.TextContent;
+            if (match is null) return 0;
+            bool parsed = int.TryParse(res.Matches(match)[pos].Value, out int result);
+            return parsed ? result : 0;
         }
         public static DateTime GetDateGS(IElement node, string selector)
         {
-                Regex res = new(@"[\d]+");
-                string[] formats = { "yyyy" };
-                var parsed = DateTime.TryParseExact(res.Match(node?.QuerySelector(selector).TextContent).Value,
+            Regex res = new(@"[\d]+");
+            string[] formats = { "yyyy" };
+            string? match = node.QuerySelector(selector)?.TextContent;
+            if (match is null) return new DateTime();
+            bool parsed = DateTime.TryParseExact(res.Match(match).Value,
                                         formats,
                                         CultureInfo.InvariantCulture,
                                         DateTimeStyles.None,
                                         out DateTime Date);
-                return parsed ? Date : new DateTime();
+            return parsed ? Date : new DateTime();
         }
 
         public static DateTime GetDate(IElement node, string selector)
         {
-                Regex res = new(@"[\d\-]+");
-                string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
-                var parsed = DateTime.TryParseExact(res.Match(node?.QuerySelector(selector).TextContent).Value,
-                                        formats,
-                                        CultureInfo.InvariantCulture,
-                                        DateTimeStyles.None,
-                                        out DateTime Date);
-                return parsed ? Date : new DateTime();
+            Regex res = new(@"[\d\-]+");
+            string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
+            string? match = node.QuerySelector(selector)?.TextContent;
+            if (match is null) return new DateTime();
+            var parsed = DateTime.TryParseExact(res.Match(match).Value,
+                                    formats,
+                                    CultureInfo.InvariantCulture,
+                                    DateTimeStyles.None,
+                                    out DateTime Date);
+            return parsed ? Date : new DateTime();
         }
 
         public static DateTime GetDateAgenda(IElement node)
         {
             string[] formats = { "dd 'de' MMMM 'de'  yyyy" };
             Regex ress1 = new(@"\d[\dA-Za-z\s]+\d");
-            var parsed = DateTime.TryParseExact(ress1.Match(node?.TextContent).Value,
+            var parsed = DateTime.TryParseExact(ress1.Match(node.TextContent).Value,
                 formats,
                 CultureInfo.GetCultureInfo("es-CL"),
                 DateTimeStyles.None,
@@ -1260,55 +1256,26 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
 
         public static DateTime GetDate(string journal, int start)
         {
-            if(journal != null)
-            {
-                string[] formats = { "yyyy" };
-                var parsed = DateTime.TryParseExact(journal.AsSpan(start, 4),
-                                        formats,
-                                        CultureInfo.InvariantCulture,
-                                        DateTimeStyles.None,
-                                        out DateTime Date);
-                if(parsed) return Date;
-            }
-            return new DateTime();
+            string[] formats = { "yyyy" };
+            var parsed = DateTime.TryParseExact(journal.AsSpan(start, 4),
+                                    formats,
+                                    CultureInfo.InvariantCulture,
+                                    DateTimeStyles.None,
+                                    out DateTime Date);
+            return parsed ? Date : new DateTime();
         }
 
-        public static string GetAbstract(IElement node, string selector)
-        {
-            return node?.QuerySelector(selector).TextContent;
-        }
+        public static string GetAbstract(IElement node, string selector) =>
+            node.QuerySelector(selector)?.TextContent ?? string.Empty;
 
         public static IEnumerable<AuthorVM> GetAuthorsGS(IElement node, string selector)
         {
-            if(node != null)
-            {
-                Regex aut = new(@"\A(?:(?![0-9]{4}).)*");
-                return aut.Match(node.QuerySelector(selector).TextContent).Value.Trim().Trim('-').Split(',')
-                    .Select(a => a.Split(' '))
-                    .Select(nn =>
-                    new AuthorVM
-                    {
-                        Last = nn[0],
-                        Name = nn.Length > 1 ? nn[1] : ""
-                    });
-            }
-            return new List<AuthorVM>();
-        }
-
-        public static IEnumerable<AuthorVM> GetAuthorsCorfo(IElement node, string selector)
-        {
-            return node?.QuerySelector(selector).TextContent.Split(';')
-                .Select(nn =>
-                new AuthorVM
-                {
-                    Name = nn
-                });
-        }
-
-        public static IEnumerable<AuthorVM> GetAuthors(IElement node, string selector)
-        {
-            return node?.QuerySelectorAll(selector)
-                .Select(a => a.TextContent.TrimEnd('.').Split(','))
+            Regex aut = new(@"\A(?:(?![0-9]{4}).)*");
+            string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
+            string? match = node.QuerySelector(selector)?.TextContent;
+            if (match is null) return new List<AuthorVM>();
+            return aut.Match(match).Value.Trim().Trim('-').Split(',')
+                .Select(a => a.Split(' '))
                 .Select(nn =>
                 new AuthorVM
                 {
@@ -1316,9 +1283,26 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                     Name = nn.Length > 1 ? nn[1] : ""
                 });
         }
-        public static IEnumerable<AuthorVM> GetAuthors(IElement node, string selector, Regex filter)
-        {
-            return node?.QuerySelectorAll(selector)
+
+        public static IEnumerable<AuthorVM> GetAuthorsCorfo(IElement node, string selector) =>
+            node.QuerySelector(selector)?.TextContent.Split(';')
+                .Select(nn =>
+                new AuthorVM
+                {
+                    Name = nn
+                }) ?? new List<AuthorVM>();
+
+        public static IEnumerable<AuthorVM> GetAuthors(IElement node, string selector) =>
+            node.QuerySelectorAll(selector)
+                .Select(a => a.TextContent.TrimEnd('.').Split(','))
+                .Select(nn =>
+                new AuthorVM
+                {
+                    Last = nn[0],
+                    Name = nn.Length > 1 ? nn[1] : ""
+                }) ?? new List<AuthorVM>();
+        public static IEnumerable<AuthorVM> GetAuthors(IElement node, string selector, Regex filter) =>
+            node.QuerySelectorAll(selector)
                 .Where(i => filter.IsMatch(i.TextContent))
                 .Select(a => a.TextContent.Split(','))
                 .Select(nn =>
@@ -1327,13 +1311,12 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                     Last = nn[0],
                     Name = nn.Length > 1 ? nn[1] : ""
                 });
-        }
     }
     public class ChartResultsItem
     {
-        public string Repositorio { get; set; }
+        public string? Repositorio { get; set; }
         public int Resultados { get; set; }
-        public string Color { get; set; }
+        public string? Color { get; set; }
     }
 
 }

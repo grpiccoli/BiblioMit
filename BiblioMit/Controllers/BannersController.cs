@@ -68,6 +68,7 @@ namespace BiblioMit.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Create([Bind("Id,MaskAngle")] Banner banner)
         {
             if (ModelState.IsValid)
@@ -97,6 +98,7 @@ namespace BiblioMit.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,MaskAngle")] Banner banner)
         {
             if (banner is null) throw new ArgumentNullException(nameof(banner));
@@ -123,6 +125,7 @@ namespace BiblioMit.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> EditCaption(int id, [Bind("Id,Title,Subtitle,Position,Lang,Color")] CaptionVM caption)
         {
             if (caption is null) throw new ArgumentNullException(nameof(caption));
@@ -157,6 +160,7 @@ namespace BiblioMit.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> EditBtn(int id, [Bind("Id,Title,Uri")] Btn btn)
         {
             if (btn is null) throw new ArgumentNullException(nameof(btn));
@@ -182,7 +186,7 @@ namespace BiblioMit.Controllers
         }
         private string UploadedFile(ImgVM model)
         {
-            string uniqueFileName = null;
+            string uniqueFileName = string.Empty;
 
             if (model.FileName != null)
             {
@@ -196,6 +200,7 @@ namespace BiblioMit.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> AddImg([Bind("Size,FileName")] ImgVM img)
         {
             if (img is null) throw new ArgumentNullException(nameof(img));
@@ -247,9 +252,11 @@ namespace BiblioMit.Controllers
         // POST: Banners/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var banner = await _context.Banners.FindAsync(id).ConfigureAwait(false);
+            Banner? banner = await _context.Banners.FindAsync(id).ConfigureAwait(false);
+            if (banner == null) return NotFound();
             _context.Banners.Remove(banner);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction(nameof(Index));

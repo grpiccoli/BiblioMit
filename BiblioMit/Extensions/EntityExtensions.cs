@@ -1,16 +1,15 @@
 ﻿using BiblioMit.Services;
 using System.Reflection;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using BiblioMit.Models;
-using System.Threading.Tasks;
 
 namespace BiblioMit.Extensions
 {
     public static class EntityExtensions
     {
-        [SuppressMessage("Performance", "CA1802:Use literals where appropriate", Justification = "includes circular definition")]
         private static readonly BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
+        public static IEnumerable<Post> HasQuery(this IEnumerable<Post> posts, string searchQuery) =>
+            posts.Where(p => (p.Title != null && p.Title.Contains(searchQuery, StringComparison.InvariantCultureIgnoreCase))
+                    || (p.Content != null && p.Content.Contains(searchQuery, StringComparison.InvariantCultureIgnoreCase)));
         public static bool IsBoxed<T>(this T value) =>
             (typeof(T).IsInterface || typeof(T) == typeof(object)) &&
             value != null &&
@@ -36,13 +35,17 @@ namespace BiblioMit.Extensions
             if (e.HasValue && !(fito.EAR.HasValue && fito.EAR.Value >= e))
                 fito.EAR = e;
         }
-        public static async Task<object> InvokeAsync(this MethodInfo @this, object obj, params object[] parameters)
+        public static async Task<object?> InvokeAsync(this MethodInfo @this, object obj, params object[] parameters)
         {
             if (@this is null) return null;
-            Task task = (Task)@this.Invoke(obj, parameters);
-            await task.ConfigureAwait(false);
-            var resultProperty = task.GetType().GetProperty("Result");
-            return resultProperty.GetValue(task);
+            Task? task = (Task?)@this.Invoke(obj, parameters);
+            if(task is not null)
+            {
+                await task.ConfigureAwait(false);
+                PropertyInfo? resultProperty = task.GetType().GetProperty("Result");
+                if(resultProperty is not null) return resultProperty.GetValue(task);
+            }
+            return null;
         }
     }
 }

@@ -228,7 +228,7 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var photo = await _context.Photos.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            var photo = await _context.Photos.SingleAsync(m => m.Id == id).ConfigureAwait(false);
             _context.Photos.Remove(photo);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");
@@ -241,13 +241,20 @@ namespace BiblioMit.Controllers
     }
     public class NanoGalleryElement
     {
+        public NanoGalleryElement(string src, string srct, string title, string id)
+        {
+            Src = src;
+            Srct = srct;
+            Title = title;
+            Id = id;
+        }
         public string Src { get; set; }
         public string Srct { get; set; }
         public string Title { get; set; }
         public string Id { get; set; }
         [DataMember(EmitDefaultValue = false)]
-        public string AlbumId { get; set; }
+        public string? AlbumId { get; set; }
         [DataMember(EmitDefaultValue = false)]
-        public string Kind { get; set; }
+        public string? Kind { get; set; }
     }
 }

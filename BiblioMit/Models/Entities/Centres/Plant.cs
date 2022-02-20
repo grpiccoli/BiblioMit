@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BiblioMit.Models.Entities.Centres
+﻿namespace BiblioMit.Models.Entities.Centres
 {
     public class Plant : Psmb
     {

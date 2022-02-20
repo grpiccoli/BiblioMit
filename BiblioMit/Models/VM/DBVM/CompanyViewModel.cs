@@ -14,7 +14,7 @@ namespace BiblioMit.Models
 
         [Required]
         [Display(Name = "Razón Social")]
-        public string BsnssName { get; set; }
+        public string? BsnssName { get; set; }
 
         [Display(Name = "Sigla o Acrónimo")]
         public string Acronym { get; set; }

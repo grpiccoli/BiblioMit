@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.ObjectModel;
 
@@ -14,10 +10,10 @@ namespace BiblioMit.Extensions
     {
         public static IQueryable<TSource> Pre<TSource>(this IEnumerable<TSource> contexto)
         {
-            var pre = contexto as IQueryable<TSource>;
+            IQueryable<TSource> pre = contexto as IQueryable<TSource> ?? Enumerable.Empty<TSource>().AsQueryable();
             return pre;
         }
-        public static PropertyDescriptor FilterSort<TSource>(this IEnumerable<TSource> contexto, string srt = "Id")
+        public static PropertyDescriptor? FilterSort<TSource>(this IEnumerable<TSource> contexto, string srt = "Id")
         {
             if (contexto is null)
             {
@@ -25,12 +21,12 @@ namespace BiblioMit.Extensions
             }
 
             if (string.IsNullOrWhiteSpace(srt)) srt = "Id";
-            PropertyDescriptor sort = TypeDescriptor.GetProperties(typeof(TSource)).Find(srt, false);
+            PropertyDescriptor? sort = TypeDescriptor.GetProperties(typeof(TSource)).Find(srt, false);
             return sort;
         }
         public static ViewDataDictionary ViewData<TSource>(this IEnumerable<TSource> contexto,
-            IQueryable<TSource> pre, int? pg = 1, int? rpp = 20, string srt = "Id",
-            bool? asc = true, string[]? val = null)
+            IQueryable<TSource> pre, int pg = 1, int rpp = 20, string srt = "Id",
+            bool asc = true, string[]? val = null)
         {
             Dictionary<string, List<string>> Filters = new() { };
 
@@ -38,19 +34,20 @@ namespace BiblioMit.Extensions
             {
                 foreach (var filter in val)
                 {
-                    var method = filter.Split(':').Take(2).ToArray();
+                    string[] method = filter.Split(':').Take(2).ToArray();
                     Filters[method[0]] = method[1].Split(',').ToList();
                 }
 
                 foreach (var filter in Filters)
                 {
-                    PropertyDescriptor prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
-
+                    PropertyDescriptor? prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
+                    if (prop != null)
                     pre = prop.PropertyType == typeof(DateTime) ?
                         pre.Where(x => filter.Value
                         .Contains(string.Format(CultureInfo.InvariantCulture, "{0:dd-MM-yyyy}", prop.GetValue(x)))) :
-                        pre.Where(x => filter.Value
-                        .Contains(prop.GetValue(x).ToString()));
+                        pre.Where(x =>
+                            filter.Value
+                            .Contains(prop.GetValue(x)));
                 }
             }
 
@@ -61,9 +58,9 @@ namespace BiblioMit.Extensions
             ViewData["srt"] = srt;
             ViewData["val"] = val;
             ViewData["Filters"] = Filters;
-            ViewData["asc"] = asc.Value;
-            ViewData["pg"] = pg.Value;
-            ViewData["rpp"] = rpp.Value;
+            ViewData["asc"] = asc;
+            ViewData["pg"] = pg;
+            ViewData["rpp"] = rpp;
 
             return ViewData;
         }
@@ -88,13 +85,13 @@ namespace BiblioMit.Extensions
 
                 foreach (var filter in Filters)
                 {
-                    PropertyDescriptor prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
-
+                    PropertyDescriptor? prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
+                    if(prop != null)
                     pre = prop.PropertyType == typeof(DateTime) ?
                         pre.Where(x => filter.Value
                         .Contains(string.Format(CultureInfo.InvariantCulture, "{0:dd-MM-yyyy}", prop.GetValue(x)))) :
                         pre.Where(x => filter.Value
-                        .Contains(prop.GetValue(x).ToString()));
+                        .Contains(prop.GetValue(x)));
                 }
             }
             return Filters;

@@ -6,9 +6,9 @@ namespace BiblioMit.Models.Entities.Variables
     {
         public int Id { get; set; }
         [Display(Name = "Name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
         [Display(Name = "Units")]
-        public string Units { get; set; }
+        public string? Units { get; set; }
         public virtual ICollection<Variable> Variables { get; } = new List<Variable>();
     }
 }

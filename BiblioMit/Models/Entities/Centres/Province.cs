@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-
-namespace BiblioMit.Models
+﻿namespace BiblioMit.Models
 {
     public class Province : Locality
     {
         public int RegionId { get; set; }
-        public virtual Region Region { get; set; }
+        public virtual Region? Region { get; set; }
         public virtual ICollection<Commune> Communes { get; } = new List<Commune>();
         public virtual ICollection<AreaCodeProvince> AreaCodeProvinces { get; } = new List<AreaCodeProvince>();
-        public string GetFullName() => $"{Name}, {Region.GetFullName()}";
+        public string GetFullName() => Region is null ? Name ?? string.Empty : $"{Name}, {Region.GetFullName()}";
     }
     //public class Provincia
     //{

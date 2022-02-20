@@ -18,6 +18,6 @@ namespace BiblioMit.Models
             }
         }
         [NotMapped]
-        public string OriginPsmbName { get; set; }
+        public string? OriginPsmbName { get; set; }
     }
 }

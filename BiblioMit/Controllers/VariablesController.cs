@@ -58,6 +58,7 @@ namespace BiblioMit.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Create([Bind("Id,PsmbId,VariableTypeId,Value,Date")] Variable variable)
         {
             if (ModelState.IsValid)
@@ -95,6 +96,7 @@ namespace BiblioMit.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,PsmbId,VariableTypeId,Value,Date")] Variable variable)
         {
             if (id != variable?.Id)
@@ -151,6 +153,7 @@ namespace BiblioMit.Controllers
         // POST: Variables/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Variable? variable = await _context.Variables.FindAsync(id).ConfigureAwait(false);

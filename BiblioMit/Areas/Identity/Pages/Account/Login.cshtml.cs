@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace BiblioMit.Areas.Identity.Pages.Account
 {
     [ValidateAntiForgeryToken]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public class LoginModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;

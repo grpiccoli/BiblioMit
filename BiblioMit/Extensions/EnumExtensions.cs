@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -99,36 +96,35 @@ namespace BiblioMit.Extensions
             ((TEnum[])Enum.GetValues(typeof(TEnum))).Select(t => t);
         public static IEnumerable<string> Enum2ListNames<TEnum>(this TEnum _)
             where TEnum : struct, IConvertible, IFormattable => 
-            ((TEnum[])Enum.GetValues(typeof(TEnum))).Select(t => t.ToString());
+            ((TEnum[])Enum.GetValues(typeof(TEnum))).Select(t => t.ToString() ?? string.Empty);
         #endregion
         //Get Enum Attributes
         #region EnumAttributes
-        public static string GetAttribute<TEnum>(this TEnum e, string attr)
+        public static string GetAttribute<TEnum>(this TEnum e, string attr) where TEnum : notnull
         {
-            if(e == null) return string.Empty;
-            DisplayAttribute? display = e.GetType().GetMember(e.ToString())
+            DisplayAttribute? display = e.GetType().GetMember(e.ToString() ?? string.Empty)
                   .FirstOrDefault()?.GetCustomAttribute<DisplayAttribute>(false);
             try
             {
                 return display?.GetType().InvokeMember($"Get{attr}",
                     BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public, null, display, null,
-                    CultureInfo.InvariantCulture) as string ?? e.ToString();
+                    CultureInfo.InvariantCulture) as string ?? e.ToString() ?? string.Empty;
             }
             catch (TargetInvocationException)
             {
-                return display?.GetType().GetProperty(attr).GetValue(display, null) as string ?? e.ToString();
+                return display?.GetType().GetProperty(attr)?.GetValue(display, null) as string ?? e.ToString() ?? string.Empty;
             }
         }
-        public static string GetAttrDescription<TEnum>(this TEnum e) => e.GetAttribute("Description");
-        public static string GetAttrPrompt<TEnum>(this TEnum e) => e.GetAttribute("Prompt");
-        public static string GetAttrName<TEnum>(this TEnum e) => e.GetAttribute("Name");
-        public static string GetAttrGroupName<TEnum>(this TEnum e) => e.GetAttribute("GroupName");
-        public static IEnumerable<string> GetNamesList<TEnum>(this TEnum e) =>
+        public static string GetAttrDescription<TEnum>(this TEnum e) where TEnum : notnull => e.GetAttribute("Description");
+        public static string GetAttrPrompt<TEnum>(this TEnum e) where TEnum : notnull => e.GetAttribute("Prompt");
+        public static string GetAttrName<TEnum>(this TEnum e) where TEnum : notnull => e.GetAttribute("Name");
+        public static string GetAttrGroupName<TEnum>(this TEnum e) where TEnum : notnull => e.GetAttribute("GroupName");
+        public static IEnumerable<string> GetNamesList<TEnum>(this TEnum e) where TEnum : notnull =>
             e.GetType()
                 .GetMembers(BindingFlags.Public | BindingFlags.Static)
               .Select(m => m
               .GetCustomAttribute<DisplayAttribute>(false)
-              ?.GetName() ?? m.ToString());
+              ?.GetName() ?? m.ToString() ?? string.Empty);
         #endregion
     }
 }

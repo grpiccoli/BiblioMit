@@ -31,7 +31,7 @@ namespace BiblioMit.Extensions
             dicToAdd.ForEach(x => dic[x.Key] = x.Value);
         public static void AddRangeOverride<TKey>(this IList<TKey> list, ICollection<TKey> listToAdd)
         {
-            list?.Clear();
+            list.Clear();
             listToAdd.ForEach(x => list.Add(x));
         }
         public static void AddOrSum(this ICollection<DeclarationDate> dates, DeclarationDate date)
@@ -40,7 +40,7 @@ namespace BiblioMit.Extensions
             if (dates == null) dates = new List<DeclarationDate>();
             if (dates.Any(d => d.Date == date.Date))
             {
-                dates.FirstOrDefault(d => d.Date == date.Date).Weight += date.Weight;
+                dates.First(d => d.Date == date.Date).Weight += date.Weight;
             }
             else
             {
@@ -53,7 +53,7 @@ namespace BiblioMit.Extensions
             if (dates.Any(d => d.SernapescaDeclarationId == date.SernapescaDeclarationId && d.Date == date.Date))
             {
                 var old = await dates
-                    .FirstOrDefaultAsync(d => d.SernapescaDeclarationId == date.SernapescaDeclarationId && d.Date == date.Date)
+                    .FirstAsync(d => d.SernapescaDeclarationId == date.SernapescaDeclarationId && d.Date == date.Date)
                     .ConfigureAwait(false);
                 old.Weight = date.Weight;
                 dates.Update(old);
@@ -69,42 +69,36 @@ namespace BiblioMit.Extensions
         }
         public static IEnumerable<T> MoveFirst<T>(this List<T> list, Func<T, bool> func)
         {
-            if (list == null) return list;
-            T item = list.FirstOrDefault(func);
+            T item = list.First(func);
             list.Remove(item);
             return list.Prepend(item);
         }
         public static IEnumerable<T> MoveLast<T>(this List<T> list, Func<T, bool> func)
         {
-            if (list == null) return list;
-            T item = list.FirstOrDefault(func);
+            T item = list.First(func);
             list.Remove(item);
             return list.Append(item);
         }
-        public static IEnumerable<TKey> ExceptNull<TKey>(this IEnumerable<TKey> list, IEnumerable<TKey> listExcept)
-        {
-            if (list == null) return listExcept;
-            if (listExcept == null) return list;
-            return list.Except(listExcept);
-        }
+        public static IEnumerable<TKey> ExceptNull<TKey>(this IEnumerable<TKey> list, IEnumerable<TKey> listExcept) =>
+            list.Except(listExcept);
         public static void AddRangeOverride<TKey>(this IList<TKey> list, IList<TKey> listToAdd)
         {
-            list?.Clear();
+            list.Clear();
             listToAdd.ForEach(x => list.Add(x));
         }
         public static void AddRangeOverride<TKey>(this IList<TKey> list, IEnumerable<TKey> listToAdd)
         {
-            list?.Clear();
+            list.Clear();
             listToAdd.ForEach(x => list.Add(x));
         }
         public static void AddRangeOverride<TKey>(this ICollection<TKey> list, IList<TKey> listToAdd)
         {
-            list?.Clear();
+            list.Clear();
             listToAdd.ForEach(x => list.Add(x));
         }
         public static void AddRangeOverride<TKey>(this ICollection<TKey> list, ICollection<TKey> listToAdd)
         {
-            list?.Clear();
+            list.Clear();
             listToAdd.ForEach(x => list.Add(x));
         }
         public static void AddRangeNewOnly<TKey, TValue>(this IDictionary<TKey, TValue> dic, IDictionary<TKey, TValue> dicToAdd) =>
@@ -133,9 +127,9 @@ namespace BiblioMit.Extensions
         }
         public static string GetValue(this Dictionary<(int, int), string> matrix, int column, int row)
         {
-            if(matrix != null && matrix.ContainsKey((column, row)))
+            if(matrix.ContainsKey((column, row)))
                 return matrix[(column, row)];
-            return null;
+            return string.Empty;
         }
     }
 }

@@ -52,6 +52,7 @@ namespace BiblioMit.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Create([Bind("Id,Name,Units")] VariableType variableType)
         {
             if (ModelState.IsValid)
@@ -85,6 +86,7 @@ namespace BiblioMit.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Units")] VariableType variableType)
         {
             if (id != variableType?.Id)
@@ -137,6 +139,7 @@ namespace BiblioMit.Controllers
         // POST: VariableTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             VariableType? variableType = await _context.VariableTypes.FindAsync(id).ConfigureAwait(false);

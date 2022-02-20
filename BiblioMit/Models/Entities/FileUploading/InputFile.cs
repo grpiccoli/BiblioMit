@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BiblioMit.Models
 {
@@ -7,7 +6,7 @@ namespace BiblioMit.Models
     {
         public int Id { get; set; }
         [Display(Name = "Código interno archivo")]
-        public string ClassName { get; set; }
+        public string? ClassName { get; set; }
         public virtual ICollection<Registry> Registries { get; } = new List<Registry>();
     }
 }

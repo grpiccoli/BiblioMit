@@ -49,6 +49,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     {
         o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
         o.CommandTimeout(10_000);
+        o.EnableRetryOnFailure();
     }
     ));
 
