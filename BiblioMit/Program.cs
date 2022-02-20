@@ -32,6 +32,9 @@ string os = Environment.OSVersion.Platform.ToString();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+    config.AddIniFile($"appsettings.{os}.json", optional: true, reloadOnChange: true));
+
 builder.WebHost
     .UseKestrel(c => {
         c.AddServerHeader = false;
@@ -78,7 +81,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedUICultures = supportedCultures;
 });
 
-//builder.Services.AddResponseCaching();
+builder.Services.AddResponseCaching();
 
 builder.Services.AddControllersWithViews(
 //    options => {
@@ -144,9 +147,8 @@ builder.Services.Configure<FlowSettings>(o =>
 builder.Services.AddScoped<IFlow, FlowService>();
 
 builder.Services.AddSignalR(options =>
-{
-    options.EnableDetailedErrors = true;
-});
+    options.EnableDetailedErrors = true);
+
 Libman.LoadJson();
 
 bool seed = args.Any(a => a == "seed");
@@ -240,6 +242,8 @@ FileExtensionContentTypeProvider provider = new();
 provider.Mappings[".webmanifest"] = "application/manifest+json";
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 //this is unnecessary it serves index.html and default.html
 //app.UseDefaultFiles();
 app.UseStaticFiles(new StaticFileOptions()
@@ -273,7 +277,7 @@ app.Use(async (context, next) =>
     context.Response.Headers[HeaderNames.Vary] =
         new string[] { "Accept-Encoding" };
 
-    await next().ConfigureAwait(false);
+    await next();
 });
 
 IOptions<RequestLocalizationOptions>? localOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
@@ -294,5 +298,7 @@ app.MapControllerRoute(
 
 app.MapHub<EntryHub>("/entryHub").RequireAuthorization();
 app.MapRazorPages();
+
+app.MapGet("/", () => DateTime.Now.Millisecond);
 
 app.Run();

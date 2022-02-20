@@ -18,7 +18,7 @@
 		<Description>Biblioteca y repositorio digital de Mytilus chilensis.</Description>
 		<PackageProjectUrl>https://www.bibliomit.cl</PackageProjectUrl>
 		<PackageIcon>wwwroot\mstile-144x144.png</PackageIcon>
-		<RepositoryUrl>https://github.com/grpiccoli/BM3</RepositoryUrl>
+		<RepositoryUrl>https://github.com/grpiccoli/BiblioMit</RepositoryUrl>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<!--<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>-->

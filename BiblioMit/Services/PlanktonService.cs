@@ -71,7 +71,8 @@ namespace BiblioMit.Services
             };
             using HttpClient client = new(handler);
             List<UserQueryableModel> users = _context.PlanktonUsers
-                .Select(u => new UserQueryableModel(u.Name, u.Password, u.Assays.Max(a => a.SamplingDate))).ToList();
+                .Where(p => p.Name != null && p.Password != null)
+                .Select(u => new UserQueryableModel(u.Name ?? string.Empty, u.Password ?? string.Empty, u.Assays.Max(a => a.SamplingDate))).ToList();
             HashSet<string> assayIds = new(_context.PlanktonAssays.Select(p => p.Id.ToString()).ToList(), null);
             foreach (UserQueryableModel user in users)
             {
