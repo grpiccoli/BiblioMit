@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BiblioMit.Models.ViewModels
+﻿namespace BiblioMit.Models.ViewModels
 {
     public class FilterVM
     {
@@ -12,12 +10,12 @@ namespace BiblioMit.Models.ViewModels
 
         public bool Asc { get; set; }
 
-        public string Controller { get; set; }
+        public string? Controller { get; set; }
 
-        public string Action { get; set; }
+        public string? Action { get; set; }
 
-        public string Srt { get; set; }
+        public string? Srt { get; set; }
 
-        public ICollection<string> Val { get; internal set;  }
+        public ICollection<string> Val { get; internal set; }
     }
 }

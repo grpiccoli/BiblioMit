@@ -1,15 +1,15 @@
+using BiblioMit.Data;
+using BiblioMit.Extensions;
+using BiblioMit.Models;
+using BiblioMit.Models.Entities.Centres;
+using BiblioMit.Models.Entities.Histopathology;
+using BiblioMit.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BiblioMit.Data;
-using BiblioMit.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Localization;
-using BiblioMit.Models.ViewModels;
 using System.Globalization;
-using BiblioMit.Extensions;
-using BiblioMit.Models.Entities.Histopathology;
-using BiblioMit.Models.Entities.Centres;
 
 namespace BiblioMit.Controllers
 {

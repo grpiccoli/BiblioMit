@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BiblioMit.Data;
 using BiblioMit.Models;
 using BiblioMit.Models.ForumViewModels;
 using BiblioMit.Models.PostViewModels;
 //using Amazon.S3;
 //using Amazon.S3.Model;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
-using BiblioMit.Data;
 
 namespace BiblioMit.Controllers
 {
@@ -29,7 +29,8 @@ namespace BiblioMit.Controllers
         public IActionResult Index()
         {
             var forums = _forumService.GetAll()
-                .Select(f => new ForumListingModel {
+                .Select(f => new ForumListingModel
+                {
                     Id = f.Id,
                     Name = f.Title,
                     Description = f.Description,
@@ -56,9 +57,9 @@ namespace BiblioMit.Controllers
             var postListings = posts.Select(p => new PostListingModel
             {
                 Id = p.Id,
-                AuthorId = p.User.Id,
-                AuthorRating = p.User.Rating,
-                AuthorName = p.User.UserName,
+                AuthorId = p.UserId,
+                AuthorRating = p.User is not null ? p.User.Rating : 0,
+                AuthorName = p.User?.UserName,
                 Title = p.Title,
                 DatePosted = p.Created.ToString(CultureInfo.InvariantCulture),
                 RepliesCount = p.Replies.Count(),
@@ -98,15 +99,15 @@ namespace BiblioMit.Controllers
         {
             var imageUri = "/images/ico/bibliomit.svg";
 
-            if(model?.ImageUpload != null)
+            if (model?.ImageUpload != null)
             {
                 imageUri = UploadForumImage(model.ImageUpload);
             }
 
             var forum = new Forum
             {
-                Title = model.Title,
-                Description = model.Description,
+                Title = model?.Title,
+                Description = model?.Description,
                 Created = DateTime.Now,
                 ImageUrl = new Uri(imageUri)
             };
@@ -143,13 +144,14 @@ namespace BiblioMit.Controllers
             //_userService.SetProfileImage(userId, new Uri(url));
 
             //return url;
-            return file.ToString();
+            return file.FileName;
         }
 
         private static ForumListingModel BuildForumListing(Post p)
         {
-            var forum = p.Forum;
+            Forum? forum = p.Forum;
 
+            if (forum == null) return new ForumListingModel();
             return BuildForumListing(forum);
         }
 

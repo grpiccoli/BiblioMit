@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BiblioMit.Models.ManageViewModels
+﻿namespace BiblioMit.Models.ManageViewModels
 {
     public class GenerateRecoveryCodesViewModel
     {

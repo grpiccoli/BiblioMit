@@ -1,24 +1,24 @@
-﻿using BiblioMit.Data;
+﻿using AngleSharp.Text;
+using BiblioMit.Data;
 using BiblioMit.Extensions;
 using BiblioMit.Models;
+using BiblioMit.Models.Entities.Centres;
+using BiblioMit.Models.Entities.Digest;
+using BiblioMit.Models.Entities.Environmental;
+using BiblioMit.Services.Hubs;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using OfficeOpenXml;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using DataTableExtensions = BiblioMit.Extensions.DataTableExtensions;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using AngleSharp.Text;
-using BiblioMit.Models.Entities.Digest;
-using BiblioMit.Models.Entities.Centres;
-using System.Linq.Expressions;
-using BiblioMit.Models.Entities.Environmental;
-using BiblioMit.Services.Hubs;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace BiblioMit.Services
 {
@@ -1029,7 +1029,7 @@ namespace BiblioMit.Services
             Type delegateType = typeof(Func<,>).MakeGenericType(entityType, typeof(bool));
             LambdaExpression predicate = Expression.Lambda(delegateType, operation, parameter);
 
-            if(firstOrDefaultAsyncMethod != null)
+            if (firstOrDefaultAsyncMethod != null)
             {
                 TEntity element = (TEntity)await firstOrDefaultAsyncMethod.InvokeAsync(null, new object[] { dbSet, predicate, default }).ConfigureAwait(false);
 
@@ -1196,7 +1196,7 @@ namespace BiblioMit.Services
             }
             ExcelRange vl = worksheet.Cells[row, data.LastColumn + 1];
             string? value = vl.Value.ToString();
-            if(value != null)
+            if (value != null)
             {
                 value = value.CleanCell();
                 return await GetValue(value, data, item)
@@ -1222,7 +1222,7 @@ namespace BiblioMit.Services
             {
                 data.LastPosition = matrix.SearchHeaders(data.Q);
             }
-            (int,int) valuePos = (data.LastPosition.Item1 + 1, data.LastPosition.Item2);
+            (int, int) valuePos = (data.LastPosition.Item1 + 1, data.LastPosition.Item2);
             if (matrix.ContainsKey(valuePos))
             {
                 string value = matrix[valuePos];

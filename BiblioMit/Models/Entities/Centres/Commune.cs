@@ -6,12 +6,12 @@ namespace BiblioMit.Models
     {
         [Display(Name = "Province")]
         public int ProvinceId { get; set; }
-        public virtual Province? Province { get; set; }
+        public virtual Province Province { get; set; } = new Province();
         [Display(Name = "Catchment Area")]
         public int? CatchmentAreaId { get; set; }
         public virtual CatchmentArea? CatchmentArea { get; set; }
         public virtual ICollection<Psmb> Psmbs { get; } = new List<Psmb>();
-        public string GetFullName() => Province is null ? Name : $"{Name}, {Province.GetFullName()}";
+        public string? GetFullName() => Province is null ? Name : $"{Name}, {Province.GetFullName()}";
     }
     //public class Comuna
     //{

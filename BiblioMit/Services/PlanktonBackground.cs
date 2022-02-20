@@ -57,7 +57,7 @@ namespace BiblioMit.Services
             }
         }
         // noop
-        public async Task StopAsync(CancellationToken cancellationToken) 
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
             LogPlanktonServiceStopped(_logger);
             _timer.Change(Timeout.Infinite, 0);

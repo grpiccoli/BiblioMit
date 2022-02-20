@@ -1,6 +1,6 @@
 ﻿namespace BiblioMit.Data
 {
-    public enum UserClaims 
+    public enum UserClaims
     {
         Institutions,
         Centres,

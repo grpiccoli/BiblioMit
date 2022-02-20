@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-namespace BiblioMit.Models.VM
+﻿namespace BiblioMit.Models.VM
 {
     public class LibManLibrary
     {

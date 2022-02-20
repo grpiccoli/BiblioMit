@@ -1,10 +1,5 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using System.Xml;
-using System.Xml.XPath;
 
 namespace BiblioMit.Extensions
 {
@@ -20,17 +15,22 @@ namespace BiblioMit.Extensions
             if (lang == "en") return text;
             try
             {
-                var file = string.Join('.', typeof(T).Namespace?.Split('.').Skip(1)
-                    .Append(typeof(T).Name).Append(lang).Append("resx"));
-                XmlReaderSettings settings = new()
+                string? nameSpace = typeof(T).Namespace;
+                if (nameSpace != null)
                 {
-                    IgnoreWhitespace = true
-                };
-                XmlDocument document = new();
-                document.Load($"Resources/{file}");
-                XmlNamespaceManager m = new(document.NameTable);
-                var element = document.SelectSingleNode($"ns:data[name='{text}']/ns:value", m);
-                return element == null ? text : element.InnerText;
+                    string file = string.Join('.', nameSpace.Split('.').Skip(1)
+                        .Append(typeof(T).Name).Append(lang).Append("resx"));
+                    XmlReaderSettings settings = new()
+                    {
+                        IgnoreWhitespace = true
+                    };
+                    XmlDocument document = new();
+                    document.Load($"Resources/{file}");
+                    XmlNamespaceManager m = new(document.NameTable);
+                    XmlNode? element = document.SelectSingleNode($"ns:data[name='{text}']/ns:value", m);
+                    return element == null ? text : element.InnerText;
+                }
+                return text;
             }
             catch (FileNotFoundException e)
             {

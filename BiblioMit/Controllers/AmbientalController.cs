@@ -1,14 +1,14 @@
-﻿using System.Globalization;
-using BiblioMit.Data;
+﻿using BiblioMit.Data;
 using BiblioMit.Models;
+using BiblioMit.Models.Entities.Semaforo;
+using BiblioMit.Models.VM;
+using BiblioMit.Models.VM.AmbientalVM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Range = BiblioMit.Models.Range;
-using BiblioMit.Models.Entities.Semaforo;
-using Microsoft.Extensions.Localization;
-using BiblioMit.Models.VM;
 using Microsoft.EntityFrameworkCore;
-using BiblioMit.Models.VM.AmbientalVM;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
+using Range = BiblioMit.Models.Range;
 
 namespace BiblioMit.Controllers
 {
@@ -38,12 +38,12 @@ namespace BiblioMit.Controllers
         public IActionResult PullPlankton()
         {
             string file = Path.Combine(
-                _environment.ContentRootPath, 
+                _environment.ContentRootPath,
                 "StaticFiles",
-                "html", 
+                "html",
                 "PullRecords.html");
             string[] htmlString = System.IO.File.ReadAllLines(file);
-            return View("PullPlankton", string.Join("",htmlString));
+            return View("PullPlankton", string.Join("", htmlString));
         }
         private IQueryable<ChoicesItem> CuencaChoices()
         {
@@ -51,11 +51,11 @@ namespace BiblioMit.Controllers
             return _context.CatchmentAreas
                 .AsNoTracking()
                 .Select(c => new ChoicesItemSelected
-            {
-                Value = c.Id,
-                Label = singlabel + c.Name,
-                Selected = c.Id == 1
-            });
+                {
+                    Value = c.Id,
+                    Label = singlabel + c.Name,
+                    Selected = c.Id == 1
+                });
         }
         private IQueryable<ChoicesItem> CommuneChoices() => _context.CatchmentAreas
             .AsNoTracking()
@@ -81,13 +81,13 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult PrivateAreasList() => Json(PrivateAreaChoices());
         [HttpGet]
-        public IActionResult ProvinciaList() 
+        public IActionResult ProvinciaList()
         {
             string full = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "StaticFiles",
                 "json",
-                CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, 
+                CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
                 "provinciafarmlist.json");
             return PhysicalFile(full, "application/json");
         }
@@ -100,7 +100,7 @@ namespace BiblioMit.Controllers
             //1 analysis, 2 psmb, 3 species, 4 size, 5 larva type, 6 rep stg, 7 sex
             if (a != 14 && a != 17 && !v.HasValue) throw new ArgumentNullException($"error: {a}, {psmb}, {sp}, {v}");
             if ((a == 13 || a == 15 || a == 16) && sp != 31) return null;
-            var psmbs = new Dictionary<int,int>{
+            var psmbs = new Dictionary<int, int>{
                 //Quetalco
                 {20, 101990},
                 //Vilipulli
@@ -126,11 +126,11 @@ namespace BiblioMit.Controllers
                     {
                         var range = v.Value % 10;
                         var db = _context.Tallas as IQueryable<Talla>;
-                        if(range != 8) db = db.Where(tl => tl.Range == (Range)range);
-                        if (psmb != 23) db = db.Where(tl => tl.SpecieSeed.Seed.Farm.Code == psmbs[psmb]);
-                        if (sp != 34) db = db.Where(tl => tl.SpecieSeed.SpecieId == sps[sp]);
+                        if (range != 8) db = db.Where(tl => tl.Range == (Range)range);
+                        if (psmb != 23) db = db.Where(tl => tl.SpecieSeed != null && tl.SpecieSeed.Seed != null && tl.SpecieSeed.Seed.Farm != null && tl.SpecieSeed.Seed.Farm.Code == psmbs[psmb]);
+                        if (sp != 34) db = db.Where(tl => tl.SpecieSeed != null && tl.SpecieSeed.SpecieId == sps[sp]);
                         selection = db
-                            .GroupBy(tl => tl.SpecieSeed.Seed.Date.Date)
+                            .GroupBy(tl => tl.SpecieSeed == null || tl.SpecieSeed.Seed == null ? DateTime.MinValue : tl.SpecieSeed.Seed.Date.Date)
                             .OrderBy(g => g.Key)
                             .Select(g => new AmData(
                                 g.Key.ToString(_dateFormat, CultureInfo.InvariantCulture),
@@ -144,10 +144,10 @@ namespace BiblioMit.Controllers
                         var type = v.Value % 10;
                         var db = _context.Larvas as IQueryable<Larva>;
                         if (type != 3) db = db.Where(tl => tl.LarvaType == (LarvaType)type);
-                        if (psmb != 23) db = db.Where(tl => tl.Larvae.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23) db = db.Where(tl => tl.Larvae != null && tl.Larvae.Farm != null && tl.Larvae.Farm.Code == psmbs[psmb]);
                         if (sp != 34) db = db.Where(tl => tl.SpecieId == sps[sp]);
                         selection = db
-                            .GroupBy(tl => tl.Larvae.Date.Date)
+                            .GroupBy(tl => tl.Larvae == null ? DateTime.MinValue : tl.Larvae.Date.Date)
                             .OrderBy(g => g.Key)
                             .Select(g => new AmData(
                                 g.Key.ToString(_dateFormat, CultureInfo.InvariantCulture),
@@ -159,7 +159,7 @@ namespace BiblioMit.Controllers
                     if (v.HasValue)
                     {
                         var db = _context.Spawnings as IQueryable<Spawning>;
-                        if (psmb != 23) db = db.Where(tl => tl.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23) db = db.Where(tl => tl.Farm != null && tl.Farm.Code == psmbs[psmb]);
                         selection = db
                             .GroupBy(tl => tl.Date.Date)
                             .OrderBy(g => g.Key)
@@ -173,10 +173,10 @@ namespace BiblioMit.Controllers
                     if (true)
                     {
                         var db = _context.SpecieSeeds as IQueryable<SpecieSeed>;
-                        if (psmb != 23) db = db.Where(tl => tl.Seed.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23) db = db.Where(tl => tl.Seed != null && tl.Seed.Farm != null && tl.Seed.Farm.Code == psmbs[psmb]);
                         if (sp != 34) db = db.Where(tl => tl.SpecieId == sps[sp]);
                         selection = db
-                            .GroupBy(tl => tl.Seed.Date.Date)
+                            .GroupBy(tl => tl.Seed == null ? DateTime.MinValue : tl.Seed.Date.Date)
                             .OrderBy(g => g.Key)
                             .Select(g => new AmData(
                                 g.Key.ToString(_dateFormat, CultureInfo.InvariantCulture),
@@ -189,9 +189,9 @@ namespace BiblioMit.Controllers
                     {
                         var stage = v.Value % 10;
                         var db = _context.ReproductiveStages.Where(tl => tl.Stage == (Stage)stage);
-                        if (psmb != 23) db = db.Where(tl => tl.Spawning.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23) db = db.Where(tl => tl.Spawning != null && tl.Spawning.Farm != null && tl.Spawning.Farm.Code == psmbs[psmb]);
                         selection = db
-                            .GroupBy(tl => tl.Spawning.Date.Date)
+                            .GroupBy(tl => tl.Spawning == null ? DateTime.MinValue : tl.Spawning.Date.Date)
                             .OrderBy(g => g.Key)
                             .Select(g => new AmData(
                                 g.Key.ToString(_dateFormat, CultureInfo.InvariantCulture),
@@ -203,7 +203,7 @@ namespace BiblioMit.Controllers
                     if (v.HasValue)
                     {
                         var db = _context.Spawnings as IQueryable<Spawning>;
-                        if (psmb != 23) db = db.Where(tl => tl.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23) db = db.Where(tl => tl.Farm != null && tl.Farm.Code == psmbs[psmb]);
                         selection = db
                             .GroupBy(tl => tl.Date.Date)
                             .OrderBy(g => g.Key)
@@ -217,10 +217,10 @@ namespace BiblioMit.Controllers
                     if (true)
                     {
                         var db = _context.SpecieSeeds as IQueryable<SpecieSeed>;
-                        if (psmb != 23) db = db.Where(tl => tl.Seed.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23) db = db.Where(tl => tl.Seed != null && tl.Seed.Farm != null && tl.Seed.Farm.Code == psmbs[psmb]);
                         if (sp != 34) db = db.Where(tl => tl.SpecieId == sps[sp]);
                         selection = db
-                            .GroupBy(tl => tl.Seed.Date.Date)
+                            .GroupBy(tl => tl.Seed == null ? DateTime.MinValue : tl.Seed.Date.Date)
                             .OrderBy(g => g.Key)
                             .Select(g => new AmData(
                                 g.Key.ToString(_dateFormat, CultureInfo.InvariantCulture),
@@ -273,25 +273,25 @@ namespace BiblioMit.Controllers
             {
                 var phyto = _context.Phytoplanktons
                                 .AsNoTracking()
-                    .Where(e => e.PlanktonAssay.SamplingDate >= start && e.PlanktonAssay.SamplingDate <= end);
+                    .Where(e => e.PlanktonAssay != null && e.PlanktonAssay.SamplingDate >= start && e.PlanktonAssay.SamplingDate <= end);
                 phyto = type switch
                 {
                     'f' => phyto
-                    .Where(p => p.Species.Genus.GroupId == id),
+                    .Where(p => p.Species != null && p.Species.Genus != null && p.Species.Genus.GroupId == id),
                     'g' => phyto
-                    .Where(p => p.Species.GenusId == id),
+                    .Where(p => p.Species != null && p.Species.GenusId == id),
                     's' => phyto
                     .Where(p => p.SpeciesId == id),
                     _ => phyto
                 };
                 phyto = order switch
                 {
-                    0 => phyto.Where(e => e.PlanktonAssay.Psmb != null && e.PlanktonAssay.Psmb.Commune != null && e.PlanktonAssay.Psmb.Commune.CatchmentAreaId == area),
-                    1 => phyto.Where(e => e.PlanktonAssay.PsmbId == area),
-                    _ => phyto.Where(e => e.PlanktonAssay.Psmb != null && e.PlanktonAssay.Psmb.CommuneId == area)
+                    0 => phyto.Where(e => e.PlanktonAssay != null && e.PlanktonAssay.Psmb != null && e.PlanktonAssay.Psmb.Commune != null && e.PlanktonAssay.Psmb.Commune.CatchmentAreaId == area),
+                    1 => phyto.Where(e => e.PlanktonAssay != null && e.PlanktonAssay.PsmbId == area),
+                    _ => phyto.Where(e => e.PlanktonAssay != null && e.PlanktonAssay.Psmb != null && e.PlanktonAssay.Psmb.CommuneId == area)
                 };
                 return Json(phyto
-                    .GroupBy(e => e.PlanktonAssay.SamplingDate.Date)
+                    .GroupBy(e => e.PlanktonAssay == null ? DateTime.MinValue : e.PlanktonAssay.SamplingDate.Date)
                     .OrderBy(g => g.Key)
                     .Select(g => new AmData(
                         g.Key.ToString(_dateFormat, CultureInfo.InvariantCulture),
@@ -333,7 +333,7 @@ namespace BiblioMit.Controllers
                     .OrderBy(g => g.Key)
                     .Select(g => new AmData(
                         g.Key.ToString(_dateFormat, CultureInfo.InvariantCulture),
-                        Math.Round(g.Where(a=>a.Salinity.HasValue).Select(a => a.Salinity ?? 0).Average(a => a), 2) )),
+                        Math.Round(g.Where(a => a.Salinity.HasValue).Select(a => a.Salinity ?? 0).Average(a => a), 2))),
                     //temp
                     _ => assays
                     .Where(a => a.Temperature.HasValue)
@@ -341,7 +341,7 @@ namespace BiblioMit.Controllers
                     .OrderBy(g => g.Key)
                     .Select(g => new AmData(
                         g.Key.ToString(_dateFormat, CultureInfo.InvariantCulture),
-                        Math.Round(g.Where(a => a.Temperature.HasValue).Select(a => a.Temperature ?? 0).Average(a => a), 2) ))
+                        Math.Round(g.Where(a => a.Temperature.HasValue).Select(a => a.Temperature ?? 0).Average(a => a), 2)))
                 });
             }
         }

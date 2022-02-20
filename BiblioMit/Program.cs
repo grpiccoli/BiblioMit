@@ -36,7 +36,8 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
     config.AddJsonFile($"appsettings.{os}.json", optional: true, reloadOnChange: true));
 
 builder.WebHost
-    .UseKestrel(c => {
+    .UseKestrel(c =>
+    {
         c.AddServerHeader = false;
         c.Limits.MaxConcurrentConnections = 200;
         c.Limits.MaxConcurrentUpgradedConnections = 200;
@@ -97,8 +98,8 @@ builder.Services.AddControllersWithViews(
         o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
     ;
 
-builder.Services.AddProgressiveWebApp(new PwaOptions 
-{ 
+builder.Services.AddProgressiveWebApp(new PwaOptions
+{
     RegisterServiceWorker = true,
     RoutesToPreCache = "/Home/Index"
 });
@@ -299,6 +300,6 @@ app.MapControllerRoute(
 app.MapHub<EntryHub>("/entryHub").RequireAuthorization();
 app.MapRazorPages();
 
-app.MapGet("/", () => DateTime.Now.Millisecond);
+//app.MapGet("/", () => DateTime.Now.Millisecond);
 
 app.Run();

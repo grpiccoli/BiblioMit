@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace BiblioMit.Models
+﻿namespace BiblioMit.Models
 {
     public interface IForum
     {
@@ -11,7 +8,7 @@ namespace BiblioMit.Models
         Task Delete(int forumId);
         Task UpdateForumTitle(int forumId, string newTitle);
         Task UpdateForumDescription(int forumId, string newDescription);
-        IEnumerable<ApplicationUser> GetActiveUsers(int id);
+        IEnumerable<ApplicationUser?> GetActiveUsers(int id);
         bool HasRecentPost(int id);
     }
 }

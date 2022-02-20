@@ -32,7 +32,7 @@ namespace BiblioMit.Pwa
 
             if (string.Equals(context.TagName, "body", StringComparison.OrdinalIgnoreCase))
             {
-                if ((_options.AllowHttp || (_accessor.HttpContext is not null && _accessor.HttpContext.Request.IsHttps) ) || _env.IsDevelopment())
+                if ((_options.AllowHttp || (_accessor.HttpContext is not null && _accessor.HttpContext.Request.IsHttps)) || _env.IsDevelopment())
                 {
                     output.PostContent.AppendHtml(_script);
                 }

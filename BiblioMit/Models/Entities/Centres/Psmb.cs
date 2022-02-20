@@ -2,7 +2,7 @@
 using BiblioMit.Models.Entities.Centres;
 using BiblioMit.Models.Entities.Variables;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+//using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
@@ -17,7 +17,7 @@ namespace BiblioMit.Models
         public int Code { get; set; }
         [Range(101101, 116305)]
         public int? CommuneId { get; set; }
-        public virtual Commune? Commune { get; set; }
+        public virtual Commune Commune { get; set; } = new Commune();
         public PsmbType Discriminator { get; set; }
         public string? Name { get; private set; }
         public void SetName(string value)
@@ -45,7 +45,7 @@ namespace BiblioMit.Models
             if (x is null) return y is null;
             return x.Equals(y);
         }
-        public static bool operator !=([AllowNull] Psmb? x, [AllowNull] Psmb? y) => (x is null && y is null) || ((x is not null && y is not null) && (x != y));
+        public static bool operator !=([AllowNull] Psmb? x, [AllowNull] Psmb? y) => !(x == y);
         public override int GetHashCode() => HashCode.Combine(Id, Discriminator);
         public bool Equals([AllowNull] Psmb? other)
         {
@@ -82,31 +82,31 @@ namespace BiblioMit.Models
         public virtual ICollection<Sampling> Samplings { get; } = new List<Sampling>();
         public virtual ICollection<Variable> Variables { get; } = new List<Variable>();
         public string GetFullName() => string.Join(",", new string?[] { Code.ToString(), Name, Commune?.GetFullName() });
-        [NotMapped]
-        public Company CompanyNN
-        {
-            get => Company ?? new();
-        }
-        [NotMapped]
-        public int CommuneIdNN
-        {
-            get => CompanyId ?? 0;
-        }
-        [NotMapped]
-        public Commune CommuneNN
-        {
-            get => Commune ?? new();
-        }
-        [NotMapped]
-        public int CompanyIdNN
-        {
-            get => CompanyId ?? 0;
-        }
-        [NotMapped]
-        public Polygon PolygonNN
-        {
-            get => Polygon ?? new();
-        }
+        //[NotMapped]
+        //public Company CompanyNN
+        //{
+        //    get => Company ?? new();
+        //}
+        //[NotMapped]
+        //public int CommuneIdNN
+        //{
+        //    get => CompanyId ?? 0;
+        //}
+        //[NotMapped]
+        //public Commune CommuneNN
+        //{
+        //    get => Commune ?? new();
+        //}
+        //[NotMapped]
+        //public int CompanyIdNN
+        //{
+        //    get => CompanyId ?? 0;
+        //}
+        //[NotMapped]
+        //public Polygon PolygonNN
+        //{
+        //    get => Polygon ?? new();
+        //}
 
     }
 }

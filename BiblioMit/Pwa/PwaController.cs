@@ -33,16 +33,18 @@ namespace BiblioMit.Pwa
                 string js = _customServiceworker.GetCustomServiceworker(_options.CustomServiceWorkerStrategyFileName);
                 return Content(InsertStrategyOptions(js));
             }
-
             else
             {
                 string fileName = _options.Strategy + ".js";
                 Assembly assembly = typeof(PwaController).Assembly;
-                Stream resourceStream = assembly.GetManifestResourceStream($"BiblioMit.Pwa.ServiceWorker.Files.{fileName}");
-
-                using var reader = new StreamReader(resourceStream);
-                string js = await reader.ReadToEndAsync();
-                return Content(InsertStrategyOptions(js));
+                Stream? resourceStream = assembly.GetManifestResourceStream($"BiblioMit.Pwa.ServiceWorker.Files.{fileName}");
+                if(resourceStream != null)
+                {
+                    using StreamReader reader = new(resourceStream);
+                    string js = await reader.ReadToEndAsync();
+                    return Content(InsertStrategyOptions(js));
+                }
+                return NotFound();
             }
         }
 
@@ -65,8 +67,8 @@ namespace BiblioMit.Pwa
             Response.ContentType = "text/html";
 
             Assembly assembly = typeof(PwaController).Assembly;
-            Stream resourceStream = assembly.GetManifestResourceStream("BiblioMit.Pwa.ServiceWorker.Files.offline.html");
-
+            Stream? resourceStream = assembly.GetManifestResourceStream("BiblioMit.Pwa.ServiceWorker.Files.offline.html");
+            if(resourceStream == null) return NotFound();
             using var reader = new StreamReader(resourceStream);
             return Content(await reader.ReadToEndAsync());
         }
@@ -78,7 +80,7 @@ namespace BiblioMit.Pwa
         [HttpGet]
         public IActionResult WebManifest([FromServices] WebManifest wm)
         {
-            if (wm == null)
+            if (wm == null || wm.RawJson == null)
             {
                 return NotFound();
             }

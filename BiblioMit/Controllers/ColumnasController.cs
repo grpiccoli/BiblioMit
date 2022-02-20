@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BiblioMit.Data;
+using BiblioMit.Extensions;
+using BiblioMit.Models;
+using BiblioMit.Models.Entities.Digest;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BiblioMit.Data;
-using BiblioMit.Models;
-using BiblioMit.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using BiblioMit.Models.Entities.Digest;
 using Microsoft.Extensions.Localization;
 
 namespace BiblioMit.Controllers
@@ -51,14 +51,14 @@ namespace BiblioMit.Controllers
 
             var regs = _context.Registries.Include(r => r.InputFile).Include(r => r.Headers);
 
-            var two2five = User.Claims.Any(c => c.Value == UserClaims.Digest.ToString() );
-            var one = User.Claims.Any(c => c.Value == UserClaims.PSMB.ToString() );
+            var two2five = User.Claims.Any(c => c.Value == UserClaims.Digest.ToString());
+            var one = User.Claims.Any(c => c.Value == UserClaims.PSMB.ToString());
 
-            if(one && two2five)
+            if (one && two2five)
             {
                 return View(await regs.Where(r => r.InputFileId < 6).ToListAsync().ConfigureAwait(false));
             }
-            else if(two2five)
+            else if (two2five)
             {
                 return View(await regs.Where(r => r.InputFileId > 1 && r.InputFileId < 6).ToListAsync().ConfigureAwait(false));
             }
@@ -78,7 +78,7 @@ namespace BiblioMit.Controllers
             var separator = sep[0];
             Registry? model = await _context.Registries
                 .FindAsync(id).ConfigureAwait(false);
-            if(model == null) throw new ArgumentOutOfRangeException(nameof(id));
+            if (model == null) throw new ArgumentOutOfRangeException(nameof(id));
             var heads = _context.Headers.Where(h => h.RegistryId == id);
             model.Description = string.IsNullOrWhiteSpace(description) ? string.Empty : description;
             model.Operation = string.IsNullOrWhiteSpace(conversion) ? string.Empty : conversion;

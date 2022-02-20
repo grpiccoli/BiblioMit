@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BiblioMit.Data;
-using Microsoft.AspNetCore.Authorization;
+﻿using BiblioMit.Data;
 using BiblioMit.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BiblioMit.Controllers
 {
@@ -144,7 +144,7 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var excel = await _context.InputFiles.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            InputFile excel = await _context.InputFiles.SingleAsync(m => m.Id == id).ConfigureAwait(false);
             _context.InputFiles.Remove(excel);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction(nameof(Index));

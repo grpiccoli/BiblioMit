@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.ObjectModel;
 
 namespace BiblioMit.Models.ManageViewModels
 {
@@ -16,6 +12,6 @@ namespace BiblioMit.Models.ManageViewModels
 
         public bool ShowRemoveButton { get; set; }
 
-        public string StatusMessage { get; set; }
+        public string? StatusMessage { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BiblioMit.Models
 {
@@ -23,7 +22,7 @@ namespace BiblioMit.Models
         [Display(Name = "Lipofuscin")]
         Lipofuscin,
 
-        [Display(Name ="Gonadal atresia")]
+        [Display(Name = "Gonadal atresia")]
         Atresia,
 
         [Display(Name = "Ciliates")]
@@ -70,7 +69,7 @@ namespace BiblioMit.Models
         [Required]
         public int IndividualId { get; set; }
         //Parent
-        public virtual Individual Individual { get; set; }
+        public virtual Individual Individual { get; set; } = new Individual();
         //ATT
         [Required]
         [Display(Name = "Symbiont or Condition")]
@@ -82,7 +81,7 @@ namespace BiblioMit.Models
         public virtual ICollection<Photo> Photos { get; } = new List<Photo>();
 
         [Display(Name = "Count")]
-        [Range(1,1000, ErrorMessage = "This value must be between {0} and {1}")]
+        [Range(1, 1000, ErrorMessage = "This value must be between {0} and {1}")]
         public int? Count { get; set; }
 
         [Display(Name = "Degree")]
@@ -95,7 +94,7 @@ namespace BiblioMit.Models
         d0,
         [Display(Name = "1 Incipient", Description = "Sparse presence observed")]
         d1,
-        [Display(Name = "2 Frequent", Description ="Visible in several locations in the histological plate")]
+        [Display(Name = "2 Frequent", Description = "Visible in several locations in the histological plate")]
         d2,
         [Display(Name = "3 Disseminated", Description = "Present in multiple tissues")]
         d3

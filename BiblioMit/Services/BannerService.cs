@@ -41,7 +41,7 @@ namespace BiblioMit.Services
             if (activeOnly)
             {
                 var active = model.Where(b => b.Active()).ToList();
-                if(active.Count != 0)
+                if (active.Count != 0)
                 {
                     model = active;
                 }
@@ -59,11 +59,12 @@ namespace BiblioMit.Services
                 var mask = "background-color: rgba(0, 0, 0, 0.6)";
                 var active = item.i == 0 ? "active" : "";
                 var lang = _localizer["en"].Value;
-                var text = item.value.Texts.FirstOrDefault(t => t.Lang.ToString() == lang);
+                var text = item?.value.Texts?.FirstOrDefault(t => t.Lang.ToString() == lang);
                 if (text == null) continue;
-                modelo.Indicators.Add(GetCarouselButton(item.i,active));
-                var btns = "";
-                if (item.value.Rgbs != null && item.value.Rgbs.Any())
+                if(item != null)
+                    modelo.Indicators.Add(GetCarouselButton(item.i, active));
+                string btns = string.Empty;
+                if (item != null && item.value.Rgbs != null && item.value.Rgbs.Any())
                 {
                     if (item.value.Rgbs.Count > 1 && string.IsNullOrWhiteSpace(item.value.MaskAngle))
                     {
@@ -81,12 +82,12 @@ namespace BiblioMit.Services
                     btns = string.Join("", text.Btns.Select(b => @$"<a id=""{b.Id}"" class=""btn-banner btn btn-outline-light btn-lg m-2"" href=""{b.Uri}""
 role=""button"" rel=""nofollow"" target=""_blank"">{b.Title}</a>"));
                 }
-                mask = $@".banner-{item.i} .mask{{{mask};}}";
+                mask = $@".banner-{item?.i} .mask{{{mask};}}";
                 if (!string.IsNullOrWhiteSpace(text.Color))
                     mask += $@"[id=""{text.Id}""]{{color:{text.Color} !important}}";
-                modelo.Styles.Add(string.Join(" ", item.value.Imgs.Select(i => $@"@media (max-width: {(int)i.Size}px){{ 
+                modelo.Styles.Add(string.Join(" ", item?.value.Imgs is null ? new List<string>() : item.value.Imgs.Select(i => $@"@media (max-width: {(int)i.Size}px){{ 
 .banner-{item.i}{{background-image: url('../Home/GetBanner?f={i.FileName}');}}}}")) + mask);
-                modelo.Items.Add(@$"<div class=""carousel-item banner-{item.i} {active}"">
+                modelo.Items.Add(@$"<div class=""carousel-item banner-{item?.i} {active}"">
                      <div class=""mask"">
                            <div class=""d-flex justify-content-center align-items-center h-100"">
                                 <div id=""{text.Id}"" data-lang=""{text.Lang}"" data-position=""{text.Position.GetAttrName()}"" class=""caption text-white text-center {text.Position.GetAttrDescription()} d-none d-md-block"">
@@ -100,7 +101,7 @@ role=""button"" rel=""nofollow"" target=""_blank"">{b.Title}</a>"));
             }
             return modelo;
         }
-        public string GetCarouselButton(int id, string active) => 
+        public string GetCarouselButton(int id, string active) =>
             @$"<button type=""button"" data-bs-target=""#{_carouselId}"" data-bs-slide-to=""{id}"" class=""{active}""></button>";
     }
     public class Carousel

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
+using System.Reflection;
 
 namespace BiblioMit.Extensions
 {
@@ -7,31 +7,25 @@ namespace BiblioMit.Extensions
     {
         public static DataTable SetColumnsOrder(this DataTable table, params string[] columnNames)
         {
-            if (columnNames is null) throw new ArgumentNullException(nameof(columnNames));
-            if(table != null)
+            int columnIndex = 0;
+            foreach (var columnName in columnNames)
             {
-                int columnIndex = 0;
-                foreach (var columnName in columnNames)
-                {
-                    table.Columns[columnName].SetOrdinal(columnIndex);
-                    columnIndex++;
-                }
+                table.Columns[columnName]?.SetOrdinal(columnIndex);
+                columnIndex++;
             }
             return table;
         }
         public static DataTable SetColumnsNames(this DataTable table, params string[] columnNames)
         {
-            if (columnNames is null) throw new ArgumentNullException(nameof(columnNames));
-            if (table != null)
-                for (int i = 0; i < table.Columns.Count; i++)
-                    table.Columns[i].ColumnName = columnNames[i];
+            for (int i = 0; i < table.Columns.Count; i++)
+                table.Columns[i].ColumnName = columnNames[i];
             return table;
         }
-        public static Type GetEnumType(string enumName)
+        public static Type? GetEnumType(string enumName)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                var type = assembly.GetType(enumName);
+                Type? type = assembly.GetType(enumName);
                 if (type == null)
                     continue;
                 if (type.IsEnum)

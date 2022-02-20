@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BiblioMit.Data;
+using BiblioMit.Models.Entities.Variables;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BiblioMit.Data;
-using BiblioMit.Models.Entities.Variables;
 
 namespace BiblioMit.Controllers
 {
@@ -157,7 +157,7 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Variable? variable = await _context.Variables.FindAsync(id).ConfigureAwait(false);
-            if(variable != null)
+            if (variable != null)
             {
                 _context.Variables.Remove(variable);
                 await _context.SaveChangesAsync().ConfigureAwait(false);

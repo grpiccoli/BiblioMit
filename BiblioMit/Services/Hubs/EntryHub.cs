@@ -1,6 +1,5 @@
 ﻿using BiblioMit.Services.Hubs;
 using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
 
 namespace BiblioMit.Services
 {
@@ -30,7 +29,7 @@ namespace BiblioMit.Services
     }
     public enum Status
     {
-        warning,danger,info,success
+        warning, danger, info, success
     }
     public enum SendFunction
     {

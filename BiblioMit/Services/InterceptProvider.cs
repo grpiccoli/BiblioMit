@@ -26,7 +26,7 @@ namespace BiblioMit.Services
             {
                 if (arg is null) return string.Empty;
                 string? argStr = arg.ToString();
-                if(string.IsNullOrEmpty(argStr)) return string.Empty;
+                if (string.IsNullOrEmpty(argStr)) return string.Empty;
                 string? formattedRut = argStr.RUTFormat();
                 if (formattedRut is null) return string.Empty;
                 return formattedRut;

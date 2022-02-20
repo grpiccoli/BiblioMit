@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Collections.ObjectModel;
 
 namespace BiblioMit.Extensions
 {
@@ -42,12 +42,12 @@ namespace BiblioMit.Extensions
                 {
                     PropertyDescriptor? prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
                     if (prop != null)
-                    pre = prop.PropertyType == typeof(DateTime) ?
-                        pre.Where(x => filter.Value
-                        .Contains(string.Format(CultureInfo.InvariantCulture, "{0:dd-MM-yyyy}", prop.GetValue(x)))) :
-                        pre.Where(x =>
-                            filter.Value
-                            .Contains(prop.GetValue(x)));
+                        pre = prop.PropertyType == typeof(DateTime) ?
+                            pre.Where(x => filter.Value
+                            .Contains(string.Format(CultureInfo.InvariantCulture, "{0:dd-MM-yyyy}", prop.GetValue(x)))) :
+                            pre.Where(x =>
+                                filter.Value
+                                .Contains(prop.GetValue(x)));
                 }
             }
 
@@ -86,12 +86,12 @@ namespace BiblioMit.Extensions
                 foreach (var filter in Filters)
                 {
                     PropertyDescriptor? prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
-                    if(prop != null)
-                    pre = prop.PropertyType == typeof(DateTime) ?
-                        pre.Where(x => filter.Value
-                        .Contains(string.Format(CultureInfo.InvariantCulture, "{0:dd-MM-yyyy}", prop.GetValue(x)))) :
-                        pre.Where(x => filter.Value
-                        .Contains(prop.GetValue(x)));
+                    if (prop != null)
+                        pre = prop.PropertyType == typeof(DateTime) ?
+                            pre.Where(x => filter.Value
+                            .Contains(string.Format(CultureInfo.InvariantCulture, "{0:dd-MM-yyyy}", prop.GetValue(x)))) :
+                            pre.Where(x => filter.Value
+                            .Contains(prop.GetValue(x)));
                 }
             }
             return Filters;

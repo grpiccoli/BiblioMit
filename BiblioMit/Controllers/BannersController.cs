@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BiblioMit.Data;
+﻿using BiblioMit.Data;
 using BiblioMit.Models.Entities.Ads;
-using Microsoft.AspNetCore.Authorization;
 using BiblioMit.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 
 namespace BiblioMit.Controllers
@@ -211,7 +211,7 @@ namespace BiblioMit.Controllers
                     string uniqueFileName = UploadedFile(img);
 
                     var edit = _context.Imgs.FirstOrDefault(i => i.Size == img.Size);
-                    if(edit != null)
+                    if (edit != null)
                     {
                         edit.FileName = uniqueFileName;
                         _context.Update(edit);

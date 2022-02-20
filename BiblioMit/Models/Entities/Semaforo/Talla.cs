@@ -8,7 +8,7 @@ namespace BiblioMit.Models
         public int SpecieSeedId { get; set; }
         public virtual SpecieSeed? SpecieSeed { get; set; }
         public Range Range { get; set; }
-        [Range(0,100)]
+        [Range(0, 100)]
         public double Proportion { get; set; }
     }
 }

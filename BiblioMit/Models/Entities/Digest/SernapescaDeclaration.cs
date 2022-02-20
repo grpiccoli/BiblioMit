@@ -62,12 +62,13 @@ namespace BiblioMit.Models
             && OriginPsmbId == q.OriginPsmbId
             && DeclarationNumber == q.DeclarationNumber;
         }
-        public static bool operator ==(SernapescaDeclaration x, SernapescaDeclaration y)
+        public static bool operator ==(SernapescaDeclaration? x, SernapescaDeclaration? y)
         {
             if (x is null) return y is null;
+            if (y is null) return x is null;
             return x.Equals(y);
         }
-        public static bool operator !=(SernapescaDeclaration x, SernapescaDeclaration y) => !(x == y);
+        public static bool operator !=(SernapescaDeclaration? x, SernapescaDeclaration? y) => !(x == y);
         public override int GetHashCode() => HashCode.Combine(Id);
         public bool Equals(SernapescaDeclaration other)
         {

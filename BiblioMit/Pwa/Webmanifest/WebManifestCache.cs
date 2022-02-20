@@ -1,8 +1,8 @@
-﻿using System.Text.RegularExpressions;
+﻿using BiblioMit.Extensions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.FileProviders;
 using System.Text.Json;
-using BiblioMit.Extensions;
+using System.Text.RegularExpressions;
 
 namespace BiblioMit.Pwa
 {

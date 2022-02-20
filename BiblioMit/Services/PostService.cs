@@ -47,7 +47,7 @@ namespace BiblioMit.Services
             GetAll().HasQuery(searchQuery);
         public IEnumerable<Post> GetLatestsPosts(int n) =>
             GetAll().OrderByDescending(p => p.Created).Take(n);
-        public IEnumerable<Post> GetPostsByForum(int id) => 
+        public IEnumerable<Post> GetPostsByForum(int id) =>
             _context.Forums.First(p => p.Id == id).Posts;
     }
 }

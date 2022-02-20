@@ -42,7 +42,7 @@ namespace BiblioMit.Services
         }
         public SourcesModel(BundleConfig bundle)
         {
-            Href = bundle.OutputFileName.Replace("wwwroot", "~");
+            Href = bundle.OutputFileName?.Replace("wwwroot", "~") ?? string.Empty;
             Extension = Path.GetExtension(Href).TrimStart('.');
             LibType = Extension switch
             {
@@ -53,7 +53,7 @@ namespace BiblioMit.Services
         }
         public SourcesModel(Compile compile)
         {
-            Href = compile.OutputFile.Replace("wwwroot", "~");
+            Href = compile.OutputFile?.Replace("wwwroot", "~") ?? string.Empty;
             Extension = Path.GetExtension(Href).TrimStart('.');
             LibType = LibType.cssLocal;
         }
@@ -130,7 +130,7 @@ namespace BiblioMit.Services
             {
                 foreach (BundleConfig bundle in bundles)
                 {
-                    string key = Regex.Replace(bundle.OutputFileName, @"^wwwroot/.*/(.*)(.min)?.(css|js|woff2|woff|ttf)$", "$1").Replace(".min", "");
+                    string key = Regex.Replace(bundle.OutputFileName ?? string.Empty, @"^wwwroot/.*/(.*)(.min)?.(css|js|woff2|woff|ttf)$", "$1").Replace(".min", "");
                     if (!Libs.ContainsKey(key))
                         Libs[key] = new HashSet<SourcesModel>();
                     Libs[key].Add(new SourcesModel(bundle));
@@ -143,7 +143,7 @@ namespace BiblioMit.Services
             {
                 foreach (Compile compile in compiles)
                 {
-                    string key = Regex.Replace(compile.OutputFile, @"^wwwroot/.*/(.*).css$", "$1")
+                    string key = Regex.Replace(compile.OutputFile ?? string.Empty, @"^wwwroot/.*/(.*).css$", "$1")
 #if !DEBUG
                     .Replace(".css", ".min.css")
 #endif

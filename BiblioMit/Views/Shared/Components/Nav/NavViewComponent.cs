@@ -81,7 +81,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            Collection<Link> producersLinks = new() 
+            Collection<Link> producersLinks = new()
             {
                 new Link
                 {
@@ -105,13 +105,13 @@ namespace BiblioMit.Views.Components.Nav
             bool client = authenticated && User.IsInRole(RoleData.Client.ToString());
             bool centres = authenticated && claims.Contains(UserClaims.Centres);
             if (centres)
-            producersLinks.Add(new Link
-            {
-                Controller = "Centres",
-                Action = "Producers",
-                Name = _localizer["Aquaculture Farms"],
-                Icon = "fas fa-industry"
-            });
+                producersLinks.Add(new Link
+                {
+                    Controller = "Centres",
+                    Action = "Producers",
+                    Name = _localizer["Aquaculture Farms"],
+                    Icon = "fas fa-industry"
+                });
             producersLinks.Add(new Link
             {
                 Controller = "Centres",

@@ -1,18 +1,18 @@
-﻿using BiblioMit.Extensions;
-using BiblioMit.Data;
+﻿using BiblioMit.Data;
+using BiblioMit.Extensions;
 using BiblioMit.Models;
-using BiblioMit.Models.ViewModels;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Data;
+using BiblioMit.Models.Entities.Ads;
 using BiblioMit.Models.Entities.Digest;
 using BiblioMit.Models.Entities.Environmental;
-using BiblioMit.Services.Interfaces;
-using System.Globalization;
 using BiblioMit.Models.Entities.Environmental.Plancton;
-using System.Security.Claims;
-using BiblioMit.Models.Entities.Ads;
+using BiblioMit.Models.ViewModels;
+using BiblioMit.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
+using System.Globalization;
+using System.Security.Claims;
 
 namespace BiblioMit.Services
 {
@@ -416,7 +416,7 @@ END";
         public async Task<Task> AddBulkFiles(string path)
         {
             DirectoryInfo? basePathInfo = Directory.GetParent(_environment.ContentRootPath)?.Parent;
-            if(basePathInfo == null) throw new NullReferenceException(nameof(basePathInfo));
+            if (basePathInfo == null) throw new NullReferenceException(nameof(basePathInfo));
             string pwd = Path.Combine(basePathInfo.FullName, path);
             try
             {

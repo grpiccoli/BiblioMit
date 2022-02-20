@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+﻿using BiblioMit.Data;
 using BiblioMit.Models;
-using BiblioMit.Services;
 using BiblioMit.Models.ProfileViewModels;
+using BiblioMit.Services;
 //using Microsoft.AspNetCore.Http;
 //using Amazon.S3;
 //using Amazon.S3.Model;
 //using System.IO;
 using Microsoft.AspNetCore.Authorization;
-using BiblioMit.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BiblioMit.Controllers
 {
@@ -99,7 +99,7 @@ namespace BiblioMit.Controllers
 
             //_userService.SetProfileImage(userId, new Uri(url));
 
-            return RedirectToAction("Details","Profiles",new { id = userId });
+            return RedirectToAction("Details", "Profiles", new { id = userId });
         }
     }
 }

@@ -21,7 +21,7 @@ namespace BiblioMit.Models.ViewModels
         [Range(1, 1000, ErrorMessage = "This value must be between {0} and {1}")]
         public int? Count { get; set; }
 
-        public Dictionary<string,bool> Configs { get; } = new Dictionary<string, bool>();
+        public Dictionary<string, bool> Configs { get; } = new Dictionary<string, bool>();
 
         [Display(Name = "Presence")]
         public bool Check { get; set; }

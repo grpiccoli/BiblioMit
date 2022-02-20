@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BiblioMit.Models
 {
@@ -9,16 +8,16 @@ namespace BiblioMit.Models
 
         [Required(ErrorMessage = "Nombre es requerido")]
         [Display(Name = "Nombre")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Display(Name = "Apellido")]
-        public string Last { get; set; }
+        public string? Last { get; set; }
 
         [Display(Name = "Cargo")]
         public Position Position { get; set; }
 
         [Display(Name = "Descripción de Cargo")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Display(Name = "Teléfono")]
         [DataType(DataType.PhoneNumber)]
@@ -34,6 +33,6 @@ namespace BiblioMit.Models
         public DateTime CloseHr { get; set; }
 
         [DataType(DataType.EmailAddress)]
-        public string Email { get; set; }
+        public string? Email { get; set; }
     }
 }

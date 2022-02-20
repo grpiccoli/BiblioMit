@@ -1,12 +1,9 @@
 ﻿using BiblioMit.Models;
 using BiblioMit.Models.Entities.Digest;
-using System;
-using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
 //using NCalc;
-using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace BiblioMit.Extensions
 {
@@ -15,19 +12,19 @@ namespace BiblioMit.Extensions
         public static string? ParseAcronym(this string text)
         {
             string? noDiacritics = text?.ToUpperInvariant().RemoveDiacritics();
-            if(!string.IsNullOrEmpty(noDiacritics)) return Regex.Replace(noDiacritics, @"[^A-Z]", "");
+            if (!string.IsNullOrEmpty(noDiacritics)) return Regex.Replace(noDiacritics, @"[^A-Z]", "");
             return text;
         }
         public static double? ParseDouble(
-            this string text, 
-            int? decimalPlaces = null, 
-            char? decimalSeparator = null, 
+            this string text,
+            int? decimalPlaces = null,
+            char? decimalSeparator = null,
             bool? deleteAfter2ndNegative = null,
             string? operation = null)
         {
             if (string.IsNullOrEmpty(text)) return null;
             text = Regex.Replace(text, @"[^\d-\.,]", "");
-            if (deleteAfter2ndNegative.HasValue && deleteAfter2ndNegative.Value) 
+            if (deleteAfter2ndNegative.HasValue && deleteAfter2ndNegative.Value)
                 text = Regex.Replace(text, @"([^^])\-.*", "$1");
             double? num = null;
             if (decimalSeparator.HasValue)
@@ -35,7 +32,7 @@ namespace BiblioMit.Extensions
                 text = Regex.Replace(text, @$"[^\d\{decimalSeparator.Value}]", "");
                 if (string.IsNullOrEmpty(text)) return null;
                 var orders = text.Split(decimalSeparator.Value);
-                if(orders.Length > 1)
+                if (orders.Length > 1)
                     num = double.Parse($"{string.Join("", orders.SkipLast(1))}.{orders.Last()}", CultureInfo.InvariantCulture);
                 else
                     num = double.Parse($"{string.Join("", orders.First())}", CultureInfo.InvariantCulture);
@@ -58,8 +55,8 @@ namespace BiblioMit.Extensions
                 num = orders.Count() switch
                 {
                     1 => double.Parse($"{sign}{orders.First()}", CultureInfo.InvariantCulture),
-                    2 => SolveDouble(sign,orders.First(),orders.Last()),
-                    _ => double.Parse($"{sign}{string.Join("",orders.SkipLast(1))}.{orders.Last()}", CultureInfo.InvariantCulture)
+                    2 => SolveDouble(sign, orders.First(), orders.Last()),
+                    _ => double.Parse($"{sign}{string.Join("", orders.SkipLast(1))}.{orders.Last()}", CultureInfo.InvariantCulture)
                 };
             }
             if (operation != null)

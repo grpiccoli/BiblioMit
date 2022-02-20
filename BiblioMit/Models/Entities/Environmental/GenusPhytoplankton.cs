@@ -11,7 +11,7 @@ namespace BiblioMit.Models.Entities.Environmental
         public string? Name { get; private set; }
         [Required, DisallowNull]
         public string? NormalizedName { get; private set; }
-        public void SetName([DisallowNull]string value)
+        public void SetName([DisallowNull] string value)
         {
             NormalizedName = value;
             Name = value.FirstCharToUpper();

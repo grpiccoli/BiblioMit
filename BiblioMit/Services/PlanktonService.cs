@@ -21,7 +21,7 @@ namespace BiblioMit.Services
 {
     public class UserQueryableModel
     {
-        private readonly DateTime _mindate = new(2003,1,1);
+        private readonly DateTime _mindate = new(2003, 1, 1);
         public UserQueryableModel(string name, string password, DateTime? maxDate)
         {
             Name = name;

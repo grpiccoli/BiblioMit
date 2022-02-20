@@ -101,7 +101,7 @@ namespace BiblioMit.Controllers
         public IActionResult Output(int id)
         {
             SernapescaEntry? model = _context.SernapescaEntries.Find(id);
-            if(model == null) return NotFound();
+            if (model == null) return NotFound();
             return PartialView("_Output", model);
         }
         // GET: Entries/Create
@@ -119,7 +119,7 @@ namespace BiblioMit.Controllers
             if (qqfile == null) return Json(new { success = false, error = "error file null" });
 
             if (qqfile.Length > 0)
-            try
+                try
                 {
                     Task result = await _import.AddAsync(qqfile).ConfigureAwait(false);
                     return Json(new
@@ -207,7 +207,7 @@ namespace BiblioMit.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Edit(int id, 
+        public async Task<IActionResult> Edit(int id,
             [Bind("Id,ApplicationUserId,IP,ProcessStart,ProcessTime,Stage,DeclarationType")] SernapescaEntry entry)
         {
             if (id != entry?.Id)
@@ -238,14 +238,14 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            return NotFound();
+                return NotFound();
 
             SernapescaEntry? entry = await _context.SernapescaEntries
                 .Include(e => e.ApplicationUser)
                 .SingleOrDefaultAsync(m => m.Id == id)
                 .ConfigureAwait(false);
             if (entry == null)
-            return NotFound();
+                return NotFound();
 
             return View(entry);
         }

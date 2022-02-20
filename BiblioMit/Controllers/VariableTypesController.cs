@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BiblioMit.Data;
+﻿using BiblioMit.Data;
 using BiblioMit.Models.Entities.Variables;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BiblioMit.Controllers
 {
@@ -143,7 +143,7 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             VariableType? variableType = await _context.VariableTypes.FindAsync(id).ConfigureAwait(false);
-            if(variableType != null)
+            if (variableType != null)
             {
                 _context.VariableTypes.Remove(variableType);
                 await _context.SaveChangesAsync().ConfigureAwait(false);

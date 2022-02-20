@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Adds ServiceWorker services to the specified <see cref="IServiceCollection"/>.
         /// </summary>
-        public static IServiceCollection AddServiceWorker(this IServiceCollection services, string baseRoute = "", string offlineRoute = Constants.Offlineroute, ServiceWorkerStrategy strategy = ServiceWorkerStrategy.CacheFirstSafe, bool registerServiceWorker = true, bool registerWebManifest = true, string cacheId = Constants.DefaultCacheId, string routesToPreCache = "", string routesToIgnore ="", string customServiceWorkerFileName = Constants.CustomServiceworkerFileName)
+        public static IServiceCollection AddServiceWorker(this IServiceCollection services, string baseRoute = "", string offlineRoute = Constants.Offlineroute, ServiceWorkerStrategy strategy = ServiceWorkerStrategy.CacheFirstSafe, bool registerServiceWorker = true, bool registerWebManifest = true, string cacheId = Constants.DefaultCacheId, string routesToPreCache = "", string routesToIgnore = "", string customServiceWorkerFileName = Constants.CustomServiceworkerFileName)
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<ITagHelperComponent, ServiceWorkerTagHelperComponent>();

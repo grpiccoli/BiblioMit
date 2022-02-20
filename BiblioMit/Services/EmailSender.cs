@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
-using System.Net.Mail;
-using System.Net;
+﻿using SendGrid;
 using SendGrid.Helpers.Mail;
-using SendGrid;
-using Microsoft.Extensions.Configuration;
 
 namespace BiblioMit.Services
 {

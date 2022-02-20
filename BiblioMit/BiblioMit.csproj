@@ -20,6 +20,7 @@
 		<PackageIcon>wwwroot\mstile-144x144.png</PackageIcon>
 		<RepositoryUrl>https://github.com/grpiccoli/BiblioMit</RepositoryUrl>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<!--<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>-->
 	</PropertyGroup>

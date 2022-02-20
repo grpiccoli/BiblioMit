@@ -12,10 +12,10 @@ namespace BiblioMit.Extensions
 {
     public static class StringExtensions
     {
-        private readonly static List<string> romanNumerals = 
+        private readonly static List<string> romanNumerals =
             new()
             { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
-        private readonly static List<int> numerals = 
+        private readonly static List<int> numerals =
             new()
             { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
         private const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -67,8 +67,8 @@ namespace BiblioMit.Extensions
             return value;
         }
         public static int GetColumn(this string col) =>
-            col.Select((c, i) => 
-            (letters.IndexOf(c, StringComparison.Ordinal) + 1) * letters.Length ^ (col.Length - i - 1) )
+            col.Select((c, i) =>
+            (letters.IndexOf(c, StringComparison.Ordinal) + 1) * letters.Length ^ (col.Length - i - 1))
                 .Sum();
         public static int Cell2Row(this string cell) => cell.ParseInt() ?? 0;
         public static string? AddColumnRow(this string cell, int columns = 0, int rows = 0)
@@ -175,7 +175,7 @@ namespace BiblioMit.Extensions
             //first toupper to gain speed
             //< ( ) needed for species - , and . needed for numbers spaces needed for everything else
             string? noDiacritics = text.ToUpperInvariant().RemoveDiacritics();
-            if(string.IsNullOrWhiteSpace(noDiacritics)) return noDiacritics;
+            if (string.IsNullOrWhiteSpace(noDiacritics)) return noDiacritics;
             return Regex.Replace(Regex.Replace(noDiacritics.Trim(), @"\s{2,}", " "), @"[^A-Z0-9 _\.\-,\/\<\(\)\@;\:]", "");
         }
         public static string CleanScientificName(this string name)

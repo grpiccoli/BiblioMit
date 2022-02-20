@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace BiblioMit.Models.SamplingViewModels
@@ -13,7 +11,7 @@ namespace BiblioMit.Models.SamplingViewModels
         [Display(Name = "Culturing Centre")]
         public int CentreId { get; set; }
 
-        public string Season { get; set; }
+        public string? Season { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MMM/yyyy}")]

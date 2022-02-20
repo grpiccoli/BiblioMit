@@ -1,15 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace BiblioMit.Services
 {
@@ -25,7 +18,7 @@ namespace BiblioMit.Services
 
         public async Task Invoke(HttpContext context, CancellationToken cancellationToken)
         {
-            if (context != null && context.Request.Path.Value.Equals("/sitemap.xml", StringComparison.OrdinalIgnoreCase))
+            if (context.Request.Path.Value != null && context.Request.Path.Value.Equals("/sitemap.xml", StringComparison.OrdinalIgnoreCase))
             {
                 var stream = context.Response.Body;
                 context.Response.StatusCode = 200;
@@ -45,7 +38,7 @@ namespace BiblioMit.Services
                             || method.ReturnType.Name == "IActionResult" || method.ReturnType.Name == "Task`1";
                         var test2 = method.CustomAttributes.Any(c => c.AttributeType == typeof(AllowAnonymousAttribute));
 
-                        if(test1 && test2)
+                        if (test1 && test2)
                         {
                             cnt++;
                             sitemapContent += "<url>"

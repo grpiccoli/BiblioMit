@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BiblioMit.Extensions
+﻿namespace BiblioMit.Extensions
 {
     public static class DateTimeExtensions
     {

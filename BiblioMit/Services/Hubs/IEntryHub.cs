@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace BiblioMit.Services.Hubs
+﻿namespace BiblioMit.Services.Hubs
 {
     public interface IEntryHub
     {

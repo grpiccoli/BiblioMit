@@ -1,6 +1,6 @@
-﻿using BiblioMit.Services;
+﻿using BiblioMit.Models;
+using BiblioMit.Services;
 using System.Reflection;
-using BiblioMit.Models;
 
 namespace BiblioMit.Extensions
 {
@@ -39,11 +39,11 @@ namespace BiblioMit.Extensions
         {
             if (@this is null) return null;
             Task? task = (Task?)@this.Invoke(obj, parameters);
-            if(task is not null)
+            if (task is not null)
             {
                 await task.ConfigureAwait(false);
                 PropertyInfo? resultProperty = task.GetType().GetProperty("Result");
-                if(resultProperty is not null) return resultProperty.GetValue(task);
+                if (resultProperty is not null) return resultProperty.GetValue(task);
             }
             return null;
         }

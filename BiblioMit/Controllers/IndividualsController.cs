@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BiblioMit.Data;
+using BiblioMit.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BiblioMit.Data;
-using BiblioMit.Models;
 
 namespace BiblioMit.Controllers
 {
@@ -157,7 +157,7 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var individual = await _context.Individuals.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Individual individual = await _context.Individuals.SingleAsync(m => m.Id == id).ConfigureAwait(false);
             _context.Individuals.Remove(individual);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");

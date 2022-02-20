@@ -1,9 +1,9 @@
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
-using System.Text.RegularExpressions;
-using OfficeOpenXml;
-using Microsoft.Extensions.Localization;
 using BiblioMit.Extensions;
+using Microsoft.Extensions.Localization;
+using OfficeOpenXml;
+using System.Text.RegularExpressions;
 
 namespace BiblioMit.Services
 {
@@ -91,7 +91,7 @@ namespace BiblioMit.Services
             foreach (var td in tds)
             {
                 string content = td.TextContent.CleanCell();
-                if(!string.IsNullOrWhiteSpace(content))
+                if (!string.IsNullOrWhiteSpace(content))
                     Matrix.Add(
                         (ColumnIndex, RowIndex), content
                     );

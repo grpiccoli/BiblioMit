@@ -9,7 +9,7 @@ namespace BiblioMit.Models
         public int FarmId { get; set; }
         public virtual Farm? Farm { get; set; }
         public DateTime Date { get; set; }
-        [Range(0,100)]
+        [Range(0, 100)]
         [Display(Description = "%")]
         public int MaleProportion { get; set; }
         [Range(0, 100)]

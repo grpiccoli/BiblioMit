@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BiblioMit.Models;
+﻿using BiblioMit.Models;
 using BiblioMit.Models.PostViewModels;
 using BiblioMit.Models.ReplyViewModels;
-using Microsoft.AspNetCore.Identity;
 using BiblioMit.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BiblioMit.Controllers
 {
@@ -30,22 +30,22 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Index(int Id)
         {
-            var post = _postService.GetById(Id);
+            Post post = _postService.GetById(Id);
 
-            var replies = BuildPostReplies(post.Replies);
+            IEnumerable<PostReplyModel> replies = BuildPostReplies(post.Replies);
 
-            var model = new PostIndexModel(
+            PostIndexModel model = new(
                 post.Title,
-                post.User.Id,
-                post.User.Email,
-                post.User.UserName,
-                post.Forum.Title,
-                post.User.ProfileImageUrl,
+                post.User?.Id,
+                post.User?.Email,
+                post.User?.UserName,
+                post.Forum?.Title,
+                post.User?.ProfileImageUrl,
                 replies
                 )
             {
                 Id = post.Id,
-                AuthorRating = post.User.Rating,
+                AuthorRating = post.User?.Rating,
                 Created = post.Created,
                 PostContent = post.Content,
                 ForumId = post.ForumId,
@@ -57,12 +57,12 @@ namespace BiblioMit.Controllers
         [Authorize]
         public IActionResult Create(int id)
         {
-            var forum = _forumService.GetbyId(id);
-            var model = new NewPostModel(
+            Forum forum = _forumService.GetbyId(id);
+            NewPostModel model = new(
                 forum.Title,
                 forum.ImageUrl
             )
-            { 
+            {
                 AuthorName = User.Identity?.Name,
                 ForumId = forum.Id
             };
@@ -84,7 +84,7 @@ namespace BiblioMit.Controllers
 
             await _userService.UpdateUserRating(userId, typeof(Post)).ConfigureAwait(false);
 
-            return RedirectToAction("Index", "Posts", new { id = post.Id } );
+            return RedirectToAction("Index", "Posts", new { id = post.Id });
         }
 
         private static Post BuildPost(NewPostModel model, ApplicationUser user)
@@ -104,10 +104,10 @@ namespace BiblioMit.Controllers
             return replies.Select(r => new PostReplyModel
             {
                 Id = r.Id,
-                AuthorName = r.User.UserName,
-                AuthorId = r.User.Id,
-                AuthorImageUrl = r.User.ProfileImageUrl,
-                AuthorRating = r.User.Rating,
+                AuthorName = r.User?.UserName,
+                AuthorId = r.User?.Id,
+                AuthorImageUrl = r.User?.ProfileImageUrl,
+                AuthorRating = r.User?.Rating,
                 Created = r.Created,
                 ReplyContent = r.Content
             });

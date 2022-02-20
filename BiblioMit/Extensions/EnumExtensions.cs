@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Reflection;
+﻿using BiblioMit.Models.VM;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using BiblioMit.Models.VM;
+using System.Reflection;
 
 namespace BiblioMit.Extensions
 {
@@ -21,7 +21,7 @@ namespace BiblioMit.Extensions
             };
         public static MultiSelectList Description2MultiSelect<TEnum>(this TEnum _,
             IEnumerable<string>? selectedValues = null)
-            where TEnum : struct, IConvertible, IFormattable => 
+            where TEnum : struct, IConvertible, IFormattable =>
             new(((TEnum[])Enum.GetValues(typeof(TEnum)))
                 .Select(s => new SelectListItem
                 {
@@ -33,23 +33,23 @@ namespace BiblioMit.Extensions
             ((TEnum[])Enum.GetValues(typeof(TEnum))).GroupBy(e => e.GetAttrGroupName())
             .OrderBy(g => g.Key)
             .Select((g, i) => new ChoicesGroup
+            {
+                Label = g.Key,
+                Choices = g.Select(t => new ChoicesItem
                 {
-                    Label = g.Key,
-                    Choices = g.Select(t => new ChoicesItem 
-                    { 
-                        Label = $"{t.GetAttrName()} ({t.GetAttrPrompt()})", 
-                        Value = prefix + t.ToString("d", null)
-                    })
-                });
-    public static MultiSelectList Name2MultiSelect<TEnum>(this TEnum _,
-            IEnumerable<string>? selectedValues = null)
-            where TEnum : struct, IConvertible, IFormattable =>
-            new(((TEnum[])Enum.GetValues(typeof(TEnum)))
-                .Select(s => new SelectListItem
-                {
-                    Value = s.ToString("d", null),
-                    Text = s.GetAttrName()
-                }), selectedValues);
+                    Label = $"{t.GetAttrName()} ({t.GetAttrPrompt()})",
+                    Value = prefix + t.ToString("d", null)
+                })
+            });
+        public static MultiSelectList Name2MultiSelect<TEnum>(this TEnum _,
+                IEnumerable<string>? selectedValues = null)
+                where TEnum : struct, IConvertible, IFormattable =>
+                new(((TEnum[])Enum.GetValues(typeof(TEnum)))
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.ToString("d", null),
+                        Text = s.GetAttrName()
+                    }), selectedValues);
         public static MultiSelectList Flag2MultiSelect<TEnum>(this TEnum _,
             IEnumerable<string>? selectedValues = null)
             where TEnum : struct, IConvertible, IFormattable =>
@@ -64,11 +64,11 @@ namespace BiblioMit.Extensions
         #region Enum2Select
         public static IEnumerable<SelectListItem> Enum2Select<TEnum>(this TEnum @enum, string? name = null)
     where TEnum : struct, IConvertible, IFormattable => name switch
-            {
-                "Name" => @enum.Name2Select(),
-                "Description" => @enum.Description2Select(),
-                _ => @enum.Flag2Select()
-            };
+    {
+        "Name" => @enum.Name2Select(),
+        "Description" => @enum.Description2Select(),
+        _ => @enum.Flag2Select()
+    };
         public static IEnumerable<SelectListItem> Name2Select<TEnum>(this TEnum _)
             where TEnum : struct, IConvertible, IFormattable => ((TEnum[])Enum.GetValues(typeof(TEnum)))
                 .Select(t => new SelectListItem
@@ -84,18 +84,18 @@ namespace BiblioMit.Extensions
                     Text = t.GetAttrDescription()
                 });
         public static IEnumerable<SelectListItem> Flag2Select<TEnum>(this TEnum _)
-            where TEnum : struct, IConvertible, IFormattable => 
-            ((TEnum[])Enum.GetValues(typeof(TEnum))).Select(t => 
+            where TEnum : struct, IConvertible, IFormattable =>
+            ((TEnum[])Enum.GetValues(typeof(TEnum))).Select(t =>
             new SelectListItem
             {
                 Value = t.ToString("d", null),
                 Text = t.ToString()
             });
         public static IEnumerable<TEnum> Enum2List<TEnum>(this TEnum _)
-            where TEnum : struct, IConvertible, IFormattable => 
+            where TEnum : struct, IConvertible, IFormattable =>
             ((TEnum[])Enum.GetValues(typeof(TEnum))).Select(t => t);
         public static IEnumerable<string> Enum2ListNames<TEnum>(this TEnum _)
-            where TEnum : struct, IConvertible, IFormattable => 
+            where TEnum : struct, IConvertible, IFormattable =>
             ((TEnum[])Enum.GetValues(typeof(TEnum))).Select(t => t.ToString() ?? string.Empty);
         #endregion
         //Get Enum Attributes

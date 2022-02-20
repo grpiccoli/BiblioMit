@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace BiblioMit.Models.VM
+﻿namespace BiblioMit.Models.VM
 {
     public class Analytics
     {

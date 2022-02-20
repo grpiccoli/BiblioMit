@@ -18,7 +18,7 @@ namespace BiblioMit.Models
         public int Added { get; set; }
         public int Observations { get; set; }
         public bool Success { get; set; }
-        [Display(Name ="Range")]
+        [Display(Name = "Range")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime Min { get; set; }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace BiblioMit.Services
 {
@@ -10,15 +6,18 @@ namespace BiblioMit.Services
     {
         static ReflectiveEnumerator() { }
 
-        public static IEnumerable<T> GetEnumerableOfType<T>(params object[] constructorArgs) where T: class
+        public static IEnumerable<T> GetEnumerableOfType<T>(params object[] constructorArgs) where T : class
         {
             List<T> objects = new();
-            foreach(Type type in 
-                Assembly.GetAssembly(typeof(T)).GetTypes()
-                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(T))))
-            {
-                objects.Add((T)Activator.CreateInstance(type, constructorArgs));
-            }
+            IEnumerable<Type>? types = Assembly.GetAssembly(typeof(T))?.GetTypes()
+                .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(T)));
+            if(types != null)
+                foreach (Type type in types)
+                {
+                    object? instance = Activator.CreateInstance(type, constructorArgs);
+                    if(instance != null)
+                        objects.Add((T)instance);
+                }
             return objects;
         }
     }

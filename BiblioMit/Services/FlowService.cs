@@ -29,19 +29,19 @@ namespace BiblioMit.Services
         }
         public string FlowJs(string function, SortedDictionary<string, string> form)
         {
-            var args = string.Join("&",
+            string args = string.Join("&",
                 form.Select(kvp => string.Format(CultureInfo.InvariantCulture, "{0}={1}", kvp.Key, kvp.Value)));
-            var script = Path.Combine(
+            string script = Path.Combine(
                 _environment.ContentRootPath,
                 "src",
-                "scripts", 
+                "scripts",
                 "flow.js");
-            var fileName = _os switch
+            string fileName = _os switch
             {
                 "Unix" => "node",
                 _ => "node.exe"
             };
-            using var process = new Process
+            using Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -52,8 +52,8 @@ namespace BiblioMit.Services
                     RedirectStandardError = true
                 }
             };
-            var s = string.Empty;
-            var e = string.Empty;
+            string s = string.Empty;
+            string e = string.Empty;
             process.OutputDataReceived += (sender, data) => s += data.Data;
             process.ErrorDataReceived += (sender, data) => e += data.Data;
             process.Start();
@@ -65,96 +65,93 @@ namespace BiblioMit.Services
         }
         public SortedDictionary<string, string> Sign(SortedDictionary<string, string> ccForm)
         {
-            if(ccForm != null)
-            {
-                var s = FlowJs("sign", ccForm);
-                ccForm.Add("s", s);
-            }
+            string s = FlowJs("sign", ccForm);
+            ccForm.Add("s", s);
             return ccForm;
         }
-        public Customer CustomerCreate(int id, string name, string email)
+        public Customer? CustomerCreate(int id, string name, string email)
         {
-            var ccForm = new SortedDictionary<string, string>
+            SortedDictionary<string, string> ccForm = new()
             {
-                { "apiKey", _settings.ApiKey },
+                { "apiKey", _settings.ApiKey ?? string.Empty },
                 { "name", name },
                 { "email", email },
                 { "externalId", id.ToString(CultureInfo.InvariantCulture) }
             };
-            var text = FlowJs("customer/create", ccForm);
-            var json = JsonSerializer.Deserialize<Customer>(text, JsonCase.Camel);
+            string text = FlowJs("customer/create", ccForm);
+            Customer? json = JsonSerializer.Deserialize<Customer>(text, JsonCase.Camel);
             return json;
         }
-        public Register CustomerRegister(string id, Uri returnUrl)
+        public Register? CustomerRegister(string id, Uri returnUrl)
         {
-            var ccForm = new SortedDictionary<string, string>
+            SortedDictionary<string, string> ccForm = new()
             {
-                { "apiKey", _settings.ApiKey },
+                { "apiKey", _settings.ApiKey ?? string.Empty },
                 { "customerId", id },
                 { "url_return", returnUrl.AbsolutePath }
             };
-            var text = FlowJs("customer/register", ccForm);
-            var json = JsonSerializer.Deserialize<Register>(text, JsonCase.Camel);
+            string text = FlowJs("customer/register", ccForm);
+            Register? json = JsonSerializer.Deserialize<Register>(text, JsonCase.Camel);
             return json;
         }
-        public Customer GetRegisterStatus(string token)
+        public Customer? GetRegisterStatus(string token)
         {
-            var ccForm = new SortedDictionary<string, string>
+            SortedDictionary<string, string> ccForm = new()
             {
-                { "apiKey", _settings.ApiKey },
+                { "apiKey", _settings.ApiKey ?? string.Empty },
                 { "token", token }
             };
-            var text = FlowJs("customer/getRegisterStatus", ccForm);
-            var json = JsonSerializer.Deserialize<Customer>(text, JsonCase.Camel);
+            string text = FlowJs("customer/getRegisterStatus", ccForm);
+            Customer? json = JsonSerializer.Deserialize<Customer>(text, JsonCase.Camel);
             return json;
         }
-        public Customer CustomerCharge(int id, int amount, string subject, string order)
+        public Customer? CustomerCharge(int id, int amount, string subject, string order)
         {
-            var ccForm = new SortedDictionary<string, string>
+            SortedDictionary<string, string> ccForm = new()
             {
-                { "apiKey", _settings.ApiKey },
+                { "apiKey", _settings.ApiKey ?? string.Empty },
                 { "customerId", id.ToString(CultureInfo.InvariantCulture) },
                 { "amount", amount.ToString(CultureInfo.InvariantCulture) },
                 { "subject", subject },
                 { "commerceOrder", order },
                 { "currency", "UF" }
             };
-            var text = FlowJs("customer/charge", ccForm);
-            var json = JsonSerializer.Deserialize<Customer>(text, JsonCase.Camel);
+            string text = FlowJs("customer/charge", ccForm);
+            Customer? json = JsonSerializer.Deserialize<Customer>(text, JsonCase.Camel);
             return json;
         }
         public string PaymentCreate(int id, string description, int ammount, string email)
         {
-            var scheme = _httpContextAccessor.HttpContext.Request.Scheme;
-            var confirmUri = _urlHelper.Action("Index", "Payment", null, scheme);
-            var returnUri = _urlHelper.Action("Index", "Payment", null, scheme); 
-            var ccForm = new SortedDictionary<string, string>
+            string? scheme = _httpContextAccessor.HttpContext?.Request.Scheme;
+            string? confirmUri = _urlHelper.Action("Index", "Payment", null, scheme);
+            string? returnUri = _urlHelper.Action("Index", "Payment", null, scheme);
+            SortedDictionary<string, string> ccForm = new()
             {
-                { "apiKey", _settings.ApiKey },
+                { "apiKey", _settings.ApiKey ?? string.Empty },
                 { "commerceOrder", id.ToString(CultureInfo.InvariantCulture) },
                 { "subject", description },
                 { "currency", "CLP" },
                 { "amount", ammount.ToString(CultureInfo.InvariantCulture) },
                 { "email", email },
-                { "urlConfirmation", confirmUri.ToString() },
-                { "urlReturn", returnUri.ToString() }
+                { "urlConfirmation", confirmUri ?? string.Empty },
+                { "urlReturn", returnUri ?? string.Empty }
             };
-            var text = FlowJs("payment/create", ccForm);
-            var json = JsonSerializer.Deserialize<Register>(text, JsonCase.Camel);
-            return json.Url + "?token=" + json.Token;
+            string text = FlowJs("payment/create", ccForm);
+            Register? json = JsonSerializer.Deserialize<Register>(text, JsonCase.Camel);
+            return json?.Url + "?token=" + json?.Token;
         }
     }
     public class Register
     {
-        public Uri Url { get; set; }
-        public string Token { get; set; }
+        public Uri? Url { get; set; }
+        public string? Token { get; set; }
         public int FlowOrder { get; set; }
     }
     public class FlowSettings
     {
-        public string ApiKey { get; set; }
-        public string SecretKey { get; set; }
-        public string Currency { get; set; }
-        public Uri EndPoint { get; set; }
+        public string? ApiKey { get; set; }
+        public string? SecretKey { get; set; }
+        public string? Currency { get; set; }
+        public Uri? EndPoint { get; set; }
     }
 }

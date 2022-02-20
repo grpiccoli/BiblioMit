@@ -9,7 +9,7 @@ namespace BiblioMit.Models
         public int SpawningId { get; set; }
         public virtual Spawning? Spawning { get; set; }
         public Stage Stage { get; set; }
-        [Range(0,100)]
+        [Range(0, 100)]
         [Display(Description = "%")]
         public int Proportion { get; set; }
     }

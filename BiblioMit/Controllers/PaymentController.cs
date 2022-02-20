@@ -40,13 +40,13 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Pay(int Id)
         {
-            var payment = new Payment();
-            var email = string.Empty;
-            if(Id == 0)
+            Payment payment = new();
+            string email = string.Empty;
+            if (Id == 0)
             {
                 payment.Id = DateTime.Now.Millisecond;
                 payment.Price = 100000;
-                var user = await _userManager.FindByNameAsync(User.Identity.Name).ConfigureAwait(false);
+                ApplicationUser user = await _userManager.FindByNameAsync(User.Identity?.Name).ConfigureAwait(false);
                 email = user.Email;
             }
             else
@@ -54,10 +54,10 @@ namespace BiblioMit.Controllers
                 payment = await _context.Payments
                     .Include(p => p.Banner)
                         .ThenInclude(b => b.ApplicationUser)
-                    .FirstOrDefaultAsync(p => p.Id == Id).ConfigureAwait(false);
-                email = payment.Banner.ApplicationUser.Email;
+                    .FirstAsync(p => p.Id == Id).ConfigureAwait(false);
+                email = payment.Banner?.ApplicationUser?.Email ?? string.Empty;
             }
-            var url = _flow.PaymentCreate(
+            string url = _flow.PaymentCreate(
                 payment.Id, "PagoParticular",
                 payment.Price,
                 email);

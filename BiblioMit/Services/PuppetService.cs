@@ -21,40 +21,40 @@ namespace BiblioMit.Services
             //_environment = environment;
             _os = Environment.OSVersion.Platform.ToString();
         }
-//        public async Task<string> GetCaptchaAsync(
-//            Page page, string selector, string folder)
-//        {
-//            if (page == null) return null;
-//            var rect = await page.EvaluateFunctionAsync<DOMRect>(
-//@$"() => document.querySelector(""{selector}"").getBoundingClientRect().toJSON()")
-//                .ConfigureAwait(false);
-//            if (rect == null) return null;
-//            var tmp = Path.Combine(Path.GetTempPath(), "tmp.png");
-//            File.Delete(tmp);
-//            await page.ScreenshotAsync(tmp,
-//                new ScreenshotOptions
-//                {
-//                    Clip = new Clip
-//                    {
-//                        X = rect.Left,
-//                        Y = rect.Top,
-//                        Width = rect.Width,
-//                        Height = rect.Height
-//                    }
-//                }).ConfigureAwait(false);
-//            byte[] imageArray = await File.ReadAllBytesAsync(tmp).ConfigureAwait(false);
-//            string base64image = Convert.ToBase64String(imageArray);
-//            AntiCaptcha anticaptcha = AntiCaptchaClient.Get();
-//            var solved = anticaptcha.GetAnswer(base64image);
-//            var captcha = solved.solution.text;
-//            if(folder != null)
-//            {
-//                var dest = Path.Combine(_environment.ContentRootPath, "Captcha", folder, $"{captcha}.png");
-//                File.Copy(tmp, dest, true);
-//            }
-//            File.Delete(tmp);
-//            return captcha;
-//        }
+        //        public async Task<string> GetCaptchaAsync(
+        //            Page page, string selector, string folder)
+        //        {
+        //            if (page == null) return null;
+        //            var rect = await page.EvaluateFunctionAsync<DOMRect>(
+        //@$"() => document.querySelector(""{selector}"").getBoundingClientRect().toJSON()")
+        //                .ConfigureAwait(false);
+        //            if (rect == null) return null;
+        //            var tmp = Path.Combine(Path.GetTempPath(), "tmp.png");
+        //            File.Delete(tmp);
+        //            await page.ScreenshotAsync(tmp,
+        //                new ScreenshotOptions
+        //                {
+        //                    Clip = new Clip
+        //                    {
+        //                        X = rect.Left,
+        //                        Y = rect.Top,
+        //                        Width = rect.Width,
+        //                        Height = rect.Height
+        //                    }
+        //                }).ConfigureAwait(false);
+        //            byte[] imageArray = await File.ReadAllBytesAsync(tmp).ConfigureAwait(false);
+        //            string base64image = Convert.ToBase64String(imageArray);
+        //            AntiCaptcha anticaptcha = AntiCaptchaClient.Get();
+        //            var solved = anticaptcha.GetAnswer(base64image);
+        //            var captcha = solved.solution.text;
+        //            if(folder != null)
+        //            {
+        //                var dest = Path.Combine(_environment.ContentRootPath, "Captcha", folder, $"{captcha}.png");
+        //                File.Copy(tmp, dest, true);
+        //            }
+        //            File.Delete(tmp);
+        //            return captcha;
+        //        }
         public static async Task<RevisionInfo> FetchAsync()
         {
             using BrowserFetcher fetcher = new();
@@ -95,8 +95,8 @@ namespace BiblioMit.Services
                 catch (TimeoutException ex)
                 {
                     Console.WriteLine(ex);
-                    if(page != null)
-                    await page.Browser.CloseAsync().ConfigureAwait(false);
+                    if (page != null)
+                        await page.Browser.CloseAsync().ConfigureAwait(false);
                 }
             };
             return page;
@@ -106,7 +106,7 @@ namespace BiblioMit.Services
             Browser browser = await GetBrowserAsync().ConfigureAwait(false);
             Page[] pages = await browser.PagesAsync().ConfigureAwait(false);
             Page page = pages[0];
-            if(block != null)
+            if (block != null)
             {
                 await page.SetRequestInterceptionAsync(true).ConfigureAwait(false);
                 page.Request += (sender, e) =>
@@ -131,28 +131,28 @@ namespace BiblioMit.Services
         private string[] GetArgs()
         {
             List<string> args = new()
-                {
-                    "--disable-accelerated-2d-canvas",
-                    "--disable-background-timer-throttling",
-                    "--disable-backgrounding-occluded-windows",
-                    "--disable-breakpad",
-                    "--disable-component-extensions-with-background-pages",
-                    "--disable-dev-shm-usage",
-                    "--disable-extensions",
-                    "--disable-features=TranslateUI,BlinkGenPropertyTrees",
-                    "--disable-gpu",
-                    "--disable-ipc-flooding-protection",
-                    "--disable-renderer-backgrounding",
-                    "--disable-setuid-sandbox",
-                    "--enable-features=NetworkService,NetworkServiceInProcess",
-                    "--force-color-profile=srgb",
-                    "--hide-scrollbars",
-                    "--metrics-recording-only",
-                    "--mute-audio",
-                    "--no-first-run",
-                    "--no-sandbox",
-                    "--no-zygote"
-                };
+            {
+                "--disable-accelerated-2d-canvas",
+                "--disable-background-timer-throttling",
+                "--disable-backgrounding-occluded-windows",
+                "--disable-breakpad",
+                "--disable-component-extensions-with-background-pages",
+                "--disable-dev-shm-usage",
+                "--disable-extensions",
+                "--disable-features=TranslateUI,BlinkGenPropertyTrees",
+                "--disable-gpu",
+                "--disable-ipc-flooding-protection",
+                "--disable-renderer-backgrounding",
+                "--disable-setuid-sandbox",
+                "--enable-features=NetworkService,NetworkServiceInProcess",
+                "--force-color-profile=srgb",
+                "--hide-scrollbars",
+                "--metrics-recording-only",
+                "--mute-audio",
+                "--no-first-run",
+                "--no-sandbox",
+                "--no-zygote"
+            };
             if (_os != "Win32NT") args.Add("--single-process");
             return args.ToArray();
         }

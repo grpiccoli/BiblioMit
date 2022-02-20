@@ -18,7 +18,7 @@ namespace BiblioMit.Models
         [Display(Name = "Archivo de Entrada")]
         public int InputFileId { get; set; }
         public virtual InputFile? InputFile { get; set; }
-        [Display(Name ="Operación de conversión")]
+        [Display(Name = "Operación de conversión")]
         public string? Operation { get; set; }
         public int? DecimalPlaces { get; set; }
         public char? DecimalSeparator { get; set; }

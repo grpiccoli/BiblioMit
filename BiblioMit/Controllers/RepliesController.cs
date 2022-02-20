@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BiblioMit.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using BiblioMit.Models;
 using BiblioMit.Models.ReplyViewModels;
 using BiblioMit.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BiblioMit.Controllers
 {
@@ -27,7 +27,7 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Create(int id)
         {
             var post = _postService.GetById(id);
-            var user = await _userManager.FindByNameAsync(User.Identity.Name).ConfigureAwait(false);
+            var user = await _userManager.FindByNameAsync(User.Identity?.Name).ConfigureAwait(false);
 
             var model = new PostReplyModel
             {
@@ -35,12 +35,12 @@ namespace BiblioMit.Controllers
                 PostTitle = post.Title,
                 PostId = post.Id,
                 AuthorId = user.Id,
-                AuthorName = User.Identity.Name,
+                AuthorName = User.Identity?.Name,
                 AuthorRating = user.Rating,
 
-                ForumName = post.Forum.Title,
+                ForumName = post.Forum?.Title,
                 ForumId = post.ForumId,
-                ForumImageUrl = post.Forum.ImageUrl,
+                ForumImageUrl = post.Forum?.ImageUrl,
 
                 Created = DateTime.Now
             };
@@ -57,7 +57,7 @@ namespace BiblioMit.Controllers
             var userId = _userManager.GetUserId(User);
             var user = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
 
-            var reply = BuildReply(model, user) as PostReply;
+            PostReply reply = BuildReply(model, user);
 
             await _postService.AddReply(reply).ConfigureAwait(false);
             await _userService.UpdateUserRating(userId, typeof(PostReply)).ConfigureAwait(false);
@@ -65,9 +65,9 @@ namespace BiblioMit.Controllers
             return RedirectToAction("Index", "Post", new { id = model.PostId });
         }
 
-        private object BuildReply(PostReplyModel model, ApplicationUser user)
+        private PostReply BuildReply(PostReplyModel model, ApplicationUser user)
         {
-            var post = _postService.GetById(model.PostId);
+            Post post = _postService.GetById(model.PostId);
 
             return new PostReply
             {

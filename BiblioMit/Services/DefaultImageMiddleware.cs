@@ -1,19 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 
 namespace BiblioMit.Services
 {
     public class DefaultImageMiddleware
     {
         private readonly RequestDelegate _next;
-
         public static string DefaultImagePath { get; set; }
-
         public DefaultImageMiddleware(RequestDelegate next)
         {
             _next = next;

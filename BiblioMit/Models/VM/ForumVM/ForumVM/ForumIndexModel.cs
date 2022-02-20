@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace BiblioMit.Models.ForumViewModels
+﻿namespace BiblioMit.Models.ForumViewModels
 {
     public class ForumIndexModel
     {
-        public IEnumerable<ForumListingModel> ForumListing { get; set; }
+        public IEnumerable<ForumListingModel> ForumListing { get; set; } = new List<ForumListingModel>();
     }
 }

@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using BiblioMit.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using BiblioMit.Models;
+using BiblioMit.Models.Entities.Ads;
 using BiblioMit.Models.Entities.Centres;
 using BiblioMit.Models.Entities.Digest;
 using BiblioMit.Models.Entities.Environmental;
 using BiblioMit.Models.Entities.Environmental.Plancton;
-using BiblioMit.Models.Entities.Ads;
 using BiblioMit.Models.Entities.Variables;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace BiblioMit.Data
 {
@@ -19,7 +19,7 @@ namespace BiblioMit.Data
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            if(builder == null) throw new ArgumentNullException(nameof(builder));
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
             base.OnModelCreating(builder);
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
@@ -42,7 +42,8 @@ namespace BiblioMit.Data
                 .HasForeignKey(e => e.RoleId)
                 .IsRequired();
 
-            builder.Entity<PlantProduct>(a => {
+            builder.Entity<PlantProduct>(a =>
+            {
                 a.HasKey(p => new { p.PlantId, p.ProductId });
 
                 a.HasOne(md => md.Plant)
@@ -53,7 +54,8 @@ namespace BiblioMit.Data
                     .WithMany(d => d.Plants)
                     .HasForeignKey(md => md.ProductId);
             });
-            builder.Entity<PlanktonAssayEmail>(a => {
+            builder.Entity<PlanktonAssayEmail>(a =>
+            {
                 a.HasKey(p => new { p.PlanktonAssayId, p.EmailId });
 
                 a.HasOne(md => md.PlanktonAssay)
@@ -64,7 +66,8 @@ namespace BiblioMit.Data
                     .WithMany(d => d.PlanktonAssayEmails)
                     .HasForeignKey(md => md.EmailId);
             });
-            builder.Entity<Phytoplankton>(a => {
+            builder.Entity<Phytoplankton>(a =>
+            {
                 a.HasKey(p => new { p.PlanktonAssayId, p.SpeciesId });
 
                 a.HasOne(md => md.PlanktonAssay)
@@ -121,7 +124,8 @@ namespace BiblioMit.Data
                 s.HasIndex(p => p.Number).IsUnique();
                 s.Property(p => p.Number).IsRequired();
             });
-            builder.Entity<AreaCodeProvince>(a => {
+            builder.Entity<AreaCodeProvince>(a =>
+            {
                 a.HasKey(p => new { p.AreaCodeId, p.ProvinceId });
 
                 a.HasOne(md => md.AreaCode)
@@ -165,7 +169,8 @@ namespace BiblioMit.Data
                 .HasForeignKey<CatchmentArea>(i => i.PolygonId)
                 .OnDelete(DeleteBehavior.Restrict);
             });
-            builder.Entity<Psmb>(a => {
+            builder.Entity<Psmb>(a =>
+            {
                 a.HasIndex(p => new { p.Code, p.CommuneId }).IsUnique();
                 a.Property(p => p.Code).IsRequired();
                 a.HasIndex(p => p.Acronym).IsUnique();

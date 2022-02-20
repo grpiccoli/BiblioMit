@@ -38,11 +38,11 @@ namespace BiblioMit.Controllers
             {
                 if (int.TryParse(c, out int r))
                     contacts = contacts.Where(o =>
-                    o.ConsessionOrResearch.CommuneId.HasValue &&
+                    o.ConsessionOrResearch != null && o.ConsessionOrResearch.CommuneId != null &&
                     o.ConsessionOrResearch.CommuneId.Value == r);
             }
 
-            var isAuthorized = User.IsInRole(RoleData.Administrator.ToString()) && 
+            var isAuthorized = User.IsInRole(RoleData.Administrator.ToString()) &&
                                User.HasClaim(UserClaims.Contacts.ToString(), UserClaims.Contacts.ToString());
 
             var currentUserId = _userManager.GetUserId(User);
@@ -103,7 +103,7 @@ namespace BiblioMit.Controllers
                 Description = "Descripción",
                 Phone = 56912345678,
                 OpenHr = Convert.ToDateTime("9:00", CultureInfo.InvariantCulture),
-				CloseHr = Convert.ToDateTime("18:00", CultureInfo.InvariantCulture)
+                CloseHr = Convert.ToDateTime("18:00", CultureInfo.InvariantCulture)
             });
         }
 
@@ -113,7 +113,7 @@ namespace BiblioMit.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        [Authorize(Roles = nameof(RoleData.Administrator)+","+ nameof(RoleData.Editor), Policy = nameof(UserClaims.Contacts))]
+        [Authorize(Roles = nameof(RoleData.Administrator) + "," + nameof(RoleData.Editor), Policy = nameof(UserClaims.Contacts))]
         public async Task<IActionResult> Create(ContactEditViewModel editModel)
         {
             if (editModel == null) return NotFound();

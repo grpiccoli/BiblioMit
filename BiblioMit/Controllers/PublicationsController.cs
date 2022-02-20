@@ -1,19 +1,19 @@
-using Microsoft.AspNetCore.Mvc;
-using BiblioMit.Data;
-using System.Diagnostics;
-using BiblioMit.Models;
-using System.Globalization;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Authorization;
-using AngleSharp.Html.Parser;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
-using BiblioMit.Models.VM;
-using System.Drawing;
-using BiblioMit.Services;
+using AngleSharp.Html.Parser;
+using BiblioMit.Data;
 using BiblioMit.Extensions;
+using BiblioMit.Models;
+using BiblioMit.Models.VM;
+using BiblioMit.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace BiblioMit.Controllers
 {
@@ -60,32 +60,32 @@ namespace BiblioMit.Controllers
             #endregion
             #region universities dictionary
             Dictionary<string, string> ues = new()
-                {
-                    {"uchile", "Universidad de Chile"},
-                    {"ula", "Universidad Los Lagos"},
-                    //{"utal","Universidad de Talca"},
-                    {"umag","Universidad de Magallanes"},
-                    //{"ust", "Universidad Santo Tom\u00E1s"},
-                    {"ucsc","Universidad Cat\u00F3lica de la Sant\u00EDsima Concepci\u00F3n"},
-                    {"uct","Universidad Cat\u00F3lica de Temuco"},
-                    {"uach","Universidad Austral de Chile"},
-                    {"udec","Universidad de Concepci\u00F3n"},
-                    {"pucv","Pontificia Universidad Cat\u00F3lica de Valpara\u00EDso"},
-                    {"puc","Pontificia Universidad Cat\u00F3lica"},
-                };
+            {
+                { "uchile", "Universidad de Chile" },
+                { "ula", "Universidad Los Lagos" },
+                //{"utal","Universidad de Talca"},
+                { "umag", "Universidad de Magallanes" },
+                //{"ust", "Universidad Santo Tom\u00E1s"},
+                { "ucsc", "Universidad Cat\u00F3lica de la Sant\u00EDsima Concepci\u00F3n" },
+                { "uct", "Universidad Cat\u00F3lica de Temuco" },
+                { "uach", "Universidad Austral de Chile" },
+                { "udec", "Universidad de Concepci\u00F3n" },
+                { "pucv", "Pontificia Universidad Cat\u00F3lica de Valpara\u00EDso" },
+                { "puc", "Pontificia Universidad Cat\u00F3lica" },
+            };
             #endregion
             #region diccionario Proyectos conicyt
             Dictionary<string, string> conicyt = new()
-                {
-                    {"FONDECYT","Fondo Nacional de Desarrollo Cient\u00EDfico y Tecnol\u00F3gico"},
-                    {"FONDEF","Fondo de Fomento al Desarrollo Cient\u00EDfico y Tecnol\u00F3gico"},
-                    {"FONDAP","Fondo de Financiamiento de Centros de Investigaci\u00F3n en \u00C1reas Prioritarias"},
-                    {"PIA","Programa de Investigaci\u00F3n Asociativa"},
-                    {"REGIONAL","Programa Regional de Investigaci\u00F3n Cient\u00EDfica y Tecnol\u00F3gica"},
-                    {"BECAS","Programa Regional de Investigaci\u00F3n Cient\u00EDfica y Tecnol\u00F3gica"},
-                    {"CONICYT","Programa Regional de Investigaci\u00F3n Cient\u00EDfica y Tecnol\u00F3gica"},
-                    {"PROYECTOS","Programa Regional de Investigaci\u00F3n Cient\u00EDfica y Tecnol\u00F3gica"},
-                };
+            {
+                { "FONDECYT", "Fondo Nacional de Desarrollo Cient\u00EDfico y Tecnol\u00F3gico" },
+                { "FONDEF", "Fondo de Fomento al Desarrollo Cient\u00EDfico y Tecnol\u00F3gico" },
+                { "FONDAP", "Fondo de Financiamiento de Centros de Investigaci\u00F3n en \u00C1reas Prioritarias" },
+                { "PIA", "Programa de Investigaci\u00F3n Asociativa" },
+                { "REGIONAL", "Programa Regional de Investigaci\u00F3n Cient\u00EDfica y Tecnol\u00F3gica" },
+                { "BECAS", "Programa Regional de Investigaci\u00F3n Cient\u00EDfica y Tecnol\u00F3gica" },
+                { "CONICYT", "Programa Regional de Investigaci\u00F3n Cient\u00EDfica y Tecnol\u00F3gica" },
+                { "PROYECTOS", "Programa Regional de Investigaci\u00F3n Cient\u00EDfica y Tecnol\u00F3gica" },
+            };
             #endregion
             #region diccionario de Proyectos
             Dictionary<string, string> proj = conicyt.Concat(new Dictionary<string, string>() {
@@ -96,11 +96,11 @@ namespace BiblioMit.Controllers
             #endregion
             #region Artículos Indexados
             Dictionary<string, string> gs = new()
-                {{"gscholar","Google Acad\u00E9mico"}};
+            { { "gscholar", "Google Acad\u00E9mico" } };
             #endregion
             #region Patentes
             Dictionary<string, string> gp = new()
-                {{"gpatents","Google Patentes" }};
+            { { "gpatents", "Google Patentes" } };
             #endregion
             ViewData[nameof(ues)] = ues;
             ViewData[nameof(proj)] = proj;
@@ -174,7 +174,7 @@ namespace BiblioMit.Controllers
                                 Color = ColorToHex(gradient.ElementAt(i))
                             };
                         }).ToList();
-                        if(chartData.Any()) chartData[0].AddRange(t);
+                        if (chartData.Any()) chartData[0].AddRange(t);
                         chartData.Add(t);
                     }
                     int low1, NoPages;
@@ -202,7 +202,7 @@ namespace BiblioMit.Controllers
                     };
                 }
             }
-            else 
+            else
             {
                 ViewData["srcs"] = string.Empty;
                 ViewData[nameof(src)] = Array.Empty<string>();
@@ -273,7 +273,7 @@ namespace BiblioMit.Controllers
                 foreach (string fondo in conicyt1_funds)
                 {
                     using IHtmlDocument? bc_doc = await GetDoc(conicyt1[fondo]).ConfigureAwait(false);
-                    if(bc_doc == null) continue;
+                    if (bc_doc == null) continue;
                     var co = GetCo("conicyt");
                     Agendas.AddRange(from n in bc_doc.QuerySelectorAll("div.lista_concurso")
                                      let cells = n.Children
@@ -385,7 +385,8 @@ namespace BiblioMit.Controllers
                         Regex ress2 = new(@"[\d\/]+");
                         string[] formats = { "dd/MM/yyyy" };
                         string? text = entry.QuerySelector("li:nth-child(3)")?.Text();
-                        if(text != null) {
+                        if (text != null)
+                        {
                             var parsed = DateTime.TryParseExact(ress2.Match(text).ToString(),
                                                     formats,
                                                     CultureInfo.InvariantCulture,
@@ -561,7 +562,7 @@ namespace BiblioMit.Controllers
                 );
 
             var gscholar = GetGscholarAsync(src,
-                new Uri($"https://scholar.google.com/scholar?q={q}&start={rpp * ( pg - 1) + 1}&scisbd={ggl}"),
+                new Uri($"https://scholar.google.com/scholar?q={q}&start={rpp * (pg - 1) + 1}&scisbd={ggl}"),
                 "div.gs_ab_mdw:has(> b)",
                 "div.gs_ri",
                 "a",
@@ -640,23 +641,24 @@ string authorSelect, string dateSelect, string abstractSelect)
             var acronym = "CORFO";
             if (src.Contains(acronym))
             {
-                try {
+                try
+                {
                     var co = GetCo(60706000);
-                using var doc = await GetDoc(url).ConfigureAwait(false);
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (from n in doc.QuerySelectorAll(nodeSelect)
-                        let t = n?.QuerySelector(quriSelect)
-                        select new PublicationVM()
-                        {
-                            Source = acronym,
-                            Uri = GetUri(url, t),
-                            Title = t?.TextContent,
-                            Typep = Typep.Project,
-                            Company = co,
-                            Date = GetDate(n, dateSelect),
-                            Authors = GetAuthorsCorfo(n, authorSelect),
-                            Abstract = GetAbstract(n, abstractSelect)
-                        }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                            let t = n?.QuerySelector(quriSelect)
+                            select new PublicationVM()
+                            {
+                                Source = acronym,
+                                Uri = GetUri(url, t),
+                                Title = t?.TextContent,
+                                Typep = Typep.Project,
+                                Company = co,
+                                Date = GetDate(n, dateSelect),
+                                Authors = GetAuthorsCorfo(n, authorSelect),
+                                Abstract = GetAbstract(n, abstractSelect)
+                            }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
                 }
                 catch (DomException de)
                 {
@@ -676,19 +678,20 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect)
             var acronym = "FIPA";
             if (src.Contains(acronym))
             {
-                try {
+                try
+                {
                     var co = GetCo(60719000);
-                using var doc = await GetDoc(url).ConfigureAwait(false);
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (from n in doc.QuerySelectorAll(nodeSelect)
-                        select new PublicationVM()
-                        {
-                            Source = acronym,
-                            Title = n.TextContent,
-                            Typep = Typep.Project,
-                            Uri = GetUri(new Uri("http://www.subpesca.cl/fipa/613/w3-article-88970.html"), n),
-                            Company = co,
-                        }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                            select new PublicationVM()
+                            {
+                                Source = acronym,
+                                Title = n.TextContent,
+                                Typep = Typep.Project,
+                                Uri = GetUri(new Uri("http://www.subpesca.cl/fipa/613/w3-article-88970.html"), n),
+                                Company = co,
+                            }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
                 }
                 catch (DomException de)
                 {
@@ -711,7 +714,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect)
 
         public static IEnumerable<Color> GetGradients(Color start, Color end, int steps)
         {
-            if(steps > 2)
+            if (steps > 2)
             {
                 Color stepper = Color.FromArgb((byte)((end.A - start.A) / (steps - 1)),
                                (byte)((end.R - start.R) / (steps - 1)),
@@ -739,22 +742,23 @@ string acronym, string parameter, int rpp, string sortBy, string order, int? pg,
         {
             if (src.Contains(acronym))
             {
-                try {
+                try
+                {
                     var co = GetCo(60915000);
                     var url = new Uri($"http://repositorio.conicyt.cl/handle/10533/{parameter}/discover?query={q}&page={pg - 1}&rpp={rpp}&sort_by={sortBy}&order={order}");
-                using var doc = await GetDoc(url).ConfigureAwait(false);
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (doc.QuerySelectorAll("div.row.ds-artifact-item")
 .Select(n => new PublicationVM()
 {
-Source = acronym,
-Title = n.QuerySelector("h4.title-list")?.Text(),
-Typep = Typep.Project,
-Uri = GetUri(url, n.QuerySelector("div.artifact-description > a")),
-Authors = GetAuthors(n, "span.ds-dc_contributor_author-authority"),
-Date = GetDate(n, "span.date"),
-Company = co,
-Journal = GetJournalConicyt(n)
+    Source = acronym,
+    Title = n.QuerySelector("h4.title-list")?.Text(),
+    Typep = Typep.Project,
+    Uri = GetUri(url, n.QuerySelector("div.artifact-description > a")),
+    Authors = GetAuthors(n, "span.ds-dc_contributor_author-authority"),
+    Date = GetDate(n, "span.date"),
+    Company = co,
+    Journal = GetJournalConicyt(n)
 }), acronym, GetNoResults(doc, "p.pagination-info", 2));
                 }
                 catch (DomException de)
@@ -776,7 +780,8 @@ string dateSelect, string authorSelect)
             var acronym = "puc";
             if (src.Contains(acronym))
             {
-                try {
+                try
+                {
                     var co = GetCo(acronym);
                     var doc = await GetDocStream(url).ConfigureAwait(false);
                     return (from n in doc.QuerySelectorAll(nodeSelect)
@@ -811,21 +816,22 @@ string quriSelect, string quriSelectAlt, string titleSelect, string authorSelect
             var acronym = "pucv";
             if (src.Contains(acronym))
             {
-                try {
+                try
+                {
                     var co = GetCo(acronym);
-                using var doc = await GetDocStream(url).ConfigureAwait(false);
-                return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
-                        let date = n.QuerySelector(dateSelect)?.Text()
-                        select new PublicationVM()
-                        {
-                            Typep = Typep.Thesis,
-                            Source = acronym,
-                            Title = n.QuerySelector(titleSelect)?.TextContent,
-                            Uri = GetUri(url, n.QuerySelector(quriSelect), n.QuerySelector(quriSelectAlt)),
-                            Authors = GetAuthors(n, authorSelect),
-                            Date = GetDate(date, date.Length - 4),
-                            Company = co,
-                        }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                    using var doc = await GetDocStream(url).ConfigureAwait(false);
+                    return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
+                            let date = n.QuerySelector(dateSelect)?.Text()
+                            select new PublicationVM()
+                            {
+                                Typep = Typep.Thesis,
+                                Source = acronym,
+                                Title = n.QuerySelector(titleSelect)?.TextContent,
+                                Uri = GetUri(url, n.QuerySelector(quriSelect), n.QuerySelector(quriSelectAlt)),
+                                Authors = GetAuthors(n, authorSelect),
+                                Date = GetDate(date, date.Length - 4),
+                                Company = co,
+                            }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
                 }
                 catch (DomException de)
                 {
@@ -845,23 +851,24 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             var acronym = "udec";
             if (src.Contains(acronym))
             {
-                try {
+                try
+                {
                     var co = GetCo(acronym);
-                IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
+                    IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null) return (new List<PublicationVM>(), acronym, 0);
-                return (
-from n in doc.QuerySelectorAll(nodeSelect)
-let m = n.QuerySelector(quriSelect)
-select new PublicationVM()
-{
-Typep = Typep.Thesis,
-Source = acronym,
-Title = m?.TextContent,
-Uri = GetUri(url, m),
-Authors = GetAuthors(n, authorSelect),
-Company = co,
-Date = GetDate(n, dateSelect)
-}, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                    return (
+    from n in doc.QuerySelectorAll(nodeSelect)
+    let m = n.QuerySelector(quriSelect)
+    select new PublicationVM()
+    {
+        Typep = Typep.Thesis,
+        Source = acronym,
+        Title = m?.TextContent,
+        Uri = GetUri(url, m),
+        Authors = GetAuthors(n, authorSelect),
+        Company = co,
+        Date = GetDate(n, dateSelect)
+    }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
                 }
                 catch (DomException de)
                 {
@@ -876,7 +883,7 @@ Date = GetDate(n, dateSelect)
         }
 
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetUachAsync(string[] src,
-    Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string titleSelect, 
+    Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string titleSelect,
     string quriSelect, string authorSelect, string dateSelect)
         {
             var acronym = "uach";
@@ -920,7 +927,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                     Regex regex = new("[a-zA-Z]");
-                using var doc = await GetDoc(url).ConfigureAwait(false);
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (
 from n in doc.QuerySelectorAll(nodeSelect)
@@ -929,15 +936,15 @@ let j = n.QuerySelector(journalSelect)?.TextContent
 let d = n.QuerySelector(dateSelect)?.TextContent
 select new PublicationVM()
 {
-                            //otros
-                            Typep = Typep.Thesis,
-Source = acronym,
-Title = m?.TextContent,
-Uri = GetUri(url, m),
-Journal = j,
-Authors = GetAuthors(n, authorSelect, regex),
-Company = co,
-Date = GetDate(d, j.LastIndexOf(",", StringComparison.Ordinal) + 2)
+    //otros
+    Typep = Typep.Thesis,
+    Source = acronym,
+    Title = m?.TextContent,
+    Uri = GetUri(url, m),
+    Journal = j,
+    Authors = GetAuthors(n, authorSelect, regex),
+    Company = co,
+    Date = GetDate(d, j.LastIndexOf(",", StringComparison.Ordinal) + 2)
 }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
                 }
                 catch (DomException de)
@@ -977,11 +984,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         Date = GetDate(n, dateSelect)
     }, acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
                 }
-                catch(DomException de)
+                catch (DomException de)
                 {
                     Console.WriteLine(de.Message);
                 }
-                catch(NullReferenceException ex)
+                catch (NullReferenceException ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
@@ -1025,7 +1032,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             return (new List<PublicationVM>(), acronym, 0);
         }
 
-        private async Task<(IEnumerable<PublicationVM>, string, int)> GetUchileAsync(string[] src, 
+        private async Task<(IEnumerable<PublicationVM>, string, int)> GetUchileAsync(string[] src,
             Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string quriSelect, string authorSelect, string dateSelect)
         {
             var acronym = "uchile";
@@ -1034,19 +1041,19 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 try
                 {
                     var co = GetCo(acronym);
-                using var doc = await GetDoc(url).ConfigureAwait(false);
+                    using var doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null) return (new List<PublicationVM>(), acronym, 0);
                     return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
-                {
-                    Source = acronym,
-                    Title = n.TextContent,
-                    Uri = GetUri(url, n.QuerySelector(quriSelect)),
-                    Authors = GetAuthors(n, authorSelect),
-                    //Typep = GetTypep(n.QuerySelector("span.tipo_obra").Text().ToLower()),
-                    Typep = Typep.Thesis,
-                    Company = co,
-                    Date = GetDate(n, dateSelect)
-                }), acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
+                    {
+                        Source = acronym,
+                        Title = n.TextContent,
+                        Uri = GetUri(url, n.QuerySelector(quriSelect)),
+                        Authors = GetAuthors(n, authorSelect),
+                        //Typep = GetTypep(n.QuerySelector("span.tipo_obra").Text().ToLower()),
+                        Typep = Typep.Thesis,
+                        Company = co,
+                        Date = GetDate(n, dateSelect)
+                    }), acronym, GetNoResults(doc, NoResultsSelect, NoResultsPos));
                 }
                 catch (DomException de)
                 {
@@ -1140,7 +1147,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
 
         public static Uri GetUri(Uri rep, IElement? link)
         {
-            if(link != null)
+            if (link != null)
             {
                 return new Uri(rep, link?.Attributes["href"]?.Value ?? string.Empty);
             }

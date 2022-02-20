@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace BiblioMit.Extensions
+﻿namespace BiblioMit.Extensions
 {
     public static class DictionaryExtensions
     {
@@ -10,15 +6,14 @@ namespace BiblioMit.Extensions
             dic.FirstOrDefault(y => y.Value.Contains(q, StringComparison.Ordinal)).Key;
         public static (int, int) GetKeyFromHeader(this Dictionary<(int, int), string> dic, string q) =>
             GetFromHeader(dic, q).Key;
-        public static string GetValueFromHeaderHorizontal(
+        public static string? GetValueFromHeaderHorizontal(
             this Dictionary<(int, int), string> dic, string q, int columns = 1) =>
             dic.GetValueFromHeader(q, columns);
-        public static string GetValueFromHeader(
+        public static string? GetValueFromHeader(
             this Dictionary<(int, int), string> dic, string q, int columns = 0, int rows = 0)
         {
-            if (dic == null) return null;
-            var cell = GetKeyFromHeader(dic, q);
-            var key = (cell.Item1 + columns, cell.Item2 + rows);
+            (int, int) cell = GetKeyFromHeader(dic, q);
+            (int, int) key = (cell.Item1 + columns, cell.Item2 + rows);
             if (dic.ContainsKey(key))
                 return dic[key];
             return null;
@@ -31,7 +26,7 @@ namespace BiblioMit.Extensions
             if (headers != null)
                 foreach (var reg in headers)
                 {
-                    var np = dic.GetFromHeader(reg).Key;
+                    (int, int) np = dic.GetFromHeader(reg).Key;
                     if (np != (0, 0)) return np;
                 }
             return (0, 0);

@@ -1,10 +1,6 @@
 ﻿using BiblioMit.Data;
 using BiblioMit.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BiblioMit.Services
 {
@@ -30,17 +26,17 @@ namespace BiblioMit.Services
             await _context.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        public IEnumerable<ApplicationUser> GetActiveUsers(int id)
+        public IEnumerable<ApplicationUser?> GetActiveUsers(int id)
         {
-            var posts = GetbyId(id).Posts;
-            
-            if(posts != null || !posts.Any())
+            ICollection<Post> posts = GetbyId(id).Posts;
+
+            if (!posts.Any())
             {
-                var postUsers = posts.Select(p => p.User);
-                var replyUsers = posts.SelectMany(p => p.Replies).Select(r => r.User);
+                IEnumerable<ApplicationUser?> postUsers = posts.Select(p => p.User);
+                IEnumerable<ApplicationUser?> replyUsers = posts.SelectMany(p => p.Replies).Select(r => r.User);
                 return postUsers.Union(replyUsers).Distinct();
             }
-            return new List<ApplicationUser>();
+            return new List<ApplicationUser?>();
         }
 
         public IEnumerable<Forum> GetAll()
@@ -51,14 +47,14 @@ namespace BiblioMit.Services
 
         public Forum GetbyId(int id)
         {
-            var forum = _context.Forums
+            Forum forum = _context.Forums
                 .Where(f => f.Id == id)
                 .Include(f => f.Posts)
                     .ThenInclude(p => p.User)
                 .Include(f => f.Posts)
                     .ThenInclude(p => p.Replies)
                         .ThenInclude(r => r.User)
-                .FirstOrDefault();
+                .First();
 
             return forum;
         }

@@ -18,7 +18,7 @@
     }
     public enum PayMode
     {
-        auto, 
+        auto,
         manual
     }
     public enum Status

@@ -1,7 +1,7 @@
-﻿using System.Globalization;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
 
 namespace BiblioMit.Controllers
 {
@@ -36,7 +36,7 @@ namespace BiblioMit.Controllers
                     if (test1)
                     {
                         cnt++;
-                        foreach(var uri in lists)
+                        foreach (var uri in lists)
                         {
                             sitemapContent += "<url>";
                             sitemapContent += string.Format(CultureInfo.InvariantCulture,

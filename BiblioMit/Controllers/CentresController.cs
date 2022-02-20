@@ -34,37 +34,37 @@ namespace BiblioMit.Controllers
                     {
                         Id = f.Code,
                         Name = f.Name,
-                        BusinessName = f.CompanyNN.BusinessName,
-                        Rut = f.CompanyIdNN,
-                        Comuna = f.CommuneNN.Name,
-                        ComunaId = f.CommuneIdNN,
-                        Provincia = f.CommuneNN.Province.Name,
-                        Region = f.CommuneNN.Province.Region.Name,
+                        BusinessName = f.Company != null ? f.Company.BusinessName : null,
+                        Rut = f.CommuneId != null ? f.CommuneId.Value : 0,
+                        Comuna = f.Commune != null ? f.Commune.Name : null,
+                        ComunaId = f.CommuneId != null ? f.CommuneId.Value : 0,
+                        Provincia = f.Commune != null && f.Commune.Province != null ? f.Commune.Province.Name : null,
+                        Region = f.Commune != null && f.Commune.Province != null && f.Commune.Province.Region != null ? f.Commune.Province.Region.Name : null,
                         Code = f.Code,
-                        Position = f.PolygonNN.Vertices.OrderBy(o => o.Order).Select(o =>
+                        Position = f.Polygon != null ? f.Polygon.Vertices.OrderBy(o => o.Order).Select(o =>
                         new GMapCoordinate
                         {
                             Lat = o.Latitude,
                             Lng = o.Longitude
-                        })
+                        }) : null,
                     }));
         }
-        private IEnumerable<Psmb> GetPsmbs<TEntity>(int[] c, int[] i) 
+        private IQueryable<Psmb> GetPsmbs<TEntity>(int[] c, int[] i)
             where TEntity : Psmb
         {
             ViewData["c"] = string.Join(",", c);
             ViewData["i"] = string.Join(",", i);
             return GetEntitiesAsync<TEntity>(c, i);
         }
-        private IEnumerable<TEntity> GetEntitiesAsync<TEntity>(int[] c, int[] i)
+        private IQueryable<TEntity> GetEntitiesAsync<TEntity>(int[] c, int[] i)
             where TEntity : Psmb
         {
-            var centres = _context.Set<TEntity>()
+            IQueryable<TEntity> centres = _context.Set<TEntity>()
                         .Where(a => a.PolygonId.HasValue
                 && a.CompanyId.HasValue);
             //if (map) centres = centres.Include(a => a.Polygon).ThenInclude(a => a.Vertices);
             //var list = await centres.ToListAsync().ConfigureAwait(false);
-            foreach(var sc in c)
+            foreach (var sc in c)
             {
                 centres = centres.Where(a => a.CommuneId.HasValue && a.CommuneId.Value == sc);
             }
@@ -127,7 +127,7 @@ namespace BiblioMit.Controllers
         }
 
         // GET: Centres/Edit/5
-        [Authorize(Roles = nameof(RoleData.Administrator)+","+nameof(RoleData.Editor), Policy = nameof(UserClaims.Centres))]
+        [Authorize(Roles = nameof(RoleData.Administrator) + "," + nameof(RoleData.Editor), Policy = nameof(UserClaims.Centres))]
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -179,7 +179,7 @@ namespace BiblioMit.Controllers
             if (id == null) return NotFound();
             Farm? centre = await _context.Farms
                 .Include(c => c.Company)
-                .Include(c => c.CommuneNN)
+                .Include(c => c.Commune)
                     .ThenInclude(c => c.Province)
                     .ThenInclude(c => c.Region)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
@@ -194,7 +194,7 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Farm? centre = await _context.Farms.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if(centre is not null) _context.Farms.Remove(centre);
+            if (centre is not null) _context.Farms.Remove(centre);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");
         }

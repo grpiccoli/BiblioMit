@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BiblioMit.Data;
 using BiblioMit.Models;
-using BiblioMit.Data;
 
 namespace BiblioMit.Services
 {
@@ -15,26 +12,26 @@ namespace BiblioMit.Services
             _context = context;
         }
 
-        public IEnumerable<Psmb> GetFilteredCentres(int page, int rpp, string searchQuery)
+        public IEnumerable<Psmb> GetFilteredCentres(int page, int rpp, string? searchQuery)
         {
-            if (string.IsNullOrEmpty(searchQuery))
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                var normalized = searchQuery?.ToUpperInvariant();
-                return ( _context.Psmbs
+                var normalized = searchQuery.ToUpperInvariant();
+                return (_context.Psmbs
                     .Where(c =>
-                    c.Address.Contains(normalized, StringComparison.Ordinal) ||
-                    c.Company.BusinessName.Contains(normalized, StringComparison.Ordinal) ||
-                    c.Commune.Name.Contains(normalized, StringComparison.Ordinal))
+                    (c.Address != null && c.Address.Contains(normalized, StringComparison.Ordinal)) ||
+                    (c.Company != null && c.Company.BusinessName != null && c.Company.BusinessName.Contains(normalized, StringComparison.Ordinal)) ||
+                    (c.Commune != null && c.Commune.Name != null && c.Commune.Name.Contains(normalized, StringComparison.Ordinal) ))
                     .OrderBy(c => c.Id)
                     .ToList()
-                    .GetRange(page * rpp - 1, rpp) );
+                    .GetRange(page * rpp - 1, rpp));
             }
             else
             {
-                return( _context.Psmbs
+                return (_context.Psmbs
                     .OrderBy(c => c.Id)
                     .ToList()
-                    .GetRange(page * rpp - 1, rpp) );
+                    .GetRange(page * rpp - 1, rpp));
             }
         }
     }

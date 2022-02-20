@@ -1,22 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using BiblioMit.Models;
-using Microsoft.AspNetCore.Authorization;
-using BiblioMit.Models.PostViewModels;
+﻿using BiblioMit.Models;
 using BiblioMit.Models.ForumViewModels;
 using BiblioMit.Models.HomeViewModels;
-using Microsoft.AspNetCore.Localization;
+using BiblioMit.Models.PostViewModels;
+using BiblioMit.Models.VM;
+using BiblioMit.Services;
+using BiblioMit.Services.Interfaces;
+using BiblioMit.Views.Components.Nav;
 using Google.Apis.AnalyticsReporting.v4;
 using Google.Apis.AnalyticsReporting.v4.Data;
-using Google.Apis.Services;
 using Google.Apis.Auth.OAuth2;
-using System.Globalization;
-using BiblioMit.Services;
-using Microsoft.Extensions.Localization;
-using BiblioMit.Models.VM;
-using BiblioMit.Services.Interfaces;
-using System.Text.RegularExpressions;
+using Google.Apis.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using BiblioMit.Views.Components.Nav;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace BiblioMit.Controllers
 {
@@ -278,9 +278,9 @@ namespace BiblioMit.Controllers
             var postListings = posts.Select(p => new PostListingModel
             {
                 Id = p.Id,
-                AuthorId = p.User.Id,
-                AuthorName = p.User.UserName,
-                AuthorRating = p.User.Rating,
+                AuthorId = p.UserId,
+                AuthorName = p.User?.UserName,
+                AuthorRating = p.User != null ? p.User.Rating : 0,
                 Title = p.Title,
                 DatePosted = p.Created.ToString(CultureInfo.InvariantCulture),
                 RepliesCount = p.Replies.Count(),
@@ -298,13 +298,13 @@ namespace BiblioMit.Controllers
 
         private static ForumListingModel BuildForumListing(Post p)
         {
-            var forum = p.Forum;
+            Forum? forum = p.Forum;
             return new ForumListingModel
             {
-                Id = forum.Id,
-                ImageUrl = forum.ImageUrl,
-                Name = forum.Title,
-                Description = forum.Description
+                Id = forum != null ? forum.Id : 0,
+                ImageUrl = forum?.ImageUrl,
+                Name = forum?.Title,
+                Description = forum?.Description
             };
         }
 
@@ -325,8 +325,8 @@ namespace BiblioMit.Controllers
                     Id = p.Id,
                     Title = p.Title,
                     AuthorId = p.UserId,
-                    AuthorName = p.User.UserName,
-                    AuthorRating = p.User.Rating,
+                    AuthorName = p.User?.UserName,
+                    AuthorRating = p.User != null ? p.User.Rating : 0,
                     DatePosted = p.Created.ToString(CultureInfo.InvariantCulture),
                     RepliesCount = p.Replies.Count(),
                     Forum = GetForumListingForPost(p)
@@ -340,9 +340,9 @@ namespace BiblioMit.Controllers
             var forum = post.Forum;
             return new ForumListingModel
             {
-                Name = forum.Title,
-                Id = forum.Id,
-                ImageUrl = forum.ImageUrl
+                Name = forum?.Title,
+                Id = forum != null ? forum.Id : 0,
+                ImageUrl = forum?.ImageUrl
             };
         }
         [HttpGet]

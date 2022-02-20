@@ -6,7 +6,7 @@
     }
     public class CommuneList
     {
-        public string Commune { get; set; }
-        public string Province { get; set; }
+        public string? Commune { get; set; }
+        public string? Province { get; set; }
     }
 }

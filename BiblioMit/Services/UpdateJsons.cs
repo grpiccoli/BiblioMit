@@ -1,15 +1,14 @@
 ﻿using BiblioMit.Controllers;
 using BiblioMit.Data;
+using BiblioMit.Extensions;
+using BiblioMit.Models;
+using BiblioMit.Models.VM;
 using BiblioMit.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
-using System.Text.Json;
 using System.Globalization;
 using System.Reflection;
-using BiblioMit.Extensions;
-using Microsoft.EntityFrameworkCore;
-using BiblioMit.Models.VM;
-using BiblioMit.Models;
-using BiblioMit.Models.Entities.Centres;
+using System.Text.Json;
 
 namespace BiblioMit.Services
 {
@@ -99,7 +98,7 @@ namespace BiblioMit.Services
                             .AsNoTracking()
                             .ToList();
 
-            List<NanoGalleryElement> gallery = photos.Select(photo => 
+            List<NanoGalleryElement> gallery = photos.Select(photo =>
             new NanoGalleryElement(
                 $"Photos/GetImg?f={photo.Key}&d=DB",
                 $"Photos/GetImg?f={photo.Key}&d=DB/Thumbs",
@@ -111,22 +110,22 @@ namespace BiblioMit.Services
 
             gallery.AddRange(photos.Select(p => p.Individual)
             .Select(i => new NanoGalleryElement(
-                $"Photos/GetImg?f={i.Photos.First().Key}&d=DB",
-                $"Photos/GetImg?f={i.Photos.First().Key}&d=DB/Thumbs",
-                i.Id.ToString(CultureInfo.InvariantCulture),
-                i.Id.ToString(CultureInfo.InvariantCulture)
+                $"Photos/GetImg?f={i?.Photos.First().Key}&d=DB",
+                $"Photos/GetImg?f={i?.Photos.First().Key}&d=DB/Thumbs",
+                i?.Id.ToString(CultureInfo.InvariantCulture),
+                i?.Id.ToString(CultureInfo.InvariantCulture)
                 )
             {
-                AlbumId = i.SamplingId.ToString(CultureInfo.InvariantCulture),
+                AlbumId = i?.SamplingId.ToString(CultureInfo.InvariantCulture),
                 Kind = "album"
             }));
 
-            gallery.AddRange(photos.Select(p => p.Individual.Sampling)
+            gallery.AddRange(photos.Select(p => p.Individual?.Sampling)
             .Select(s => new NanoGalleryElement(
-                $"Photos/GetImg?f={s.Individuals.First().Photos.First().Key}&d=DB",
-                $"Photos/GetImg?f={s.Individuals.First().Photos.First().Key}&d=DB/Thumbs",
-                s.Id.ToString(CultureInfo.InvariantCulture),
-                s.Id.ToString(CultureInfo.InvariantCulture)
+                $"Photos/GetImg?f={s?.Individuals.First().Photos.First().Key}&d=DB",
+                $"Photos/GetImg?f={s?.Individuals.First().Photos.First().Key}&d=DB/Thumbs",
+                s?.Id.ToString(CultureInfo.InvariantCulture),
+                s?.Id.ToString(CultureInfo.InvariantCulture)
                 )
             {
                 Kind = "album"
@@ -456,12 +455,12 @@ namespace BiblioMit.Services
                 {
                     Id = c.Id,
                     Name = title + c.Name,
-                    Position = c.Polygon.Vertices.Select(o =>
+                    Position = c.Polygon != null ? c.Polygon.Vertices.Select(o =>
                     new GMapCoordinate
                     {
                         Lat = o.Latitude,
                         Lng = o.Longitude
-                    })
+                    }) : null
                 });
             return JsonSerializer.Serialize(data, JsonCase.CamelMin);
         }
@@ -475,7 +474,7 @@ namespace BiblioMit.Services
                 {
                     Id = com.Id,
                     Name = title + com.Name,
-                    Provincia = com.Province.Name,
+                    Provincia = com.Province != null ? com.Province.Name : null,
                     Position = com.Polygons
                     .Select(p => p.Vertices.Select(o => new GMapCoordinate
                     {
@@ -494,24 +493,24 @@ namespace BiblioMit.Services
                 Label = p.Code + " " + p.Name
             }), JsonCase.CamelMin);
         public string ResearchData() => JsonSerializer.Serialize(_context.ResearchCentres
-    .AsNoTracking()
+            .AsNoTracking()
             .Where(c => c.PolygonId.HasValue && c.CommuneId.HasValue)
             .Select(c => new GMapPolygonCentre
             {
                 Id = c.Id,
                 Name = c.Name + " (" + c.Acronym + ")",
-                Comuna = c.CommuneNN.Name,
-                ComunaId = c.CommuneIdNN,
-                Provincia = c.CommuneNN.Province.Name,
-                Region = c.CommuneNN.Province.Region.Name,
-                BusinessName = c.CompanyNN.BusinessName,
-                Rut = c.CompanyIdNN,
-                Position = c.PolygonNN
+                Comuna = c.Commune != null ? c.Commune.Name : string.Empty,
+                ComunaId = c.CommuneId != null ? c.CommuneId.Value : 0,
+                Provincia = c.Commune != null && c.Commune.Province != null ? c.Commune.Province.Name : null,
+                Region = c.Commune != null && c.Commune.Province != null && c.Commune.Province.Region != null ? c.Commune.Province.Region.Name : null,
+                BusinessName = c.Company != null ? c.Company.BusinessName : null,
+                Rut = c.CompanyId != null ? c.CompanyId.Value : 0,
+                Position = c.Polygon != null ? c.Polygon
                 .Vertices.Select(o => new GMapCoordinate
                 {
                     Lat = o.Latitude,
                     Lng = o.Longitude
-                })
+                }) : null
             }), JsonCase.CamelMin);
         public string FarmData() => JsonSerializer.Serialize(_context.PsmbAreas
     .AsNoTracking()
@@ -519,37 +518,37 @@ namespace BiblioMit.Services
     .Select(c => new GMapPolygonCentre
     {
         Id = c.Id,
-        Name = c.Code + " " + c.Name ?? "",
-        Comuna = c.CommuneNN.Name,
-        ComunaId = c.CommuneIdNN,
-        Provincia = c.CommuneNN.Province.Name,
+        Name = c.Code + " " + c.Name,
+        Comuna = c.Commune != null ? c.Commune.Name : null,
+        ComunaId = c.CommuneId != null ? c.CommuneId.Value : 0,
+        Provincia = c.Commune != null && c.Commune.Province != null ? c.Commune.Province.Name : null,
         Code = c.Code,
-    //BusinessName = c.Company.BusinessName ?? "",
-    //Rut = c.CompanyId.Value,
-    Position = c.PolygonNN
+        BusinessName = c.Company != null ? c.Company.BusinessName : null,
+        Rut = c.CompanyId != null ? c.CompanyId.Value : 0,
+        Position = c.Polygon != null ? c.Polygon
                 .Vertices.Select(o => new GMapCoordinate
                 {
                     Lat = o.Latitude,
                     Lng = o.Longitude
-                })
+                }) : null,
     }), JsonCase.CamelMin);
         public string PsmbData() => JsonSerializer.Serialize(SelectPsmbs(_context.PsmbAreas
             .AsNoTracking()
-            .Where(c => c.CommuneNN.CatchmentAreaId.HasValue && c.PolygonId.HasValue && c.PlanktonAssays.Any())), JsonCase.CamelMin);
+            .Where(c => c.Commune != null && c.Commune.CatchmentAreaId.HasValue && c.PolygonId.HasValue && c.PlanktonAssays.Any())), JsonCase.CamelMin);
         private static IQueryable<GMapPolygon> SelectPsmbs(IQueryable<PsmbArea> psmbs) =>
     psmbs.Select(c => new GMapPolygon
     {
         Id = c.Id,
         Name = c.Code + " " + c.Name,
-        Comuna = c.CommuneNN.Name,
-        Provincia = c.CommuneNN.Province.Name,
+        Comuna = c.Commune != null ? c.Commune.Name : null,
+        Provincia = c.Commune != null && c.Commune.Province != null ? c.Commune.Province.Name : null,
         Code = c.Code,
-        Position = c.PolygonNN
+        Position = c.Polygon != null ? c.Polygon
                 .Vertices.Select(o => new GMapCoordinate
                 {
                     Lat = o.Latitude,
                     Lng = o.Longitude
-                })
+                }) : null
     });
         public string PsmbList() => JsonSerializer.Serialize(_context.Communes
     .AsNoTracking()
@@ -600,13 +599,13 @@ namespace BiblioMit.Services
             var sp = " (" + _localizer["Species"] + ")";
             return JsonSerializer.Serialize(new ChoicesGroup
             {
-                Label = _localizer["Species"]+" (Cel/mL)",
+                Label = _localizer["Species"] + " (Cel/mL)",
                 Choices = _context.SpeciesPhytoplanktons
                 .AsNoTracking()
                 .Select(p => new ChoicesItem
                 {
                     Value = "s" + p.Id,
-                    Label = p.Genus.Name + " " + p.Name + sp
+                    Label = p.Genus != null ? p.Genus.Name + " " + p.Name + sp : p.Name + sp
                 })
             });
         }

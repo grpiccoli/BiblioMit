@@ -1,16 +1,16 @@
+using BiblioMit.Data;
+using BiblioMit.Extensions;
+using BiblioMit.Models;
+using BiblioMit.Models.Entities.Histopathology;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BiblioMit.Data;
-using BiblioMit.Models;
-using Microsoft.AspNetCore.Authorization;
+using System.Runtime.Serialization;
 //using Amazon.S3;
 //using Amazon.S3.Model;
 //using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
-using BiblioMit.Extensions;
-using BiblioMit.Models.Entities.Histopathology;
-using System.Runtime.Serialization;
 
 namespace BiblioMit.Controllers
 {
@@ -70,7 +70,7 @@ namespace BiblioMit.Controllers
         {
             ViewData["IndividualId"] = _context.Individuals.GroupBy(i => i.SamplingId);
             var mags = from Magnification e in Enum.GetValues(typeof(Magnification))
-                        select new { Id = e, Name = e.GetAttrName() };
+                       select new { Id = e, Name = e.GetAttrName() };
             ViewData["Magnification"] = new SelectList(mags, "Id", "Name");
 
             return View();
@@ -241,7 +241,7 @@ namespace BiblioMit.Controllers
     }
     public class NanoGalleryElement
     {
-        public NanoGalleryElement(string src, string srct, string title, string id)
+        public NanoGalleryElement(string src, string srct, string? title, string? id)
         {
             Src = src;
             Srct = srct;
@@ -250,8 +250,8 @@ namespace BiblioMit.Controllers
         }
         public string Src { get; set; }
         public string Srct { get; set; }
-        public string Title { get; set; }
-        public string Id { get; set; }
+        public string? Title { get; set; }
+        public string? Id { get; set; }
         [DataMember(EmitDefaultValue = false)]
         public string? AlbumId { get; set; }
         [DataMember(EmitDefaultValue = false)]

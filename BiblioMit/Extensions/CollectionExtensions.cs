@@ -1,8 +1,5 @@
 ﻿using BiblioMit.Models.Entities.Digest;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 
 namespace BiblioMit.Extensions
@@ -127,7 +124,7 @@ namespace BiblioMit.Extensions
         }
         public static string GetValue(this Dictionary<(int, int), string> matrix, int column, int row)
         {
-            if(matrix.ContainsKey((column, row)))
+            if (matrix.ContainsKey((column, row)))
                 return matrix[(column, row)];
             return string.Empty;
         }

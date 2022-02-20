@@ -86,12 +86,12 @@ namespace BiblioMit.Models
             && Ph == q.Ph
             && Salinity == q.Salinity;
         }
-        public static bool operator ==(PlanktonAssay x, PlanktonAssay y)
+        public static bool operator ==(PlanktonAssay? x, PlanktonAssay? y)
         {
             if (x is null) return y is null;
             return x.Equals(y);
         }
-        public static bool operator !=(PlanktonAssay x, PlanktonAssay y) => !(x == y);
+        public static bool operator !=(PlanktonAssay? x, PlanktonAssay? y) => !(x == y);
         public override int GetHashCode() => HashCode.Combine(Id);
         public bool Equals(PlanktonAssay? other)
         {
