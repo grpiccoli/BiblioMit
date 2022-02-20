@@ -33,7 +33,7 @@ string os = Environment.OSVersion.Platform.ToString();
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
-    config.AddIniFile($"appsettings.{os}.json", optional: true, reloadOnChange: true));
+    config.AddJsonFile($"appsettings.{os}.json", optional: true, reloadOnChange: true));
 
 builder.WebHost
     .UseKestrel(c => {
