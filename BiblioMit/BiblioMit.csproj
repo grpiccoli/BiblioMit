@@ -91,6 +91,7 @@
 	  <None Include="Views\VariableTypes\Index.cshtml" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Remove="StaticFiles\**"/>
 		<Content Include="StaticFiles\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
