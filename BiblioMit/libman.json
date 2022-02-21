@@ -25,7 +25,7 @@
     {
       "library": "moment@2.29.1",
       "destination": "wwwroot/lib/moment.js",
-      "files": [ "dist/moment.min.js", "dist/locale/es.min.js" ]
+      "files": [ "min/moment-with-locales.min.js" ]
     },
     {
       "library": "ckeditor5@32.0.0",

@@ -40,6 +40,7 @@ var esp = lang === 'es';
 var choiceOps = {
     maxItemCount: 50,
     removeItemButton: true,
+    allowHTML: true,
     duplicateItemsAllowed: false,
     paste: false,
     searchResultLimit: 10,

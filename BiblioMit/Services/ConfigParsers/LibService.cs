@@ -112,13 +112,21 @@ namespace BiblioMit.Services
                         .Where(f => !f.EndsWith("gif") && !f.EndsWith("png"));
                 if (Libs.ContainsKey(key))
                 {
-                    foreach(string file in files)
+                    if (files.Count() != Libs[key].Count)
                     {
-                        SourcesModel model = new(library, file);
-                        if(!Libs[key].Any(x => x.Href == model.Href))
+                        Libs.Remove(key);
+                        Libs.Add(key, new HashSet<SourcesModel>(files.Select(f => new SourcesModel(library, f).SetLibMan(library, f))));
+                    }
+                    else
+                    {
+                        foreach (string file in files)
                         {
-                            model.SetLibMan(library, file);
-                            Libs[key].Add(model);
+                            SourcesModel model = new(library, file);
+                            if (!Libs[key].Any(x => x.Href == model.Href))
+                            {
+                                model.SetLibMan(library, file);
+                                Libs[key].Add(model);
+                            }
                         }
                     }
                 }
@@ -168,9 +176,19 @@ namespace BiblioMit.Services
                     string key = Regex.Replace(bundle.OutputFileName ?? string.Empty, @"^wwwroot/.*/(.*)(.min)?.(css|js|woff2|woff|ttf)$", "$1").Replace(".min", "");
                     if (!Libs.ContainsKey(key))
                     {
-                        Libs[key] = new HashSet<SourcesModel>();
+                        Libs[key] = new HashSet<SourcesModel>
+                        {
+                            new SourcesModel(bundle)
+                        };
                     }
-                    Libs[key].Add(new SourcesModel(bundle));
+                    else
+                    {
+                        var model = new SourcesModel(bundle);
+                        if(!Libs[key].Any(l => l.Href == model.Href))
+                        {
+                            Libs[key].Add(model);
+                        }
+                    }
                 }
             }
             using StreamReader c = new(_compiler);
@@ -187,10 +205,19 @@ namespace BiblioMit.Services
                         ;
                     if (!Libs.ContainsKey(key))
                     {
-                        Libs[key] = new HashSet<SourcesModel>();
+                        Libs[key] = new HashSet<SourcesModel>
+                        {
+                            new SourcesModel(compile)
+                        };
                     }
-
-                    Libs[key].Add(new SourcesModel(compile));
+                    else
+                    {
+                        var model = new SourcesModel(compile);
+                        if (!Libs[key].Any(l => l.Href == model.Href))
+                        {
+                            Libs[key].Add(model);
+                        }
+                    }
                 }
             }
             using StreamWriter w = new(_filename);

@@ -11,6 +11,7 @@ namespace BiblioMit.Extensions
             using SHA512 sha = SHA512.Create();
             byte[] checksum = sha.ComputeHash(stream);
             await stream.DisposeAsync().ConfigureAwait(false);
+            Thread.Sleep(200);
             return "sha512-" + Convert.ToBase64String(checksum);
         }
         public static string Get512Local(string file, int bufferSize = 1_000_000)
