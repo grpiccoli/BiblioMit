@@ -12,7 +12,11 @@ namespace BiblioMit.Controllers
         [ResponseCache(Duration = 60)]
         public IActionResult GetJson(string lang, string name)
         {
-            if (name == null) throw new ArgumentNullException($"argument name {name} cannot be null");
+            if (name == null)
+            {
+                throw new ArgumentNullException($"argument name {name} cannot be null");
+            }
+
             var invariant = name.ToUpperInvariant();
             if (invariant.Contains("FARM", StringComparison.Ordinal)
                 || invariant.Contains("PSMB", StringComparison.Ordinal)
@@ -20,7 +24,10 @@ namespace BiblioMit.Controllers
                 || invariant.Contains("GENUS", StringComparison.Ordinal)
                 || invariant.Contains("TL", StringComparison.Ordinal))
             {
-                if (User.Identity is not null && !User.Identity.IsAuthenticated) throw new AuthenticationException($"Please log in to view this content {name}");
+                if (User.Identity is not null && !User.Identity.IsAuthenticated)
+                {
+                    throw new AuthenticationException($"Please log in to view this content {name}");
+                }
             }
             var file = Path.Combine(
                 Directory.GetCurrentDirectory(),
@@ -34,8 +41,16 @@ namespace BiblioMit.Controllers
         [ResponseCache(Duration = 60)]
         public IActionResult GetHtml(string name)
         {
-            if (name == null) throw new ArgumentNullException($"argument name {name} cannot be null");
-            if (User.Identity is not null && !User.Identity.IsAuthenticated) throw new AuthenticationException($"Please log in to view this content {name}");
+            if (name == null)
+            {
+                throw new ArgumentNullException($"argument name {name} cannot be null");
+            }
+
+            if (User.Identity is not null && !User.Identity.IsAuthenticated)
+            {
+                throw new AuthenticationException($"Please log in to view this content {name}");
+            }
+
             var file = Path.Combine(Directory.GetCurrentDirectory(), "html", name);
             //var physical = System.IO.File.Exists(file) ? file
             //    : Path.Combine(Directory.GetCurrentDirectory(), DefaultStaticMiddleware.DefaultImagePath);

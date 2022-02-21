@@ -1,6 +1,7 @@
 ﻿using BiblioMit.Models.Entities.Environmental.Plancton;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -12,10 +13,12 @@ namespace BiblioMit.Models
         public DateTime SamplingDate { get; set; }
         [ParseSkip]
         public int? StationId { get; set; }
-        public virtual Station? Station { get; set; }
+        [AllowNull]
+        public virtual Station Station { get; set; }
         [ParseSkip]
         public int? SamplingEntityId { get; set; }
-        public virtual SamplingEntity? SamplingEntity { get; set; }
+        [AllowNull]
+        public virtual SamplingEntity SamplingEntity { get; set; }
         public DateTime? AssayStart { get; set; }
         //public int Formulario { get; set; }
         public virtual ICollection<PlanktonAssayEmail> Emails { get; } = new List<PlanktonAssayEmail>();
@@ -24,20 +27,23 @@ namespace BiblioMit.Models
         public DateTime? AssayEnd { get; set; }
         [ParseSkip]
         public int? LaboratoryId { get; set; }
-        public virtual Laboratory? Laboratory { get; set; }
+        [AllowNull]
+        public virtual Laboratory Laboratory { get; set; }
         [ParseSkip]
         public int? PhoneId { get; set; }
-        public virtual Phone? Phone { get; set; }
+        [AllowNull]
+        public virtual Phone Phone { get; set; }
         [Required]
         [ParseSkip]
         public int PsmbId { get; set; }
-        [ParseSkip]
-        public virtual Psmb? Psmb { get; set; }
+        [ParseSkip, AllowNull]
+        public virtual Psmb Psmb { get; set; }
         public int NoSamples { get; set; }
         public DateTime? DepartureDate { get; set; }
         [ParseSkip]
         public int? AnalistId { get; set; }
-        public virtual Analist? Analist { get; set; }
+        [AllowNull]
+        public virtual Analist Analist { get; set; }
         [Range(-2, 40)]
         public double? Temperature { get; set; }
         [Range(0, 100)]
@@ -58,15 +64,27 @@ namespace BiblioMit.Models
         public int? AreaCode { get; set; }
         [ParseSkip]
         public int? PlanktonUserId { get; set; }
-        [ParseSkip]
-        public virtual PlanktonUser? PlanktonUser { get; set; }
+        [ParseSkip, AllowNull]
+        public virtual PlanktonUser PlanktonUser { get; set; }
         [ParseSkip]
         public virtual ICollection<Phytoplankton> Phytoplanktons { get; } = new List<Phytoplankton>();
         public override bool Equals(object? obj)
         {
-            if (obj is null) return this is null;
-            if (this is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (obj is null)
+            {
+                return this is null;
+            }
+
+            if (this is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
             return obj is PlanktonAssay q
             && Id == q.Id
             && StationId == q.StationId
@@ -88,16 +106,32 @@ namespace BiblioMit.Models
         }
         public static bool operator ==(PlanktonAssay? x, PlanktonAssay? y)
         {
-            if (x is null) return y is null;
+            if (x is null)
+            {
+                return y is null;
+            }
+
             return x.Equals(y);
         }
         public static bool operator !=(PlanktonAssay? x, PlanktonAssay? y) => !(x == y);
         public override int GetHashCode() => HashCode.Combine(Id);
         public bool Equals(PlanktonAssay? other)
         {
-            if (other is null) return this is null;
-            if (this is null) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (other is null)
+            {
+                return this is null;
+            }
+
+            if (this is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             return Id.Equals(other.Id)
             && Id.Equals(other.Id)
             && StationId.Equals(other.StationId)
@@ -118,11 +152,5 @@ namespace BiblioMit.Models
             && Ph.Equals(other.Ph)
             && Salinity.Equals(other.Salinity);
         }
-        [NotMapped]
-        public int FarmCodeNN { get => FarmCode ?? 0; }
-        [NotMapped]
-        public double TemperatureNN { get => Temperature ?? 0; }
-        [NotMapped]
-        public double SalinityNN { get => Salinity ?? 0; }
     }
 }

@@ -63,7 +63,10 @@ namespace BiblioMit.Services
                 string tsvPath = Path
                     .Combine(_environment.ContentRootPath, "Data", "Fora");
                 if (!_context.Forums.Any())
+                {
                     await Insert<Forum>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Posts.Any())
                 {
                     await Insert<Post>(tsvPath).ConfigureAwait(false);
@@ -75,21 +78,45 @@ namespace BiblioMit.Services
                 tsvPath = Path
                     .Combine(_environment.ContentRootPath, "Data", "Centres");
                 if (!_context.Localities.Any())
+                {
                     await Insert<Locality>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.AreaCodes.Any())
+                {
                     await Insert<AreaCode>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.AreaCodeProvinces.Any())
+                {
                     await Insert<AreaCodeProvince>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.CatchmentAreas.Any())
+                {
                     await Insert<CatchmentArea>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Psmbs.Any())
+                {
                     await Insert<Psmb>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Companies.Any())
+                {
                     await Insert<Company>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Products.Any())
+                {
                     await Insert<Product>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.PlantProducts.Any())
+                {
                     await Insert<PlantProduct>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Contacts.Any())
                 {
                     await Insert<Contact>(tsvPath).ConfigureAwait(false);
@@ -98,38 +125,71 @@ namespace BiblioMit.Services
                     await _context.SaveChangesAsync().ConfigureAwait(false);
                 }
                 if (!_context.Polygons.Any())
+                {
                     await Insert<Polygon>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Coordinates.Any())
+                {
                     await Insert<Coordinate>(tsvPath).ConfigureAwait(false);
+                }
 
                 tsvPath = Path
                     .Combine(_environment.ContentRootPath, "Data", "Histopathology");
                 if (!_context.Samplings.Any())
+                {
                     await Insert<Sampling>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Individuals.Any())
+                {
                     await Insert<Individual>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Softs.Any())
+                {
                     await Insert<Soft>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Photos.Any())
+                {
                     await Insert<Photo>(tsvPath).ConfigureAwait(false);
+                }
 
                 tsvPath = Path
                     .Combine(_environment.ContentRootPath, "Data", "FileUploading");
                 if (!_context.InputFiles.Any())
+                {
                     await Insert<InputFile>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Registries.Any())
+                {
                     await Insert<Registry>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Headers.Any())
+                {
                     await Insert<Header>(tsvPath).ConfigureAwait(false);
+                }
 
                 tsvPath = Path
                     .Combine(_environment.ContentRootPath, "Data", "Digest");
                 if (!_context.Origins.Any())
+                {
                     await Insert<Origin>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.SernapescaDeclarations.Any())
+                {
                     await Insert<SernapescaDeclaration>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.DeclarationDates.Any())
+                {
                     await Insert<DeclarationDate>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Entries.Any())
                 {
                     await Insert<Entry>(tsvPath).ConfigureAwait(false);
@@ -141,66 +201,145 @@ namespace BiblioMit.Services
                 tsvPath = Path
                     .Combine(_environment.ContentRootPath, "Data", "Environmental");
                 if (!_context.Analists.Any())
+                {
                     await Insert<Analist>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Emails.Any())
+                {
                     await Insert<Email>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.GenusPhytoplanktons.Any())
+                {
                     await Insert<GenusPhytoplankton>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Laboratories.Any())
+                {
                     await Insert<Laboratory>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Phones.Any())
+                {
                     await Insert<Phone>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.PhylogeneticGroups.Any())
+                {
                     await Insert<PhylogeneticGroup>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Phytoplanktons.Any())
+                {
                     await Insert<Phytoplankton>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.PlanktonAssays.Any())
+                {
                     await Insert<PlanktonAssay>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.PlanktonAssayEmails.Any())
+                {
                     await Insert<PlanktonAssayEmail>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.SamplingEntities.Any())
+                {
                     await Insert<SamplingEntity>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.SpeciesPhytoplanktons.Any())
+                {
                     await Insert<SpeciesPhytoplankton>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Stations.Any())
+                {
                     await Insert<Station>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.PlanktonUsers.Any())
+                {
                     await Insert<PlanktonUser>(tsvPath).ConfigureAwait(false);
+                }
 
                 tsvPath = Path
                     .Combine(_environment.ContentRootPath, "Data", "Ads");
                 if (!_context.Banners.Any())
+                {
                     await Insert<Banner>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Btns.Any())
+                {
                     await Insert<Btn>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Captions.Any())
+                {
                     await Insert<Caption>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Imgs.Any())
+                {
                     await Insert<Img>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Rgbs.Any())
+                {
                     await Insert<Rgb>(tsvPath).ConfigureAwait(false);
+                }
 
                 tsvPath = Path
                     .Combine(_environment.ContentRootPath, "Data", "Semaforo");
                 if (!_context.Spawnings.Any())
+                {
                     await Insert<Spawning>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.ReproductiveStages.Any())
+                {
                     await Insert<ReproductiveStage>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Species.Any())
+                {
                     await Insert<Specie>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.SpecieSeeds.Any())
+                {
                     await Insert<SpecieSeed>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Seeds.Any())
+                {
                     await Insert<Seed>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Tallas.Any())
+                {
                     await Insert<Talla>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Larvaes.Any())
+                {
                     await Insert<Larvae>(tsvPath).ConfigureAwait(false);
+                }
+
                 if (!_context.Larvas.Any())
+                {
                     await Insert<Larva>(tsvPath).ConfigureAwait(false);
+                }
+
                 string path = "Data/Environmental/DB";
                 if (Directory.Exists(path))
+                {
                     await AddBulkFiles(path).ConfigureAwait(false);
+                }
+
                 CultureInfo.CurrentUICulture = new CultureInfo("en");
                 _update.SeedUpdate();
                 CultureInfo.CurrentUICulture = new CultureInfo("es");
@@ -271,7 +410,11 @@ END";
             //_context.Database.SetCommandTimeout(10000);
             var tsv = Path.Combine(path, $"{name}.tsv");
             var tmp = Path.Combine(Path.GetTempPath(), $"{name}.tsv");
-            if (!File.Exists(tsv)) return;
+            if (!File.Exists(tsv))
+            {
+                return;
+            }
+
             File.Copy(tsv, tmp, true);
             var dbo = $"dbo.{name}";
             await _context.Database
@@ -295,9 +438,11 @@ END";
                         NormalizedName = _normalizer.NormalizeName(r)
                     });
                     foreach (var r in aprolls)
+                    {
                         await _context.ApplicationRoles
                             .AddAsync(r)
                             .ConfigureAwait(false);
+                    }
 
                     await _context.SaveChangesAsync().ConfigureAwait(false);
                 }
@@ -397,17 +542,26 @@ END";
                         ProfileImageUrl = item.ImageUri
                     };
                     IdentityResult userResult = await _userManager.CreateAsync(user, item.Key).ConfigureAwait(false);
-                    if (!userResult.Succeeded) throw new InvalidOperationException($"user could not be added {user.UserName}");
+                    if (!userResult.Succeeded)
+                    {
+                        throw new InvalidOperationException($"user could not be added {user.UserName}");
+                    }
 
                     IdentityResult claimIdentityResult = await _userManager
                         .AddClaimsAsync(user, item.Claims.Select(c =>
                     new Claim(c, c)))
                         .ConfigureAwait(false);
-                    if (!claimIdentityResult.Succeeded) throw new InvalidOperationException($"claims could not be added to user {user.UserName}");
+                    if (!claimIdentityResult.Succeeded)
+                    {
+                        throw new InvalidOperationException($"claims could not be added to user {user.UserName}");
+                    }
 
                     IdentityResult rolesIdentityResult = await _userManager
                         .AddToRolesAsync(user, item.Roles).ConfigureAwait(false);
-                    if (!rolesIdentityResult.Succeeded) throw new InvalidOperationException($"roles could not be added to user {user.UserName}");
+                    if (!rolesIdentityResult.Succeeded)
+                    {
+                        throw new InvalidOperationException($"roles could not be added to user {user.UserName}");
+                    }
                 }
                 await _context.SaveChangesAsync()
                     .ConfigureAwait(false);
@@ -416,7 +570,11 @@ END";
         public async Task<Task> AddBulkFiles(string path)
         {
             DirectoryInfo? basePathInfo = Directory.GetParent(_environment.ContentRootPath)?.Parent;
-            if (basePathInfo == null) throw new NullReferenceException(nameof(basePathInfo));
+            if (basePathInfo == null)
+            {
+                throw new NullReferenceException(nameof(basePathInfo));
+            }
+
             string pwd = Path.Combine(basePathInfo.FullName, path);
             try
             {

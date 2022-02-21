@@ -2,4 +2,4 @@
 using System.Reflection;
 
 [assembly: ResourceLocation("Resources")]
-[assembly: RootNamespace("BiblioMit")]
+[assembly: RootNamespace("BiblioMit")] 

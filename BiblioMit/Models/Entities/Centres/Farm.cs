@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models.Entities.Centres
 {
@@ -6,7 +7,8 @@ namespace BiblioMit.Models.Entities.Centres
     {
         [Display(Name = "PSMB area")]
         public int? PsmbAreaId { get; set; }
-        public virtual PsmbArea? PsmbArea { get; set; }
+        [AllowNull]
+        public virtual PsmbArea PsmbArea { get; set; }
         [Display(Name = "Invoice number", Description = "National Registry of Aquaculture (RNA)")]
         public int? RnaInvoice { get; set; }
         public virtual ICollection<Larvae> Larvaes { get; } = new List<Larvae>();

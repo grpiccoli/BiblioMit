@@ -36,7 +36,11 @@ namespace BiblioMit.Services
         public static GetReportsResponse GetReport(GetReportsRequest getReportsRequest)
         {
             string? config = System.Configuration.ConfigurationManager.AppSettings["KeyFileName"];
-            if (string.IsNullOrWhiteSpace(config)) throw new MissingFieldException($"missing KeyFileName entry in csproj config file");
+            if (string.IsNullOrWhiteSpace(config))
+            {
+                throw new MissingFieldException($"missing KeyFileName entry in csproj config file");
+            }
+
             using var analyticsService = GetAnalyticsReportingServiceInstance(config);
             return analyticsService.Reports.BatchGet(getReportsRequest).Execute();
         }

@@ -7,16 +7,17 @@ namespace BiblioMit.Models
 {
     public class PhylogeneticGroup
     {
-        public int Id { get; set; }
-        [DisallowNull]
-        public string? Name { get; private set; }
-        [Required, DisallowNull]
-        public string? NormalizedName { get; private set; }
-        public void SetName([DisallowNull] string value)
+        public PhylogeneticGroup() { }
+        public PhylogeneticGroup(string value)
         {
-            NormalizedName = value;
+            NormalizedName = value.ToUpperInvariant();
             Name = value.FirstCharToUpper();
         }
+        public int Id { get; set; }
+        [Required, DisallowNull]
+        public string Name { get; private set; }
+        [Required, DisallowNull]
+        public string NormalizedName { get; private set; }
         public virtual ICollection<GenusPhytoplankton> GenusPhytoplanktons { get; } = new List<GenusPhytoplankton>();
     }
 }

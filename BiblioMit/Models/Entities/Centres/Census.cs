@@ -1,4 +1,6 @@
-﻿namespace BiblioMit.Models
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace BiblioMit.Models
 {
     public class Census
     {
@@ -6,6 +8,7 @@
         public DateTime Year { get; set; }
         public int Count { get; set; }
         public int LocationId { get; set; }
-        public virtual Locality? Locality { get; set; }
+        [AllowNull]
+        public virtual Locality Locality { get; set; }
     }
 }

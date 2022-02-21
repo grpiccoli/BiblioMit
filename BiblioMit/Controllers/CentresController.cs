@@ -21,7 +21,11 @@ namespace BiblioMit.Controllers
         [AllowAnonymous]
         public IActionResult GetMap(PsmbType type, int[] c, int[] i)
         {
-            if (c == null || i == null) throw new ArgumentNullException($"Argument c {c} and i {i} cannot be null");
+            if (c == null || i == null)
+            {
+                throw new ArgumentNullException($"Argument c {c} and i {i} cannot be null");
+            }
+
             var list = type switch
             {
                 PsmbType.Farm => GetEntitiesAsync<Farm>(c, i),
@@ -85,13 +89,21 @@ namespace BiblioMit.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             Farm? centre = await _context.Farms
                 .Include(c => c.Company)
                 .Include(c => c.Polygon)
                 .Include(c => c.Contacts)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if (centre is null) return NotFound();
+            if (centre is null)
+            {
+                return NotFound();
+            }
+
             return View(centre);
         }
 
@@ -114,7 +126,10 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Create([Bind("Id,ComunaId,Type,Url,Acronym,CompanyId,Name,Address")] ResearchCentre centre)
         {
-            if (centre is null) return NotFound();
+            if (centre is null)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -131,9 +146,17 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             var centre = await _context.Farms.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if (centre is null) return NotFound();
+            if (centre is null)
+            {
+                return NotFound();
+            }
+
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", centre.CompanyId);
             ViewData["ComunaId"] = new SelectList(_context.Communes, "Id", "Name", centre.CommuneId);
             //var values = from CentreType e in Enum.GetValues(typeof(CentreType))
@@ -151,7 +174,11 @@ namespace BiblioMit.Controllers
         [Authorize(Roles = nameof(RoleData.Administrator) + "," + nameof(RoleData.Editor), Policy = nameof(UserClaims.Centres))]
         public async Task<IActionResult> Edit(int id, [Bind("ComunaId,Type,Url,Acronym,CompanyId,Name,Address")] ResearchCentre centre)
         {
-            if (id != centre.Id) return NotFound();
+            if (id != centre.Id)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -161,8 +188,14 @@ namespace BiblioMit.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CentreExists(centre.Id)) return NotFound();
-                    else throw;
+                    if (!CentreExists(centre.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
                 return RedirectToAction("Index");
             }
@@ -175,15 +208,27 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             bool isAuthorized = User.IsInRole(RoleData.Administrator.ToString());
-            if (!isAuthorized) return RedirectToAction("AccessDenied", "Account");
-            if (id == null) return NotFound();
+            if (!isAuthorized)
+            {
+                return RedirectToAction("AccessDenied", "Account");
+            }
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             Farm? centre = await _context.Farms
                 .Include(c => c.Company)
                 .Include(c => c.Commune)
                     .ThenInclude(c => c.Province)
                     .ThenInclude(c => c.Region)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if (centre is null) return NotFound();
+            if (centre is null)
+            {
+                return NotFound();
+            }
+
             return View(centre);
         }
 
@@ -194,7 +239,11 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Farm? centre = await _context.Farms.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if (centre is not null) _context.Farms.Remove(centre);
+            if (centre is not null)
+            {
+                _context.Farms.Remove(centre);
+            }
+
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");
         }

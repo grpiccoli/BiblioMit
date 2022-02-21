@@ -65,7 +65,11 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Create([Bind("Id,SamplingId,Sex,Maturity")] Individual individual)
         {
-            if (individual == null) return NotFound();
+            if (individual == null)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(individual);

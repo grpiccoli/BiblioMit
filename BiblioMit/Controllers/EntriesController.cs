@@ -47,7 +47,11 @@ namespace BiblioMit.Controllers
         {
             int pgNN = pg ?? 1;
             int rppNN = rpp ?? 20;
-            if (string.IsNullOrWhiteSpace(srt)) srt = "Date";
+            if (string.IsNullOrWhiteSpace(srt))
+            {
+                srt = "Date";
+            }
+
             bool ascNN = asc ?? false;
 
             IQueryable<SernapescaEntry> pre = _context.SernapescaEntries.Pre();
@@ -86,14 +90,18 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             SernapescaEntry? entry = await _context.SernapescaEntries
                 .Include(e => e.ApplicationUser)
                 .SingleOrDefaultAsync(m => m.Id == id)
                 .ConfigureAwait(false);
             if (entry == null)
+            {
                 return NotFound();
+            }
 
             return View(entry);
         }
@@ -101,7 +109,11 @@ namespace BiblioMit.Controllers
         public IActionResult Output(int id)
         {
             SernapescaEntry? model = _context.SernapescaEntries.Find(id);
-            if (model == null) return NotFound();
+            if (model == null)
+            {
+                return NotFound();
+            }
+
             return PartialView("_Output", model);
         }
         // GET: Entries/Create
@@ -116,9 +128,13 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> CreateFito(IFormFile qqfile)
         {
-            if (qqfile == null) return Json(new { success = false, error = "error file null" });
+            if (qqfile == null)
+            {
+                return Json(new { success = false, error = "error file null" });
+            }
 
             if (qqfile.Length > 0)
+            {
                 try
                 {
                     Task result = await _import.AddAsync(qqfile).ConfigureAwait(false);
@@ -129,6 +145,8 @@ namespace BiblioMit.Controllers
                     });
                 }
                 catch { throw; }
+            }
+
             throw new ArgumentNullException($"Argument {qqfile} has length 0");
             //return Json(new { success = false, error = "qqfile length 0" });
         }
@@ -152,7 +170,10 @@ namespace BiblioMit.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (entry?.InputFile == null) return View(nameof(Create));
+                if (entry?.InputFile == null)
+                {
+                    return View(nameof(Create));
+                }
 
                 entry.ApplicationUserId = _userManager.GetUserId(User);
                 entry.IP = Request.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
@@ -190,13 +211,18 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             SernapescaEntry? entry = await _context.SernapescaEntries
                 .SingleOrDefaultAsync(m => m.Id == id)
                 .ConfigureAwait(false);
             if (entry == null)
+            {
                 return NotFound();
+            }
+
             ViewData["ApplicationUserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", entry.ApplicationUserId);
             return View(entry);
         }
@@ -211,7 +237,9 @@ namespace BiblioMit.Controllers
             [Bind("Id,ApplicationUserId,IP,ProcessStart,ProcessTime,Stage,DeclarationType")] SernapescaEntry entry)
         {
             if (id != entry?.Id)
+            {
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -224,9 +252,13 @@ namespace BiblioMit.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!EntryExists(entry.Id))
+                    {
                         return NotFound();
+                    }
                     else
+                    {
                         throw;
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -238,14 +270,18 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             SernapescaEntry? entry = await _context.SernapescaEntries
                 .Include(e => e.ApplicationUser)
                 .SingleOrDefaultAsync(m => m.Id == id)
                 .ConfigureAwait(false);
             if (entry == null)
+            {
                 return NotFound();
+            }
 
             return View(entry);
         }

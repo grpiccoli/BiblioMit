@@ -110,7 +110,11 @@ namespace BiblioMit.Controllers
             if (src != null && src.Any())
             {
                 ViewData["srcs"] = src;
-                if (src[0].Contains(',', StringComparison.Ordinal)) src = src[0].Split(',');
+                if (src[0].Contains(',', StringComparison.Ordinal))
+                {
+                    src = src[0].Split(',');
+                }
+
                 ViewData[nameof(src)] = src;
 
                 if (!string.IsNullOrWhiteSpace(q))
@@ -174,7 +178,11 @@ namespace BiblioMit.Controllers
                                 Color = ColorToHex(gradient.ElementAt(i))
                             };
                         }).ToList();
-                        if (chartData.Any()) chartData[0].AddRange(t);
+                        if (chartData.Any())
+                        {
+                            chartData[0].AddRange(t);
+                        }
+
                         chartData.Add(t);
                     }
                     int low1, NoPages;
@@ -234,9 +242,21 @@ namespace BiblioMit.Controllers
             stopWatch.Start();
 
             #region Variables
-            if (!pg.HasValue) pg = 1;
-            if (!trpp.HasValue) trpp = 20;
-            if (string.IsNullOrWhiteSpace(stt)) stt = "abierto";
+            if (!pg.HasValue)
+            {
+                pg = 1;
+            }
+
+            if (!trpp.HasValue)
+            {
+                trpp = 20;
+            }
+
+            if (string.IsNullOrWhiteSpace(stt))
+            {
+                stt = "abierto";
+            }
+
             ViewData[nameof(src)] = src;
             ViewData["srcs"] = string.Join(",", src);
             ViewData[nameof(pg)] = pg;
@@ -273,7 +293,11 @@ namespace BiblioMit.Controllers
                 foreach (string fondo in conicyt1_funds)
                 {
                     using IHtmlDocument? bc_doc = await GetDoc(conicyt1[fondo]).ConfigureAwait(false);
-                    if (bc_doc == null) continue;
+                    if (bc_doc == null)
+                    {
+                        continue;
+                    }
+
                     var co = GetCo("conicyt");
                     Agendas.AddRange(from n in bc_doc.QuerySelectorAll("div.lista_concurso")
                                      let cells = n.Children
@@ -335,7 +359,11 @@ namespace BiblioMit.Controllers
                                                     CultureInfo.InvariantCulture,
                                                     DateTimeStyles.None,
                                                     out DateTime Date);
-                            if (parsed) Entry.End = Date;
+                            if (parsed)
+                            {
+                                Entry.End = Date;
+                            }
+
                             Agendas.Add(Entry);
                         }
                     }
@@ -392,7 +420,11 @@ namespace BiblioMit.Controllers
                                                     CultureInfo.InvariantCulture,
                                                     DateTimeStyles.None,
                                                     out DateTime Date);
-                            if (parsed) Entry.End = Date;
+                            if (parsed)
+                            {
+                                Entry.End = Date;
+                            }
+
                             Agendas.Add(Entry);
                         }
                     }
@@ -607,7 +639,11 @@ string dateSelect, int rpp, string acronym)
                     co.SetAcronym(acronym);
                     co.SetBusinessName("Google Inc");
                     using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
                             let t = n?.QuerySelector(titleSelect)?.TextContent
                             select new PublicationVM()
@@ -645,7 +681,11 @@ string authorSelect, string dateSelect, string abstractSelect)
                 {
                     var co = GetCo(60706000);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (from n in doc.QuerySelectorAll(nodeSelect)
                             let t = n?.QuerySelector(quriSelect)
                             select new PublicationVM()
@@ -682,7 +722,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect)
                 {
                     var co = GetCo(60719000);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (from n in doc.QuerySelectorAll(nodeSelect)
                             select new PublicationVM()
                             {
@@ -747,7 +791,11 @@ string acronym, string parameter, int rpp, string sortBy, string order, int? pg,
                     var co = GetCo(60915000);
                     var url = new Uri($"http://repositorio.conicyt.cl/handle/10533/{parameter}/discover?query={q}&page={pg - 1}&rpp={rpp}&sort_by={sortBy}&order={order}");
                     using var doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (doc.QuerySelectorAll("div.row.ds-artifact-item")
 .Select(n => new PublicationVM()
 {
@@ -855,7 +903,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                     IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (
     from n in doc.QuerySelectorAll(nodeSelect)
     let m = n.QuerySelector(quriSelect)
@@ -893,7 +945,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
                     {
                         Source = acronym,
@@ -928,7 +984,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                     var co = GetCo(acronym);
                     Regex regex = new("[a-zA-Z]");
                     using var doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (
 from n in doc.QuerySelectorAll(nodeSelect)
 let m = n.QuerySelector(quriSelect)
@@ -969,7 +1029,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (
     from n in doc.QuerySelectorAll(nodeSelect)
     let m = n.QuerySelector(quriSelect)
@@ -1006,7 +1070,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (from n in doc.QuerySelectorAll(nodeSelect)
                             let m = n.QuerySelector(quriSelect)
                             select new PublicationVM()
@@ -1042,7 +1110,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 {
                     var co = GetCo(acronym);
                     using var doc = await GetDoc(url).ConfigureAwait(false);
-                    if (doc is null) return (new List<PublicationVM>(), acronym, 0);
+                    if (doc is null)
+                    {
+                        return (new List<PublicationVM>(), acronym, 0);
+                    }
+
                     return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
                     {
                         Source = acronym,
@@ -1078,7 +1150,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                     var co = GetCo(acronym);
                     using var doc = await GetDocStream(url).ConfigureAwait(false);
                     var num = doc.QuerySelectorAll(nodeSelect);
-                    if (pg == null) pg = 1;
+                    if (pg == null)
+                    {
+                        pg = 1;
+                    }
+
                     return (num.Skip(rpp * (pg.Value - 1)).Take(rpp).Select(n => new PublicationVM()
                     {
                         Typep = Typep.Thesis,
@@ -1208,7 +1284,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         {
             Regex res = new(@"([0-9]+,)*[0-9]+");
             string? match = doc.QuerySelector(selector)?.TextContent;
-            if (match is null) return 0;
+            if (match is null)
+            {
+                return 0;
+            }
+
             bool parsed = int.TryParse(res.Match(match).Value.Replace(",", "", StringComparison.Ordinal), out int result);
             return parsed ? result : 0;
         }
@@ -1217,7 +1297,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         {
             Regex res = new(@"[\d\.,]+");
             string? match = doc.QuerySelector(selector)?.TextContent;
-            if (match is null) return 0;
+            if (match is null)
+            {
+                return 0;
+            }
+
             bool parsed = int.TryParse(res.Matches(match)[pos].Value, out int result);
             return parsed ? result : 0;
         }
@@ -1226,7 +1310,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             Regex res = new(@"[\d]+");
             string[] formats = { "yyyy" };
             string? match = node.QuerySelector(selector)?.TextContent;
-            if (match is null) return new DateTime();
+            if (match is null)
+            {
+                return new DateTime();
+            }
+
             bool parsed = DateTime.TryParseExact(res.Match(match).Value,
                                         formats,
                                         CultureInfo.InvariantCulture,
@@ -1240,7 +1328,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             Regex res = new(@"[\d\-]+");
             string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
             string? match = node.QuerySelector(selector)?.TextContent;
-            if (match is null) return new DateTime();
+            if (match is null)
+            {
+                return new DateTime();
+            }
+
             var parsed = DateTime.TryParseExact(res.Match(match).Value,
                                     formats,
                                     CultureInfo.InvariantCulture,
@@ -1280,7 +1372,11 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
             Regex aut = new(@"\A(?:(?![0-9]{4}).)*");
             string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
             string? match = node.QuerySelector(selector)?.TextContent;
-            if (match is null) return new List<AuthorVM>();
+            if (match is null)
+            {
+                return new List<AuthorVM>();
+            }
+
             return aut.Match(match).Value.Trim().Trim('-').Split(',')
                 .Select(a => a.Split(' '))
                 .Select(nn =>

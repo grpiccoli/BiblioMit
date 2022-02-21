@@ -8,8 +8,6 @@
     HtmlString script = this.WriteBlocks("Scripts");
     #endregion scripts
 
-    string serviceWorkerNonce = Hash.Nonce();
-    BiblioMit.Models.VM.CSPTag.ScriptSrcElem.Add($"'nonce-{serviceWorkerNonce}'");
     if (!ViewData.Keys.Contains("Title"))
     {
         ViewData["controller"] = this.ViewContext.RouteData.Values["controller"]?.ToString();
@@ -156,6 +154,5 @@
     @this.WriteBlocks("Scripts")
     @*@script*@
     @RenderSection("Scripts", required: false)
-    <script nonce="@serviceWorkerNonce">'serviceWorker' in navigator && navigator.serviceWorker.register('/serviceworker')</script>
 </body>
 </html>

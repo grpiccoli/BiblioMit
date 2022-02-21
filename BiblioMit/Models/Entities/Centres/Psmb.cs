@@ -17,7 +17,8 @@ namespace BiblioMit.Models
         public int Code { get; set; }
         [Range(101101, 116305)]
         public int? CommuneId { get; set; }
-        public virtual Commune Commune { get; set; } = new Commune();
+        [AllowNull]
+        public virtual Commune Commune { get; set; }
         public PsmbType Discriminator { get; set; }
         public string? Name { get; private set; }
         public void SetName(string value)
@@ -33,25 +34,53 @@ namespace BiblioMit.Models
         #region Comparison
         public override bool Equals(object? obj)
         {
-            if (obj is null) return this is null;
-            if (this is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (obj is null)
+            {
+                return this is null;
+            }
+
+            if (this is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
             return obj is Psmb q
                 && q.Id == Id
                 && q.Discriminator == Discriminator;
         }
         public static bool operator ==([AllowNull] Psmb? x, [AllowNull] Psmb? y)
         {
-            if (x is null) return y is null;
+            if (x is null)
+            {
+                return y is null;
+            }
+
             return x.Equals(y);
         }
         public static bool operator !=([AllowNull] Psmb? x, [AllowNull] Psmb? y) => !(x == y);
         public override int GetHashCode() => HashCode.Combine(Id, Discriminator);
         public bool Equals([AllowNull] Psmb? other)
         {
-            if (other is null) return this is null;
-            if (this is null) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (other is null)
+            {
+                return this is null;
+            }
+
+            if (this is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             return Id.Equals(other.Id)
             && Discriminator.Equals(other.Discriminator);
         }
@@ -61,7 +90,8 @@ namespace BiblioMit.Models
         [DisplayFormat(DataFormatString = "{0,9:N0}")]
         public int? CompanyId { get; set; }
         [Display(Name = "Company")]
-        public Company? Company { get; set; }
+        [AllowNull]
+        public virtual Company Company { get; set; }
         [Display(Name = "Contacts")]
         public virtual ICollection<Contact> Contacts { get; } = new List<Contact>();
         //AREA FARM
@@ -74,7 +104,8 @@ namespace BiblioMit.Models
         public WaterBody? WaterBody { get; set; }
         //AREA BED FARM
         public int? PolygonId { get; set; }
-        public virtual Polygon? Polygon { get; set; }
+        [AllowNull]
+        public virtual Polygon Polygon { get; set; }
         //CRAFT FARM PLANT
         public virtual ICollection<SernapescaDeclaration> Declarations { get; } = new List<SernapescaDeclaration>();
         //BED FARM
@@ -82,31 +113,5 @@ namespace BiblioMit.Models
         public virtual ICollection<Sampling> Samplings { get; } = new List<Sampling>();
         public virtual ICollection<Variable> Variables { get; } = new List<Variable>();
         public string GetFullName() => string.Join(",", new string?[] { Code.ToString(), Name, Commune?.GetFullName() });
-        //[NotMapped]
-        //public Company CompanyNN
-        //{
-        //    get => Company ?? new();
-        //}
-        //[NotMapped]
-        //public int CommuneIdNN
-        //{
-        //    get => CompanyId ?? 0;
-        //}
-        //[NotMapped]
-        //public Commune CommuneNN
-        //{
-        //    get => Commune ?? new();
-        //}
-        //[NotMapped]
-        //public int CompanyIdNN
-        //{
-        //    get => CompanyId ?? 0;
-        //}
-        //[NotMapped]
-        //public Polygon PolygonNN
-        //{
-        //    get => Polygon ?? new();
-        //}
-
     }
 }

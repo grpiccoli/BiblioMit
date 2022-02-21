@@ -1,6 +1,7 @@
 ﻿using BiblioMit.Models.Entities.Digest;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -10,8 +11,8 @@ namespace BiblioMit.Models
         public int Id { get; set; }
         [ParseSkip, Required]
         public int EntryId { get; set; }
-        [ParseSkip]
-        public virtual SernapescaEntry? Entry { get; set; }
+        [ParseSkip, AllowNull]
+        public virtual SernapescaEntry Entry { get; set; }
         [ParseSkip, Required]
         public DeclarationType Discriminator { get; set; }
         //Tons
@@ -48,14 +49,27 @@ namespace BiblioMit.Models
         public int DeclarationNumber { get; set; }//1
         [ParseSkip]
         public int OriginPsmbId { get; set; }
-        public virtual Psmb? OriginPsmb { get; set; }//0
+        [AllowNull]
+        public virtual Psmb OriginPsmb { get; set; }//0
         [ParseSkip]
         public virtual ICollection<DeclarationDate> DeclarationDates { get; } = new List<DeclarationDate>();
         public override bool Equals(object? obj)
         {
-            if (obj is null) return this is null;
-            if (this is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (obj is null)
+            {
+                return this is null;
+            }
+
+            if (this is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
             return obj is SernapescaDeclaration q
             && Id == q.Id
             && Discriminator == q.Discriminator
@@ -64,17 +78,37 @@ namespace BiblioMit.Models
         }
         public static bool operator ==(SernapescaDeclaration? x, SernapescaDeclaration? y)
         {
-            if (x is null) return y is null;
-            if (y is null) return x is null;
+            if (x is null)
+            {
+                return y is null;
+            }
+
+            if (y is null)
+            {
+                return x is null;
+            }
+
             return x.Equals(y);
         }
         public static bool operator !=(SernapescaDeclaration? x, SernapescaDeclaration? y) => !(x == y);
         public override int GetHashCode() => HashCode.Combine(Id);
         public bool Equals(SernapescaDeclaration other)
         {
-            if (other is null) return this is null;
-            if (this is null) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (other is null)
+            {
+                return this is null;
+            }
+
+            if (this is null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             return Id.Equals(other.Id)
             && Id.Equals(other.Id)
             && Discriminator.Equals(other.Discriminator)

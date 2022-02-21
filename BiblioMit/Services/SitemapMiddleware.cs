@@ -61,7 +61,9 @@ namespace BiblioMit.Services
                 await memoryStream.CopyToAsync(stream, bytes.Length, cancellationToken).ConfigureAwait(false);
             }
             else
+            {
                 await _next(context).ConfigureAwait(false);
+            }
         }
     }
 

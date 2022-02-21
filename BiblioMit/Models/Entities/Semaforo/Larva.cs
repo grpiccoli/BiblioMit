@@ -1,5 +1,6 @@
 ﻿using BiblioMit.Models.Entities.Semaforo;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -7,9 +8,11 @@ namespace BiblioMit.Models
     {
         public int Id { get; set; }
         public int LarvaeId { get; set; }
-        public virtual Larvae? Larvae { get; set; }
+        [AllowNull]
+        public virtual Larvae Larvae { get; set; }
         public int SpecieId { get; set; }
-        public Specie? Specie { get; set; }
+        [AllowNull]
+        public Specie Specie { get; set; }
         public LarvaType LarvaType { get; set; }
         [Display(Description = "Larvas/m3")]
         public double Count { get; set; }

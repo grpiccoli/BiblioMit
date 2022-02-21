@@ -53,7 +53,11 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> AddReply(PostReplyModel model)
         {
-            if (model == null) return NotFound();
+            if (model == null)
+            {
+                return NotFound();
+            }
+
             var userId = _userManager.GetUserId(User);
             var user = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
 

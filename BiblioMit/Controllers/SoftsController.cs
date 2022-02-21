@@ -61,7 +61,11 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Create([Bind("Id,IndividualId,SoftType,Tissue,Comment,Count,Degree")] Soft soft)
         {
-            if (soft == null) return NotFound();
+            if (soft == null)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(soft);
@@ -154,7 +158,11 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Soft? soft = await _context.Softs.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
-            if (soft == null) return NotFound();
+            if (soft == null)
+            {
+                return NotFound();
+            }
+
             _context.Softs.Remove(soft);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");

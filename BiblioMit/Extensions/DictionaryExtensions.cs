@@ -15,7 +15,10 @@
             (int, int) cell = GetKeyFromHeader(dic, q);
             (int, int) key = (cell.Item1 + columns, cell.Item2 + rows);
             if (dic.ContainsKey(key))
+            {
                 return dic[key];
+            }
+
             return null;
         }
         public static KeyValuePair<(int, int), string> GetFromHeader(
@@ -24,11 +27,17 @@
         public static (int, int) SearchHeaders(this Dictionary<(int, int), string> dic, IEnumerable<string> headers)
         {
             if (headers != null)
+            {
                 foreach (var reg in headers)
                 {
                     (int, int) np = dic.GetFromHeader(reg).Key;
-                    if (np != (0, 0)) return np;
+                    if (np != (0, 0))
+                    {
+                        return np;
+                    }
                 }
+            }
+
             return (0, 0);
         }
     }

@@ -11,7 +11,11 @@ namespace BiblioMit.Extensions
         private static HashSet<Func<dynamic, HelperResult>> Libs { get; set; } = new HashSet<Func<dynamic, HelperResult>>();
         public static HtmlString Blocks(this RazorPageBase webPage, string name, params Func<dynamic, HelperResult>[] templates)
         {
-            if (templates is null) throw new ArgumentNullException(nameof(templates));
+            if (templates is null)
+            {
+                throw new ArgumentNullException(nameof(templates));
+            }
+
             StringBuilder sb = new();
             foreach (var t in templates)
             {
@@ -21,16 +25,24 @@ namespace BiblioMit.Extensions
         }
         public static HtmlString Block(this RazorPageBase webPage, string name, Func<dynamic, HelperResult> template)
         {
-            if (Libs.Contains(template)) return new HtmlString(string.Empty);
+            if (Libs.Contains(template))
+            {
+                return new HtmlString(string.Empty);
+            }
+
             StringBuilder sb = new();
             using TextWriter tw = new StringWriter(sb);
             HtmlEncoder? encoder = (HtmlEncoder?)webPage.ViewContext.HttpContext.RequestServices.GetService(typeof(HtmlEncoder));
-            if (encoder == null) throw new InvalidOperationException();
+            if (encoder == null)
+            {
+                throw new InvalidOperationException();
+            }
+
             if (webPage.ViewContext.HttpContext.Request.Headers["x-requested-with"] != "XMLHttpRequest")
             {
                 StringBuilder scriptBuilder = webPage.ViewContext.HttpContext.Items[name + BLOCK_BUILDER] as StringBuilder ?? new();
 
-                template.Invoke(null).WriteTo(tw, encoder);
+                template.Invoke(null!).WriteTo(tw, encoder);
                 scriptBuilder.Append(sb);
 
                 webPage.ViewContext.HttpContext.Items[name + BLOCK_BUILDER] = scriptBuilder;
@@ -38,7 +50,7 @@ namespace BiblioMit.Extensions
                 return new HtmlString(string.Empty);
             }
 
-            template.Invoke(null).WriteTo(tw, encoder);
+            template.Invoke(null!).WriteTo(tw, encoder);
 
             return new HtmlString(sb.ToString());
         }

@@ -18,7 +18,7 @@ namespace BiblioMit.Models
         /// Navigation property for the claims this user possesses.
         /// </summary>
         public virtual IEnumerable<IdentityUserClaim<string>>? Claims { get; internal set; }
-        public virtual ICollection<Banner>? Banners { get; internal set; }
+        public virtual ICollection<Banner> Banners { get; internal set; } = new List<Banner>();
         //public virtual ICollection<PlataformaUser> Plataforma { get; } = new List<PlataformaUser>();
     }
 }

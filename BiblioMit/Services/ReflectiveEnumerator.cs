@@ -11,13 +11,18 @@ namespace BiblioMit.Services
             List<T> objects = new();
             IEnumerable<Type>? types = Assembly.GetAssembly(typeof(T))?.GetTypes()
                 .Where(myType => myType.IsClass && !myType.IsAbstract && myType.IsSubclassOf(typeof(T)));
-            if(types != null)
+            if (types != null)
+            {
                 foreach (Type type in types)
                 {
                     object? instance = Activator.CreateInstance(type, constructorArgs);
-                    if(instance != null)
+                    if (instance != null)
+                    {
                         objects.Add((T)instance);
+                    }
                 }
+            }
+
             return objects;
         }
     }

@@ -9,7 +9,7 @@ namespace BiblioMit.Models.Entities.Ads
         public string? Subtitle { get; set; }
         public string? Color { get; set; }
         public VerticalPosition Position { get; set; }
-        public ICollection<Btn>? Btns { get; internal set; }
+        public ICollection<Btn> Btns { get; internal set; } = new List<Btn>();
         public Lang Lang { get; set; }
     }
     public enum Lang

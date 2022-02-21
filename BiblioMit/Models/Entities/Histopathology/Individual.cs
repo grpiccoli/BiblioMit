@@ -1,6 +1,7 @@
 ﻿using BiblioMit.Models.Entities.Histopathology;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -13,8 +14,8 @@ namespace BiblioMit.Models
         [Display(Name = "Sample Id")]
         public int SamplingId { get; set; }
         //Parent
-        [Display(Name = "Sample")]
-        public virtual Sampling? Sampling { get; set; }
+        [Display(Name = "Sample"), AllowNull]
+        public virtual Sampling Sampling { get; set; }
         //ATT
         [Display(Name = "Sex")]
         public Sex Sex { get; set; }

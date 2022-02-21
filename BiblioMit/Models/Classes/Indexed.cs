@@ -14,13 +14,18 @@ namespace BiblioMit.Models
             get
             {
                 PropertyInfo? propertyInfo = GetType().GetProperty(propertyName);
-                if (propertyInfo == null) return null;
+                if (propertyInfo == null)
+                {
+                    return null;
+                }
+
                 return propertyInfo.GetValue(this, null);
             }
             set
             {
                 PropertyInfo? propertyInfo = GetType().GetProperty(propertyName);
                 if (propertyInfo != null)
+                {
                     if (value is null)
                     {
                         if (propertyInfo.PropertyType.IsGenericType)
@@ -65,10 +70,12 @@ namespace BiblioMit.Models
                                     null, list, null,
                                     CultureInfo.InvariantCulture);
                                 foreach (object item in (ICollection)value)
+                                {
                                     propertyInfo.PropertyType.InvokeMember("Add",
                                         BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public,
                                         null, list, new object[] { item },
                                         CultureInfo.InvariantCulture);
+                                }
                             }
                         }
                         else if (inputType == propertyInfo.PropertyType && propertyInfo.CanWrite)
@@ -84,7 +91,9 @@ namespace BiblioMit.Models
                                 {
                                     Type? t = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
                                     if (inputType == t)
+                                    {
                                         SetValue(this, propertyInfo, propertyName, value);
+                                    }
                                 }
                             }
                             else
@@ -95,20 +104,29 @@ namespace BiblioMit.Models
                             }
                         }
                     }
+                }
             }
         }
         public static void SetValue(Indexed entity, PropertyInfo propertyInfo, string propertyName, object? value)
         {
             //if (propertyInfo == null) return;
             MethodInfo? method = propertyInfo.GetSetMethod(true);
-            if (method == null) return;
+            if (method == null)
+            {
+                return;
+            }
+
             if (method.IsPublic)
+            {
                 propertyInfo.SetValue(entity, value, null);
+            }
             else
+            {
                 propertyInfo.PropertyType.InvokeMember($"Set{propertyName}",
                 BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.Public,
                 null, entity, new object?[] { value },
                 CultureInfo.InvariantCulture);
+            }
         }
     }
 }

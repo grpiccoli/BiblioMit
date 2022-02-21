@@ -1,5 +1,6 @@
 ﻿using BiblioMit.Models.Entities.Digest;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -17,7 +18,8 @@ namespace BiblioMit.Models
         public string? Description { get; set; }
         [Display(Name = "Archivo de Entrada")]
         public int InputFileId { get; set; }
-        public virtual InputFile? InputFile { get; set; }
+        [AllowNull]
+        public virtual InputFile InputFile { get; set; }
         [Display(Name = "Operación de conversión")]
         public string? Operation { get; set; }
         public int? DecimalPlaces { get; set; }

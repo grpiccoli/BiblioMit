@@ -6,19 +6,21 @@ namespace BiblioMit.Models.Entities.Environmental
 {
     public class GenusPhytoplankton
     {
-        public int Id { get; set; }
-        [DisallowNull, Required]
-        public string? Name { get; private set; }
-        [Required, DisallowNull]
-        public string? NormalizedName { get; private set; }
-        public void SetName([DisallowNull] string value)
+        public GenusPhytoplankton() { }
+        public GenusPhytoplankton(string value)
         {
-            NormalizedName = value;
+            NormalizedName = value.ToUpperInvariant();
             Name = value.FirstCharToUpper();
         }
+        public int Id { get; set; }
+        [Required, DisallowNull]
+        public string Name { get; private set; }
+        [Required, DisallowNull]
+        public string NormalizedName { get; private set; } = null!;
         [Required]
         public int GroupId { get; set; }
-        public virtual PhylogeneticGroup? Group { get; set; }
+        [AllowNull]
+        public virtual PhylogeneticGroup Group { get; set; }
         public virtual ICollection<SpeciesPhytoplankton> SpeciesPhytoplanktons { get; } = new List<SpeciesPhytoplankton>();
     }
 }

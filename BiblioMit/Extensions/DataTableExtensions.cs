@@ -18,7 +18,10 @@ namespace BiblioMit.Extensions
         public static DataTable SetColumnsNames(this DataTable table, params string[] columnNames)
         {
             for (int i = 0; i < table.Columns.Count; i++)
+            {
                 table.Columns[i].ColumnName = columnNames[i];
+            }
+
             return table;
         }
         public static Type? GetEnumType(string enumName)
@@ -27,9 +30,13 @@ namespace BiblioMit.Extensions
             {
                 Type? type = assembly.GetType(enumName);
                 if (type == null)
+                {
                     continue;
-                if (type.IsEnum)
+                }
+                else if (type.IsEnum)
+                {
                     return type;
+                }
             }
             return null;
         }

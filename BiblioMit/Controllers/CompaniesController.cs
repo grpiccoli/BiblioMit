@@ -73,7 +73,11 @@ namespace BiblioMit.Controllers
         [Authorize(Roles = nameof(RoleData.Administrator))]
         public async Task<IActionResult> Create([Bind("Id,BsnssName,Acronym")] CompanyViewModel company)
         {
-            if (company == null) return NotFound();
+            if (company == null)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 (int rut, string dv)? rut = company.RUT?.RUTUnformat();
@@ -84,8 +88,11 @@ namespace BiblioMit.Controllers
                         Id = rut.Value.rut
                     };
                     corp.SetBusinessName(company.BsnssName);
-                    if(company.Acronym is not null)
-                    corp.SetAcronym(company.Acronym);
+                    if (company.Acronym is not null)
+                    {
+                        corp.SetAcronym(company.Acronym);
+                    }
+
                     _context.Add(corp);
                     await _context.SaveChangesAsync().ConfigureAwait(false);
                     return RedirectToAction("Index");
@@ -107,7 +114,10 @@ namespace BiblioMit.Controllers
 
             Company? company = await _context.Companies.FindAsync(id).ConfigureAwait(false);
             if (company == null)
+            {
                 return NotFound();
+            }
+
             CompanyViewModel comp = new()
             {
                 RUT = company.Id.RUTFormat(),
@@ -182,7 +192,11 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Company? company = await _context.Companies.FindAsync(id).ConfigureAwait(false);
-            if (company == null) return NotFound();
+            if (company == null)
+            {
+                return NotFound();
+            }
+
             _context.Companies.Remove(company);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -7,7 +8,8 @@ namespace BiblioMit.Models
         public int Id { get; set; }
         [Display(Name = "User")]
         public string? ApplicationUserId { get; set; }
-        public virtual ApplicationUser? ApplicationUser { get; set; }
+        [AllowNull]
+        public virtual ApplicationUser ApplicationUser { get; set; }
         [Display(Name = "Date of Upload")]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy hh:mm}", ApplyFormatInEditMode = true)]

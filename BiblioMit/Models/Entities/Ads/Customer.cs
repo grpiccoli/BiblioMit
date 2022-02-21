@@ -1,4 +1,6 @@
-﻿namespace BiblioMit.Models.Entities
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace BiblioMit.Models.Entities
 {
     //Flow Customer Info
     public class Customer
@@ -11,7 +13,8 @@
         public string? CreditCardType { get; set; }
         public string? Last4CardDigits { get; set; }
         public Guid ExternalId { get; set; }
-        public virtual ApplicationUser? External { get; set; }
+        [AllowNull]
+        public virtual ApplicationUser External { get; set; }
         public Status Status { get; set; }
         public DateTime RegisterDate { get; set; }
         public string? Token { get; set; }

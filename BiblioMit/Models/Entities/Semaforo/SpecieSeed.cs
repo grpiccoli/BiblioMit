@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -6,9 +7,11 @@ namespace BiblioMit.Models
     {
         public int Id { get; set; }
         public int SpecieId { get; set; }
-        public virtual Specie Specie { get; set; } = new Specie();
+        [AllowNull]
+        public virtual Specie Specie { get; set; }
         public int SeedId { get; set; }
-        public virtual Seed Seed { get; set; } = new Seed();
+        [AllowNull]
+        public virtual Seed Seed { get; set; }
         public int Capture { get; set; }
         [Range(0, 100)]
         public double Proportion { get; set; }

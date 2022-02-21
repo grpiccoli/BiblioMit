@@ -1,4 +1,5 @@
 ﻿using BiblioMit.Models.Entities.Histopathology;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -8,7 +9,8 @@ namespace BiblioMit.Models
         //Parent Id
         public int IndividualId { get; set; }
         //Related Parent Entities
-        public virtual Individual? Individual { get; set; }
+        [AllowNull]
+        public virtual Individual Individual { get; set; }
         //ATT
         public string? Key { get; set; }
         public string? Comment { get; set; }

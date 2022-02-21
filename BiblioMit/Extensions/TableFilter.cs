@@ -20,7 +20,11 @@ namespace BiblioMit.Extensions
                 throw new ArgumentNullException(nameof(contexto));
             }
 
-            if (string.IsNullOrWhiteSpace(srt)) srt = "Id";
+            if (string.IsNullOrWhiteSpace(srt))
+            {
+                srt = "Id";
+            }
+
             PropertyDescriptor? sort = TypeDescriptor.GetProperties(typeof(TSource)).Find(srt, false);
             return sort;
         }
@@ -42,12 +46,14 @@ namespace BiblioMit.Extensions
                 {
                     PropertyDescriptor? prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
                     if (prop != null)
+                    {
                         pre = prop.PropertyType == typeof(DateTime) ?
                             pre.Where(x => filter.Value
                             .Contains(string.Format(CultureInfo.InvariantCulture, "{0:dd-MM-yyyy}", prop.GetValue(x)))) :
                             pre.Where(x =>
                                 filter.Value
                                 .Contains(prop.GetValue(x)));
+                    }
                 }
             }
 
@@ -87,11 +93,13 @@ namespace BiblioMit.Extensions
                 {
                     PropertyDescriptor? prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
                     if (prop != null)
+                    {
                         pre = prop.PropertyType == typeof(DateTime) ?
                             pre.Where(x => filter.Value
                             .Contains(string.Format(CultureInfo.InvariantCulture, "{0:dd-MM-yyyy}", prop.GetValue(x)))) :
                             pre.Where(x => filter.Value
                             .Contains(prop.GetValue(x)));
+                    }
                 }
             }
             return Filters;
@@ -101,10 +109,25 @@ namespace BiblioMit.Extensions
             int? pg = 1, int? rpp = 20, string srt = "Id",
             bool? asc = true)
         {
-            if (pg == null) pg = 1;
-            if (rpp == null) rpp = 20;
-            if (string.IsNullOrEmpty(srt)) srt = "Date";
-            if (asc == null) asc = false;
+            if (pg == null)
+            {
+                pg = 1;
+            }
+
+            if (rpp == null)
+            {
+                rpp = 20;
+            }
+
+            if (string.IsNullOrEmpty(srt))
+            {
+                srt = "Date";
+            }
+
+            if (asc == null)
+            {
+                asc = false;
+            }
 
             bool _asc = asc.Value;
 

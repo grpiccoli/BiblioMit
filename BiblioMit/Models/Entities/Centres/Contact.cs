@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -10,10 +11,12 @@ namespace BiblioMit.Models
         [Display(Name = "Submitted by")]
         // user Id from AspNetUser table
         public string? OwnerId { get; set; }
-        public virtual ApplicationUser? Owner { get; set; }
+        [AllowNull]
+        public virtual ApplicationUser Owner { get; set; }
         [Display(Name = "Centre")]
         public int ConsessionOrResearchId { get; set; }
-        public virtual Psmb? ConsessionOrResearch { get; set; }
+        [AllowNull]
+        public virtual Psmb ConsessionOrResearch { get; set; }
         [Display(Name = "Name")]
         public string? Name { get; set; }
         [Display(Name = "Surname")]

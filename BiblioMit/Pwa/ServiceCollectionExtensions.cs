@@ -70,11 +70,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton(sp =>
             {
-                IWebHostEnvironment env = sp.GetService<IWebHostEnvironment>();
+                IWebHostEnvironment? env = sp.GetService<IWebHostEnvironment>();
                 return new WebManifestCache(env, manifestFileName);
             });
 
-            services.AddScoped(sp => sp.GetService<WebManifestCache>().GetManifest());
+            services.AddScoped(sp => sp.GetService<WebManifestCache>()?.GetManifest());
 
             return services;
         }

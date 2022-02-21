@@ -15,7 +15,10 @@ namespace BiblioMit.Extensions
             foreach (var name in columnNames)
             {
                 int index = headers.IndexOf(name);
-                if (index != -1) return index;
+                if (index != -1)
+                {
+                    return index;
+                }
             }
             return -1;
         }

@@ -92,7 +92,11 @@ namespace BiblioMit.Views.Components.Nav
                 }
             };
             var identity = User.Identity;
-            if (identity == null) throw new UnauthorizedAccessException();
+            if (identity == null)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
             HashSet<UserClaims> claims = ((ClaimsIdentity)identity).Claims
                 .Where(c => Enum.IsDefined(typeof(UserClaims), c.Value))
                 .Select(c => (UserClaims)Enum.Parse(typeof(UserClaims), c.Value))
@@ -105,6 +109,7 @@ namespace BiblioMit.Views.Components.Nav
             bool client = authenticated && User.IsInRole(RoleData.Client.ToString());
             bool centres = authenticated && claims.Contains(UserClaims.Centres);
             if (centres)
+            {
                 producersLinks.Add(new Link
                 {
                     Controller = "Centres",
@@ -112,6 +117,8 @@ namespace BiblioMit.Views.Components.Nav
                     Name = _localizer["Aquaculture Farms"],
                     Icon = "fas fa-industry"
                 });
+            }
+
             producersLinks.Add(new Link
             {
                 Controller = "Centres",

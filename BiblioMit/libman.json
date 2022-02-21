@@ -8,34 +8,32 @@
       "files": [ "dist/browser/signalr.min.js" ]
     },
     {
-      "library": "@fortawesome/fontawesome-free@5.15.4",
+      "library": "@fortawesome/fontawesome-free@6.0.0",
       "destination": "wwwroot/lib/@fortawesome/fontawesome-free",
       "files": [
         "css/all.min.css",
-        "webfonts/fa-solid-900.woff2",
-        "webfonts/fa-solid-900.woff",
-        "webfonts/fa-solid-900.ttf",
-        "webfonts/fa-regular-400.woff2",
-        "webfonts/fa-regular-400.woff",
-        "webfonts/fa-regular-400.ttf",
         "webfonts/fa-brands-400.woff2",
-        "webfonts/fa-brands-400.woff",
-        "webfonts/fa-brands-400.ttf"
+        "webfonts/fa-brands-400.ttf",
+        "webfonts/fa-regular-400.woff2",
+        "webfonts/fa-regular-400.ttf",
+        "webfonts/fa-solid-900.ttf",
+        "webfonts/fa-solid-900.woff2",
+        "webfonts/fa-v4compatibility.ttf",
+        "webfonts/fa-v4compatibility.woff2"
       ]
     },
     {
-      "provider": "cdnjs",
-      "library": "moment.js@2.29.1",
+      "library": "moment@2.29.1",
       "destination": "wwwroot/lib/moment.js",
-      "files": [ "moment.min.js", "locale/es.js" ]
+      "files": [ "dist/moment.min.js", "dist/locale/es.min.js" ]
     },
     {
-      "library": "ckeditor5@31.1.0",
+      "library": "ckeditor5@32.0.0",
       "destination": "wwwroot/lib/ckeditor5",
       "files": [ "package.json" ]
     },
     {
-      "library": "@amcharts/amcharts4@4.10.23",
+      "library": "@amcharts/amcharts4@4.10.24",
       "destination": "wwwroot/lib/@amcharts/amcharts4",
       "files": [
         "core.js",
@@ -59,17 +57,12 @@
       ]
     },
     {
-      "library": "fabric@4.6.0",
-      "destination": "wwwroot/lib/fabric",
-      "files": [ "dist/fabric.min.js" ]
-    },
-    {
       "library": "alasql@1.7.3",
       "destination": "wwwroot/lib/alasql",
       "files": [ "dist/alasql.min.js" ]
     },
     {
-      "library": "clipboard@2.0.8",
+      "library": "clipboard@2.0.10",
       "destination": "wwwroot/lib/clipboard",
       "files": [ "dist/clipboard.min.js" ]
     },
@@ -98,7 +91,7 @@
       ]
     },
     {
-      "library": "@popperjs/core@2.11.0",
+      "library": "@popperjs/core@2.11.2",
       "destination": "wwwroot/lib/@popperjs/core",
       "files": [
         "dist/umd/popper.min.js"
@@ -122,7 +115,7 @@
       ]
     },
     {
-      "library": "choices.js@9.1.0",
+      "library": "choices.js@10.1.0",
       "destination": "wwwroot/lib/choices.js",
       "files": [
         "public/assets/styles/choices.min.css",
@@ -189,7 +182,7 @@
       "files": [ "jquery.rut.min.js" ]
     },
     {
-      "library": "jspdf@2.5.0",
+      "library": "jspdf@2.5.1",
       "destination": "wwwroot/lib/jspdf",
       "files": [ "dist/jspdf.umd.min.js", "dist/jspdf.es.min.js" ]
     },
@@ -207,15 +200,6 @@
       "library": "jquery@3.6.0",
       "destination": "wwwroot/lib/jquery",
       "files": [ "dist/jquery.min.js" ]
-    },
-    {
-      "provider": "cdnjs",
-      "library": "jqueryui@1.12.1",
-      "destination": "wwwroot/lib/jqueryui",
-      "files": [
-        "jquery-ui.min.js",
-        "themes/base/jquery-ui.min.css"
-      ]
     },
     {
       "library": "jquery-validation@1.19.3",
@@ -246,7 +230,6 @@
       ]
     },
     {
-      "provider": "unpkg",
       "library": "tippy.js@6.3.7",
       "destination": "wwwroot/lib/tippy.js",
       "files": [
@@ -273,12 +256,12 @@
       "files": [ "dist/umd/tooltip.min.js" ]
     },
     {
-      "library": "mdb-ui-kit@3.10.1",
+      "library": "mdb-ui-kit@3.10.2",
       "destination": "wwwroot/lib/mdb-ui-kit",
       "files": [ "js/mdb.min.js", "css/mdb.min.css" ]
     },
     {
-      "library": "xlsx@0.17.4",
+      "library": "xlsx@0.18.2",
       "destination": "wwwroot/lib/xlsx",
       "files": [ "dist/xlsx.core.min.js" ]
     }

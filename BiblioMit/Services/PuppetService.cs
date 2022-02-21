@@ -96,7 +96,9 @@ namespace BiblioMit.Services
                 {
                     Console.WriteLine(ex);
                     if (page != null)
+                    {
                         await page.Browser.CloseAsync().ConfigureAwait(false);
+                    }
                 }
             };
             return page;
@@ -112,9 +114,13 @@ namespace BiblioMit.Services
                 page.Request += (sender, e) =>
                 {
                     if (block.Any(b => e.Request.Url.Contains(b, StringComparison.InvariantCultureIgnoreCase)))
+                    {
                         e.Request.AbortAsync();
+                    }
                     else
+                    {
                         e.Request.ContinueAsync();
+                    }
                 };
             }
             await page.GoToAsync(
@@ -153,7 +159,11 @@ namespace BiblioMit.Services
                 "--no-sandbox",
                 "--no-zygote"
             };
-            if (_os != "Win32NT") args.Add("--single-process");
+            if (_os != "Win32NT")
+            {
+                args.Add("--single-process");
+            }
+
             return args.ToArray();
         }
     }

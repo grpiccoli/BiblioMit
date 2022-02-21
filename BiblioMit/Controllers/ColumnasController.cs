@@ -74,11 +74,19 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<JsonResult> Editar(int id, string description, string headers, string conversion, int places, string sep, bool negative)
         {
-            if (string.IsNullOrWhiteSpace(sep)) throw new ArgumentException(_localizer["error"]);
+            if (string.IsNullOrWhiteSpace(sep))
+            {
+                throw new ArgumentException(_localizer["error"]);
+            }
+
             var separator = sep[0];
             Registry? model = await _context.Registries
                 .FindAsync(id).ConfigureAwait(false);
-            if (model == null) throw new ArgumentOutOfRangeException(nameof(id));
+            if (model == null)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
+
             var heads = _context.Headers.Where(h => h.RegistryId == id);
             model.Description = string.IsNullOrWhiteSpace(description) ? string.Empty : description;
             model.Operation = string.IsNullOrWhiteSpace(conversion) ? string.Empty : conversion;

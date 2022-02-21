@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Razor.TagHelpers;
+﻿using BiblioMit.Extensions;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace BiblioMit.Pwa
 {
@@ -15,8 +16,14 @@ namespace BiblioMit.Pwa
             _env = env;
             _accessor = accessor;
             _options = options;
-
-            _script = "\r\n\t<script" + (_options.EnableCspNonce ? Constants.CspNonce : string.Empty) + ">'serviceWorker'in navigator&&navigator.serviceWorker.register('" + options.BaseRoute + Constants.ServiceworkerRoute + "', { scope: '" + options.BaseRoute + "/' })</script>";
+            string csp = string.Empty;
+            if (_options.EnableCspNonce)
+            {
+                string serviceWorkerNonce = Hash.Nonce();
+                Models.VM.CSPTag.ScriptSrcElem.Add($"'nonce-{serviceWorkerNonce}'");
+                csp = string.Format(Constants.CspNonce, serviceWorkerNonce);
+            }
+            _script = $"\r\n\t<script{csp}>'serviceWorker' in navigator&&navigator.serviceWorker.register('{options.BaseRoute}{Constants.ServiceworkerRoute}', {{ scope: '{options.BaseRoute}/' }})</script>";
         }
 
         /// <inheritdoc />

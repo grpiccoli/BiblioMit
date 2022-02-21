@@ -60,7 +60,11 @@ namespace BiblioMit.Services
         }
         public async Task<Task> AddRangeAsync(string pwd, IEnumerable<string> files)
         {
-            if (files == null) throw new ArgumentNullException(_localizer[$"argument files cannot be null {files}"]);
+            if (files == null)
+            {
+                throw new ArgumentNullException(_localizer[$"argument files cannot be null {files}"]);
+            }
+
             Task resultInit = await Init<PlanktonAssay>().ConfigureAwait(false);
             if (resultInit.IsCompletedSuccessfully)
             {
@@ -99,23 +103,34 @@ namespace BiblioMit.Services
         public async Task<Task> AddFilesAsync(string pwd)
         {
             if (!Directory.Exists(pwd))
+            {
                 throw new DirectoryNotFoundException(_localizer[$"directory {pwd} not found"]);
+            }
+
             string logs = Path.Combine(pwd, "LOGS");
             if (Directory.Exists(logs))
             {
                 DirectoryInfo di = new(logs);
                 foreach (FileInfo file in di.GetFiles("*log"))
+                {
                     file.Delete();
+                }
             }
             Directory.CreateDirectory(logs);
             string filesPath = Path.Combine(pwd, "plankton");
             if (!Directory.Exists(filesPath))
+            {
                 throw new DirectoryNotFoundException(_localizer[$"directory {filesPath} not found"]);
+            }
+
             IEnumerable<string> files = Directory.GetDirectories(filesPath).SelectMany(d => Directory.GetFiles(d));
             if (files.Any())
             {
                 Task response1 = await AddRangeAsync(pwd, files).ConfigureAwait(false);
-                if (!response1.IsCompletedSuccessfully) throw new InvalidOperationException(_localizer["Error when adding Plankton records"]);
+                if (!response1.IsCompletedSuccessfully)
+                {
+                    throw new InvalidOperationException(_localizer["Error when adding Plankton records"]);
+                }
             }
             HttpContext? context = _httpContext.HttpContext;
             string userId = string.Empty;
@@ -134,7 +149,11 @@ namespace BiblioMit.Services
             {
                 string dt = ((DeclarationType)i).ToString();
                 string dir = Path.Combine(pwd, "declaration", dt);
-                if (!Directory.Exists(dir)) continue;
+                if (!Directory.Exists(dir))
+                {
+                    continue;
+                }
+
                 IEnumerable<string> ds = Directory.GetFiles(dir);
                 foreach (string d in ds)
                 {
@@ -184,10 +203,16 @@ namespace BiblioMit.Services
             where T : SernapescaDeclaration
         {
             if (entry == null || package == null)
+            {
                 throw new ArgumentNullException($"Arguments Entry {entry} and package {package} cannot be null");
+            }
 
             Task resultInit = await Init<T>().ConfigureAwait(false);
-            if (!resultInit.IsCompletedSuccessfully) throw new ArgumentException(_localizer[$"Unknown Error"]);
+            if (!resultInit.IsCompletedSuccessfully)
+            {
+                throw new ArgumentException(_localizer[$"Unknown Error"]);
+            }
+
             double pgr = 0;
             IEnumerable<ExcelWorksheet> worksheets = package.Workbook.Worksheets.Where(w => w.Dimension != null);
             double rows = worksheets.Sum(w => w.Dimension.Rows);
@@ -200,7 +225,11 @@ namespace BiblioMit.Services
                 context.User.Identity.Name : "nofeed";
             foreach (ExcelWorksheet worksheet in worksheets)
             {
-                if (worksheet == null) continue;
+                if (worksheet == null)
+                {
+                    continue;
+                }
+
                 int rowCount = worksheet.Dimension.Rows;
                 ExcelRange headers = worksheet.Cells["1:1"];
                 Headers = headers.Select(s => s.Value?.ToString()?.CleanCell() ?? string.Empty).ToList();
@@ -224,7 +253,11 @@ namespace BiblioMit.Services
                         object? value = await GetValue(worksheet, d, row, item).ConfigureAwait(false);
                         if (value == null)
                         {
-                            if (Tdatas[d].Name == nameof(SeedDeclaration.Origin)) continue;
+                            if (Tdatas[d].Name == nameof(SeedDeclaration.Origin))
+                            {
+                                continue;
+                            }
+
                             msg =
                                 $">ERROR: Columna '{string.Join(",", Tdatas[d].Q)}' no encontrada en hoja '{worksheet.Name}'. Verificar archivo.\n0 registros procesados.";
                             entry.OutPut += msg;
@@ -269,8 +302,8 @@ namespace BiblioMit.Services
                     }
                     if (item.Discriminator == DeclarationType.Production)
                     {
-                        bool rawMaterial = item[nameof(ProductionDeclaration.RawOrProd)].ToString()
-                            .ToUpperInvariant().Contains('M', StringComparison.Ordinal);
+                        bool rawMaterial = item[nameof(ProductionDeclaration.RawOrProd)]?.ToString()?
+                            .ToUpperInvariant().Contains('M', StringComparison.Ordinal) ?? false;
                         DeclarationDate? date = await _context.DeclarationDates
                             .FirstOrDefaultAsync(t => t.SernapescaDeclarationId == item.Id
                             && t.Date == item.Date
@@ -284,8 +317,8 @@ namespace BiblioMit.Services
                                 SernapescaDeclarationId = item.Id,
                                 Date = item.Date,
                                 Weight = item.Weight,
-                                RawMaterial = item[nameof(ProductionDeclaration.RawOrProd)].ToString()
-                                .ToUpperInvariant().Contains('M', StringComparison.Ordinal),
+                                RawMaterial = item[nameof(ProductionDeclaration.RawOrProd)]?.ToString()?
+                                .ToUpperInvariant().Contains('M', StringComparison.Ordinal) ?? false,
                                 ProductionType = (ProductionType)item[nameof(ProductionDeclaration.ProductionType)],
                                 ItemType = (Item)item[nameof(ProductionDeclaration.ItemType)]
                             };
@@ -327,8 +360,16 @@ namespace BiblioMit.Services
                         datesIds.Add(date.Id);
                     }
                     await _context.SaveChangesAsync().ConfigureAwait(false);
-                    if (entry.Min > item.Date) entry.Min = item.Date;
-                    if (entry.Max < item.Date) entry.Max = item.Date;
+                    if (entry.Min > item.Date)
+                    {
+                        entry.Min = item.Date;
+                    }
+
+                    if (entry.Max < item.Date)
+                    {
+                        entry.Max = item.Date;
+                    }
+
                     pgr += pgrRow;
                     await _hubContext.SendProgress(userId, pgr)
                         .ConfigureAwait(false);
@@ -355,7 +396,10 @@ namespace BiblioMit.Services
             InputFile = await _context.InputFiles
                 .FirstOrDefaultAsync(e => e.ClassName == Declaration).ConfigureAwait(false) ?? new();
             if (InputFile is null)
+            {
                 throw new MissingFieldException(_localizer[$"ExcelFile {Declaration} not present in DataBase"]);
+            }
+
             FieldInfos.AddRangeOverride(type.GetProperties(BindingFlags)
                 .Where(f =>
                 f.GetCustomAttribute<ParseSkipAttribute>() == null));
@@ -367,9 +411,15 @@ namespace BiblioMit.Services
                 .FirstOrDefaultAsync(c => c.NormalizedAttribute == dt.Name.ToUpperInvariant())
                 .ConfigureAwait(false) ?? new();
                 if (r == null)
+                {
                     throw new Exception(dt.Name);
+                }
+
                 if (string.IsNullOrWhiteSpace(r.Description))
+                {
                     return null;
+                }
+
                 Type t = dt.PropertyType;
                 if (t.IsClass)
                 {
@@ -381,7 +431,10 @@ namespace BiblioMit.Services
                     if (def == typeof(Nullable<>))
                     {
                         Type? underl = Nullable.GetUnderlyingType(t);
-                        if (underl != null) t = underl;
+                        if (underl != null)
+                        {
+                            t = underl;
+                        }
                     }
                     else if (def == typeof(ICollection<>))
                     {
@@ -402,7 +455,10 @@ namespace BiblioMit.Services
             FirstOrDefaultAsyncMethod = typeof(EntityFrameworkQueryableExtensions).GetMethods(BindingFlags.Static | BindingFlags.Public)
                 .FirstOrDefault(m => m.Name == nameof(EntityFrameworkQueryableExtensions.FirstOrDefaultAsync) && m.GetParameters().Length == 3);
             if (FirstOrDefaultAsyncMethod is null)
+            {
                 throw new InvalidOperationException(_localizer[$"Cannot find \"System.Linq.FirstOrDefault\" method."]);
+            }
+
             if (type == typeof(PlanktonAssay))
             {
                 PhytoStart = await _context.Registries
@@ -414,7 +470,10 @@ namespace BiblioMit.Services
                     .FirstOrDefaultAsync(r => r.NormalizedAttribute == nameof(PhytoEnd).ToUpperInvariant())
                     .ConfigureAwait(false) ?? new();
                 if (PhytoStart is null || PhytoEnd is null)
+                {
                     throw new MissingFieldException(_localizer[$"Columna Inicio or Fin not defined in DataBase"]);
+                }
+
                 InSet[nameof(Email)] = new Dictionary<string, int>();
                 InSet[nameof(SpeciesPhytoplankton)] = new Dictionary<string, int>();
                 InSet[nameof(GenusPhytoplankton)] = new Dictionary<string, int>();
@@ -422,13 +481,15 @@ namespace BiblioMit.Services
                 InSet[nameof(Psmb)] = new Dictionary<string, int>();
                 Registry? regsp = await _context.Registries.FirstOrDefaultAsync(r => r.Attribute == nameof(Phytoplankton)).ConfigureAwait(false);
                 if (regsp is not null)
+                {
                     PhytoTData = new Tdata
                     {
-                        Operation = regsp.Operation,
+                        Operation = regsp.Operation ?? string.Empty,
                         DecimalPlaces = regsp.DecimalPlaces,
                         DecimalSeparator = regsp.DecimalSeparator,
                         DeleteAfter2ndNegative = regsp.DeleteAfter2ndNegative
                     };
+                }
             }
             //else
             //{
@@ -440,7 +501,11 @@ namespace BiblioMit.Services
         {
             string dest = "ERROR";
             string? dir = Path.GetFileName(Path.GetDirectoryName(file));
-            if (dir is null) throw new FileNotFoundException(dir);
+            if (dir is null)
+            {
+                throw new FileNotFoundException(dir);
+            }
+
             string logFile = Path.Combine(pwd, "LOGS", $"{dir}_{Path.GetFileName(file)}.log");
             using StreamWriter log = new(logFile);
             try
@@ -469,7 +534,10 @@ namespace BiblioMit.Services
                 }
                 newf += $"/{Path.GetFileName(file)}";
                 if (File.Exists(newf))
+                {
                     File.Delete(newf);
+                }
+
                 File.Move(file, newf);
                 log.Close();
             }
@@ -484,9 +552,15 @@ namespace BiblioMit.Services
         {
             Farm newFarm = new();
             if (item.Name != null)
+            {
                 item.Name = Regex.Replace(item.Name, @"[^A-Z0-9 ]", "");
+            }
+
             if (item.Acronym != null)
+            {
                 item.Acronym = Regex.Replace(item.Acronym, @"[^A-Z]", "");
+            }
+
             if (item.FarmCode.HasValue)
             {
                 string farmcode = item.FarmCode.Value.ToString(CultureInfo.InvariantCulture);
@@ -620,9 +694,14 @@ namespace BiblioMit.Services
                 .Where(f => f.NormalizedName == item.Name && (f.Discriminator == PsmbType.PsmbArea || f.Discriminator == PsmbType.Farm)).ToList();
                 List<Psmb> tmps = new();
                 foreach (Psmb tmp in psmbs)
+                {
                     if (await _context.PlanktonAssays.AnyAsync(p => p.SamplingEntityId == item.SamplingEntityId
                          && p.PsmbId == tmp.Id).ConfigureAwait(false))
+                    {
                         tmps.Add(tmp);
+                    }
+                }
+
                 if (tmps.Count == 1)
                 {
                     Psmb tmp = tmps[0];
@@ -698,7 +777,7 @@ namespace BiblioMit.Services
                     item.PsmbId = pareaId.Value;
                     return null;
                 }
-                newFarm.Code = item.AreaCode ?? item.FarmCodeNN;
+                newFarm.Code = item.AreaCode ?? item.FarmCode ?? 0;
             }
             if (newFarm.Code != 0)
             {
@@ -718,7 +797,9 @@ namespace BiblioMit.Services
                 PsmbArea? tmp = await _context.PsmbAreas
                     .FirstOrDefaultAsync(p => p.Code == item.AreaCode.Value).ConfigureAwait(false);
                 if (tmp is not null)
+                {
                     return tmp.Id;
+                }
             }
             return null;
         }
@@ -780,35 +861,57 @@ namespace BiblioMit.Services
         {
             try
             {
-                if (matrix == null) throw new ArgumentNullException($"matrix null error: {matrix}");
+                if (matrix == null)
+                {
+                    throw new ArgumentNullException($"matrix null error: {matrix}");
+                }
+
                 if (!(matrix.ContainsKey((1, StartRow))
                     && PhytoStart.Headers.Any(h => h.NormalizedName == matrix.GetValue(1, StartRow))))
+                {
                     StartRow = matrix.SearchHeaders(PhytoStart.Headers.Select(h => h.NormalizedName)).Item2;
+                }
+
                 int end = matrix.SearchHeaders(PhytoEnd.Headers.Select(h => h.NormalizedName)).Item2;
                 if (end == 0 || StartRow == 0)
+                {
                     throw new InputFormatterException($"start {PhytoStart.Description} or end {PhytoEnd.Description} not found");
+                }
+
                 PlanktonAssay item = Activator.CreateInstance<PlanktonAssay>();
                 //GET Id
                 int d = 0;
                 object? id = await GetValue(matrix, d).ConfigureAwait(false);
-                if (id == null) throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Id {string.Join("; ", Tdatas[d].Q)}"]);
+                if (id == null)
+                {
+                    throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Id {string.Join("; ", Tdatas[d].Q)}"]);
+                }
+
                 item.Id = (int)id;
                 d++;
                 //GET Sampling Date
                 object? samplingDate = await GetValue(matrix, d).ConfigureAwait(false);
                 if (samplingDate == null)
+                {
                     throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Fecha de Muestreo en {id} {string.Join("; ", Tdatas[d].Q)}"]);
+                }
+
                 item.SamplingDate = (DateTime)samplingDate;
                 //get other values
                 for (d++; d < Tdatas.Count; d++)
                 {
                     object? value = await GetValue(matrix, d, item).ConfigureAwait(false);
-                    if (value != null) item[Tdatas[d].Name] = value;
+                    if (value != null)
+                    {
+                        item[Tdatas[d].Name] = value;
+                    }
                 }
                 //check db for centre || psmb
                 item.Psmb = await ParsePsmb(item).ConfigureAwait(false);
                 if (item.PsmbId == 0 && item.Psmb is null)
+                {
                     throw new InvalidOperationException($"No se pudo encontrar un Psmb o Centro válido para la declaración {item.Id} con fecha {item.SamplingDate}");
+                }
                 //Get Phytos
                 int groupId = 0;
                 HashSet<string> speciesInFile = new();
@@ -816,9 +919,17 @@ namespace BiblioMit.Services
                 for (int row = StartRow + 1; row < end; row++)
                 {
                     string val = matrix.GetValue(1, row);
-                    if (val == null || val.Contains("TOTAL", StringComparison.Ordinal)) continue;
+                    if (val == null || val.Contains("TOTAL", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
+
                     string fullName = val.CleanScientificName();
-                    if (string.IsNullOrWhiteSpace(fullName)) continue;
+                    if (string.IsNullOrWhiteSpace(fullName))
+                    {
+                        continue;
+                    }
+
                     List<string> genusSp = fullName.SplitSpaces().ToList();
                     double? ce = matrix.GetValue(3, row)
                         .ParseDouble(
@@ -826,9 +937,13 @@ namespace BiblioMit.Services
                         PhytoTData.DeleteAfter2ndNegative, PhytoTData.Operation);
                     if (ce.HasValue)
                     {
-                        if (ce == 0) continue;
+                        if (ce == 0)
+                        {
+                            continue;
+                        }
+
                         Ear? e = (Ear?)matrix.GetValue(2, row).ParseInt();
-                        SpeciesPhytoplankton sp = new();
+                        SpeciesPhytoplankton sp = new(string.Empty);
                         if (!InSet[nameof(SpeciesPhytoplankton)].ContainsKey(fullName))
                         {
                             if (!InSet[nameof(GenusPhytoplankton)].ContainsKey(genusSp[0]))
@@ -837,29 +952,31 @@ namespace BiblioMit.Services
                                     .FirstOrDefaultAsync(s => s.NormalizedName == genusSp[0]).ConfigureAwait(false);
                                 if (genus == null)
                                 {
-                                    genus = new GenusPhytoplankton
+                                    genus = new GenusPhytoplankton(genusSp[0])
                                     {
                                         GroupId = groupId
                                     };
-                                    genus.SetName(genusSp[0]);
                                     await _context.GenusPhytoplanktons.AddAsync(genus).ConfigureAwait(false);
                                     await _context.SaveChangesAsync().ConfigureAwait(false);
                                 }
                                 InSet[nameof(GenusPhytoplankton)].Add(genus.NormalizedName, genus.Id);
                             }
                             int genusId = InSet[nameof(GenusPhytoplankton)][genusSp[0]];
-                            if (genusSp.Count == 1) genusSp.Add("SP");
+                            if (genusSp.Count == 1)
+                            {
+                                genusSp.Add("SP");
+                            }
+
                             SpeciesPhytoplankton? specie = await _context.SpeciesPhytoplanktons
                                 .FirstOrDefaultAsync(s =>
                                 s.Genus.NormalizedName == genusSp[0]
                                 && s.NormalizedName == genusSp[1]).ConfigureAwait(false);
                             if (specie == null)
                             {
-                                specie = new SpeciesPhytoplankton
+                                specie = new SpeciesPhytoplankton(genusSp[1])
                                 {
                                     GenusId = genusId
                                 };
-                                specie.SetName(genusSp[1]);
                                 sp = specie;
                             }
                             else
@@ -873,7 +990,9 @@ namespace BiblioMit.Services
                             sp.Id = InSet[nameof(SpeciesPhytoplankton)][fullName];
                         }
                         if (speciesInFile.Contains(fullName) && fitos.ContainsKey(fullName))
+                        {
                             fitos[fullName].AddToPhyto(ce.Value, e);
+                        }
                         else if (sp.Id != 0)
                         {
                             Phytoplankton? fito = await _context.Phytoplanktons
@@ -917,8 +1036,7 @@ namespace BiblioMit.Services
                             .FirstOrDefaultAsync(g => g.NormalizedName == grp).ConfigureAwait(false);
                             if (group == null)
                             {
-                                group = new PhylogeneticGroup();
-                                group.SetName(grp);
+                                group = new PhylogeneticGroup(grp);
                                 await _context.PhylogeneticGroups.AddAsync(group).ConfigureAwait(false);
                                 await _context.SaveChangesAsync().ConfigureAwait(false);
                             }
@@ -948,7 +1066,10 @@ namespace BiblioMit.Services
                 if (ensayoFito is null)
                 {
                     if (fitos.Any())
+                    {
                         item.Phytoplanktons.AddRangeOverride(fitos.Values);
+                    }
+
                     await _context.PlanktonAssays.AddAsync(item).ConfigureAwait(false);
                     await _context.SaveChangesAsync().ConfigureAwait(false);
                     UpdateInSet(item, toUpdate);
@@ -959,7 +1080,10 @@ namespace BiblioMit.Services
                     ////get ids from entities
                     ensayoFito.AddChanges(item);
                     if (fitos.Any())
+                    {
                         ensayoFito.Phytoplanktons.AddRangeOverride(fitos.Values);
+                    }
+
                     _context.PlanktonAssays.Update(ensayoFito);
                     await _context.SaveChangesAsync().ConfigureAwait(false);
                     UpdateInSet(ensayoFito, toUpdate);
@@ -974,23 +1098,46 @@ namespace BiblioMit.Services
         private void UpdateInSet(PlanktonAssay item, List<bool> toUpdate)
         {
             if (toUpdate[0])
+            {
                 AddToInset<Analist>(item, nameof(Analist.NormalizedName));
+            }
+
             if (toUpdate[1])
+            {
                 InSet[nameof(Email)].AddRangeNewOnly(item.Emails.Select(s => new { s.Email.Address, s.EmailId })
                     .ToDictionary(v => v.Address, v => v.EmailId));
+            }
+
             if (toUpdate[2])
+            {
                 AddToInset<Laboratory>(item, nameof(Laboratory.NormalizedName));
+            }
+
             if (toUpdate[3])
+            {
                 AddToInset<Phone>(item, nameof(Phone.Number));
+            }
+
             if (toUpdate[4])
+            {
                 InSet[nameof(SpeciesPhytoplankton)].AddRangeNewOnly(item.Phytoplanktons.Select(s => new { s.Species.NormalizedName, s.SpeciesId })
                     .ToDictionary(v => v.NormalizedName, v => v.SpeciesId));
+            }
+
             if (toUpdate[5])
+            {
                 AddToInset<Psmb>(item, nameof(Psmb.NormalizedName));
+            }
+
             if (toUpdate[6])
+            {
                 AddToInset<SamplingEntity>(item, nameof(SamplingEntity.NormalizedName));
+            }
+
             if (toUpdate[7])
+            {
                 AddToInset<Station>(item, nameof(Station.NormalizedName));
+            }
         }
         private void AddToInset<T>(PlanktonAssay item, string key) where T : IHasBasicIndexer
         {
@@ -998,13 +1145,18 @@ namespace BiblioMit.Services
             int? id = (int?)item[$"{name}Id"];
             T entity = (T)item[name];
             if (!InSet[name].ContainsKey(GetKey(entity, key)) && id.HasValue)
+            {
                 InSet[name].Add(GetKey(entity, key), id.Value);
+            }
         }
         private static string GetKey<T>(T item, string key) where T : IHasBasicIndexer => item[key] as string;
         private async Task<TEntity?> FindParsedAsync<TEntity>(Indexed? item, string attribute, string normalized) where TEntity : class, IHasBasicIndexer
         {
             //return null if arguments null
-            if (string.IsNullOrWhiteSpace(normalized)) return null;
+            if (string.IsNullOrWhiteSpace(normalized))
+            {
+                return null;
+            }
             //if inset saved Id only and return null
             Type entityType = typeof(TEntity);
             string name = entityType.Name;
@@ -1051,7 +1203,11 @@ namespace BiblioMit.Services
         }
         private async Task<Station?> ParseEstacion(string text, Indexed? item)
         {
-            if (text == null) return null;
+            if (text == null)
+            {
+                return null;
+            }
+
             text = Regex.Replace(text, @"[^A-Z0-9 ]|ESTA?C?I?O?N? *", "");
             text = Regex.Replace(text, @"\s+(\b[\w']{1,4}\b)", "$1");
             text = Regex.Replace(text, @"\bE([\w']{1,4}\b)", "$1");
@@ -1060,7 +1216,11 @@ namespace BiblioMit.Services
         }
         private async Task<Origin?> ParseOrigin(string text, Indexed item)
         {
-            if (text == null) return null;
+            if (text == null)
+            {
+                return null;
+            }
+
             int id = (int)item[nameof(SeedDeclaration.OriginId)];
             string name = nameof(Origin);
             if (InSet[name].ContainsKey(text))
@@ -1082,13 +1242,21 @@ namespace BiblioMit.Services
         }
         private async Task<SamplingEntity?> ParseEntidadMuestreadora(string text, Indexed item)
         {
-            if (text == null) return null;
+            if (text == null)
+            {
+                return null;
+            }
+
             text = Regex.Replace(text, @"[^A-Z\s]", "");
             return await FindParsedAsync<SamplingEntity>(item, nameof(SamplingEntity.NormalizedName), text).ConfigureAwait(false);
         }
         private async Task<Laboratory?> ParseLaboratorio(string text, Indexed item)
         {
-            if (text == null) return null;
+            if (text == null)
+            {
+                return null;
+            }
+
             text = Regex.Replace(text, @"[^A-Z\s]", "");
             return await FindParsedAsync<Laboratory>(item, nameof(Laboratory.NormalizedName), text).ConfigureAwait(false);
         }
@@ -1097,7 +1265,10 @@ namespace BiblioMit.Services
             text = Regex.Replace(text, @"[^A-Z\s]|\b[\w']{1,3}\b", "");
             string[] names = text.SplitSpaces();
             if (!names.Any() || names.Length == 1)
+            {
                 return new Analist();
+            }
+
             if (names.Length == 3)
             {
                 text = $"{names[0]} {names.Last()}";
@@ -1161,7 +1332,11 @@ namespace BiblioMit.Services
         }
         private async Task<Phone?> ParseTelefono(string text, Indexed item)
         {
-            if (text == null) return null;
+            if (text == null)
+            {
+                return null;
+            }
+
             text = Regex.Replace(text, @"[^0-9\-\/\(\)\s]", "");
             text = Regex.Replace(text, @"\(\)", "");
             return await FindParsedAsync<Phone>(item, nameof(Phone.Number), text).ConfigureAwait(false);
@@ -1171,12 +1346,20 @@ namespace BiblioMit.Services
             List<PlanktonAssayEmail> results = new();
             object i = item[nameof(PlanktonAssay.Id)];
             int? id = i as int?;
-            if (text == null || !id.HasValue) return null;
+            if (text == null || !id.HasValue)
+            {
+                return null;
+            }
+
             string[] normalizedList = Regex.Replace(text, @"[^A-Z0-9_\-\.\@;]", "")
                 .Split(";");
             foreach (string email in normalizedList)
             {
-                if (!Regex.IsMatch(email, @"^([A-Z0-9_\-\.]+)@([A-Z0-9_\-\.]+)\.([A-Z]{2,5})$")) continue;
+                if (!Regex.IsMatch(email, @"^([A-Z0-9_\-\.]+)@([A-Z0-9_\-\.]+)\.([A-Z]{2,5})$"))
+                {
+                    continue;
+                }
+
                 PlanktonAssayEmail emailensayo = new()
                 {
                     PlanktonAssayId = id.Value
@@ -1189,7 +1372,11 @@ namespace BiblioMit.Services
         private async Task<object?> GetValue(ExcelWorksheet worksheet, int d, int row, Indexed item)
         {
             Tdata data = Tdatas[d];
-            if (worksheet == null || !data.Q.Any()) return null;
+            if (worksheet == null || !data.Q.Any())
+            {
+                return null;
+            }
+
             if (data.LastColumn == -1 || Headers.Count <= data.LastColumn + 1 || !data.Q.Contains(Headers[data.LastColumn]))
             {
                 data.LastColumn = Headers.GetColumnByNames(data.Q);
@@ -1209,7 +1396,11 @@ namespace BiblioMit.Services
         private async Task<object?> GetValue(Dictionary<(int, int), string> matrix, int d, PlanktonAssay item)
         {
             Tdata data = Tdatas[d];
-            if (matrix == null || !data.Q.Any()) return null;
+            if (matrix == null || !data.Q.Any())
+            {
+                return null;
+            }
+
             if (data.LastPosition != (0, 0) && matrix.ContainsKey(data.LastPosition))
             {
                 string lpHeader = matrix[data.LastPosition];
@@ -1232,7 +1423,11 @@ namespace BiblioMit.Services
         }
         private async Task<object?> GetValue(string val, Tdata data, Indexed item)
         {
-            if (data.FieldName == null) return null;
+            if (data.FieldName == null)
+            {
+                return null;
+            }
+
             return data.FieldName switch
             {
                 nameof(Int32) => val.ParseInt(data.DeleteAfter2ndNegative, data.Operation),

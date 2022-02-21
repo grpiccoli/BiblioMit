@@ -29,7 +29,11 @@ namespace BiblioMit.Pwa
                 string json = File.ReadAllText(file.PhysicalPath);
 
                 WebManifest? manifest = JsonSerializer.Deserialize<WebManifest>(json, JsonCase.Snake);
-                if (manifest is null) throw new JsonException("manifest is null");
+                if (manifest is null)
+                {
+                    throw new JsonException("manifest is null");
+                }
+
                 if (!manifest.IsValid(out string error))
                 {
                     throw new JsonException(error);

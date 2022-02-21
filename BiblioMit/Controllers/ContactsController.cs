@@ -37,9 +37,11 @@ namespace BiblioMit.Controllers
             foreach (var c in tmp)
             {
                 if (int.TryParse(c, out int r))
+                {
                     contacts = contacts.Where(o =>
                     o.ConsessionOrResearch != null && o.ConsessionOrResearch.CommuneId != null &&
                     o.ConsessionOrResearch.CommuneId.Value == r);
+                }
             }
 
             var isAuthorized = User.IsInRole(RoleData.Administrator.ToString()) &&
@@ -116,7 +118,11 @@ namespace BiblioMit.Controllers
         [Authorize(Roles = nameof(RoleData.Administrator) + "," + nameof(RoleData.Editor), Policy = nameof(UserClaims.Contacts))]
         public async Task<IActionResult> Create(ContactEditViewModel editModel)
         {
-            if (editModel == null) return NotFound();
+            if (editModel == null)
+            {
+                return NotFound();
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(editModel);
@@ -181,7 +187,10 @@ namespace BiblioMit.Controllers
                 // and the user cannot approve set the status back to submitted
                 var canApprove = User.IsInRole(RoleData.Administrator.ToString()) && User.HasClaim(UserClaims.Contacts.ToString(), UserClaims.Contacts.ToString());
 
-                if (!canApprove) contact.Status = ContactStatus.Submitted;
+                if (!canApprove)
+                {
+                    contact.Status = ContactStatus.Submitted;
+                }
             }
 
             _context.Update(contact);

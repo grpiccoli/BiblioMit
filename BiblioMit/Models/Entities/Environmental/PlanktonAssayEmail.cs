@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -6,9 +7,11 @@ namespace BiblioMit.Models
     {
         [Required]
         public int EmailId { get; set; }
-        public virtual Email? Email { get; set; }
+        [AllowNull]
+        public virtual Email Email { get; set; }
         [Required]
         public int PlanktonAssayId { get; set; }
-        public virtual PlanktonAssay? PlanktonAssay { get; set; }
+        [AllowNull]
+        public virtual PlanktonAssay PlanktonAssay { get; set; }
     }
 }

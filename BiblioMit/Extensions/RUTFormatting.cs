@@ -14,7 +14,9 @@ namespace BiblioMit.Extensions
                 Id /= 10;
                 Contador += 1;
                 if (Contador == 8)
+                {
                     Contador = 2;
+                }
             }
             Digito = 11 - (Acumulador % 11);
             return Digito switch
@@ -26,9 +28,17 @@ namespace BiblioMit.Extensions
         }
         public static string? RUTFormat(this string? rut, bool thousandSep = true, bool dash = true)
         {
-            if (string.IsNullOrWhiteSpace(rut)) return null;
+            if (string.IsNullOrWhiteSpace(rut))
+            {
+                return null;
+            }
+
             (int rut, string dv)? ruT = RUTUnformat(rut);
-            if (ruT is null) return null;
+            if (ruT is null)
+            {
+                return null;
+            }
+
             return RUTFormat(ruT.Value.rut, thousandSep, dash);
         }
         public static string RUTFormat(this int rut, bool thousandSep = true, bool dash = true) =>
@@ -40,7 +50,11 @@ namespace BiblioMit.Extensions
         public static string? RUTFonasa(this string rut)
         {
             (int rut, string dv)? unformated = RUTUnformat(rut);
-            if (unformated is null) return null;
+            if (unformated is null)
+            {
+                return null;
+            }
+
             return RUTFonasa(unformated.Value.rut);
         }
         public static bool RUTIsValid(this int rut, string dv)
@@ -55,7 +69,10 @@ namespace BiblioMit.Extensions
             bool parsed = int.TryParse(array[0], out int rut);
             if (parsed)
             {
-                if (RUTGetDigit(rut) == array[1].ToUpper(new CultureInfo("es-CL"))) return (rut, dv: array[1]);
+                if (RUTGetDigit(rut) == array[1].ToUpper(new CultureInfo("es-CL")))
+                {
+                    return (rut, dv: array[1]);
+                }
             }
             return null;
         }

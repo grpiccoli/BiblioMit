@@ -98,8 +98,16 @@ namespace BiblioMit.Controllers
             )
         {
             //1 analysis, 2 psmb, 3 species, 4 size, 5 larva type, 6 rep stg, 7 sex
-            if (a != 14 && a != 17 && !v.HasValue) throw new ArgumentNullException($"error: {a}, {psmb}, {sp}, {v}");
-            if ((a == 13 || a == 15 || a == 16) && sp != 31) return null;
+            if (a != 14 && a != 17 && !v.HasValue)
+            {
+                throw new ArgumentNullException($"error: {a}, {psmb}, {sp}, {v}");
+            }
+
+            if ((a == 13 || a == 15 || a == 16) && sp != 31)
+            {
+                return null;
+            }
+
             var psmbs = new Dictionary<int, int>{
                 //Quetalco
                 {20, 101990},
@@ -126,9 +134,21 @@ namespace BiblioMit.Controllers
                     {
                         var range = v.Value % 10;
                         var db = _context.Tallas as IQueryable<Talla>;
-                        if (range != 8) db = db.Where(tl => tl.Range == (Range)range);
-                        if (psmb != 23) db = db.Where(tl => tl.SpecieSeed != null && tl.SpecieSeed.Seed != null && tl.SpecieSeed.Seed.Farm != null && tl.SpecieSeed.Seed.Farm.Code == psmbs[psmb]);
-                        if (sp != 34) db = db.Where(tl => tl.SpecieSeed != null && tl.SpecieSeed.SpecieId == sps[sp]);
+                        if (range != 8)
+                        {
+                            db = db.Where(tl => tl.Range == (Range)range);
+                        }
+
+                        if (psmb != 23)
+                        {
+                            db = db.Where(tl => tl.SpecieSeed != null && tl.SpecieSeed.Seed != null && tl.SpecieSeed.Seed.Farm != null && tl.SpecieSeed.Seed.Farm.Code == psmbs[psmb]);
+                        }
+
+                        if (sp != 34)
+                        {
+                            db = db.Where(tl => tl.SpecieSeed != null && tl.SpecieSeed.SpecieId == sps[sp]);
+                        }
+
                         selection = db
                             .GroupBy(tl => tl.SpecieSeed == null || tl.SpecieSeed.Seed == null ? DateTime.MinValue : tl.SpecieSeed.Seed.Date.Date)
                             .OrderBy(g => g.Key)
@@ -143,9 +163,21 @@ namespace BiblioMit.Controllers
                     {
                         var type = v.Value % 10;
                         var db = _context.Larvas as IQueryable<Larva>;
-                        if (type != 3) db = db.Where(tl => tl.LarvaType == (LarvaType)type);
-                        if (psmb != 23) db = db.Where(tl => tl.Larvae != null && tl.Larvae.Farm != null && tl.Larvae.Farm.Code == psmbs[psmb]);
-                        if (sp != 34) db = db.Where(tl => tl.SpecieId == sps[sp]);
+                        if (type != 3)
+                        {
+                            db = db.Where(tl => tl.LarvaType == (LarvaType)type);
+                        }
+
+                        if (psmb != 23)
+                        {
+                            db = db.Where(tl => tl.Larvae != null && tl.Larvae.Farm != null && tl.Larvae.Farm.Code == psmbs[psmb]);
+                        }
+
+                        if (sp != 34)
+                        {
+                            db = db.Where(tl => tl.SpecieId == sps[sp]);
+                        }
+
                         selection = db
                             .GroupBy(tl => tl.Larvae == null ? DateTime.MinValue : tl.Larvae.Date.Date)
                             .OrderBy(g => g.Key)
@@ -159,7 +191,11 @@ namespace BiblioMit.Controllers
                     if (v.HasValue)
                     {
                         var db = _context.Spawnings as IQueryable<Spawning>;
-                        if (psmb != 23) db = db.Where(tl => tl.Farm != null && tl.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23)
+                        {
+                            db = db.Where(tl => tl.Farm != null && tl.Farm.Code == psmbs[psmb]);
+                        }
+
                         selection = db
                             .GroupBy(tl => tl.Date.Date)
                             .OrderBy(g => g.Key)
@@ -173,8 +209,16 @@ namespace BiblioMit.Controllers
                     if (true)
                     {
                         var db = _context.SpecieSeeds as IQueryable<SpecieSeed>;
-                        if (psmb != 23) db = db.Where(tl => tl.Seed != null && tl.Seed.Farm != null && tl.Seed.Farm.Code == psmbs[psmb]);
-                        if (sp != 34) db = db.Where(tl => tl.SpecieId == sps[sp]);
+                        if (psmb != 23)
+                        {
+                            db = db.Where(tl => tl.Seed != null && tl.Seed.Farm != null && tl.Seed.Farm.Code == psmbs[psmb]);
+                        }
+
+                        if (sp != 34)
+                        {
+                            db = db.Where(tl => tl.SpecieId == sps[sp]);
+                        }
+
                         selection = db
                             .GroupBy(tl => tl.Seed == null ? DateTime.MinValue : tl.Seed.Date.Date)
                             .OrderBy(g => g.Key)
@@ -189,7 +233,11 @@ namespace BiblioMit.Controllers
                     {
                         var stage = v.Value % 10;
                         var db = _context.ReproductiveStages.Where(tl => tl.Stage == (Stage)stage);
-                        if (psmb != 23) db = db.Where(tl => tl.Spawning != null && tl.Spawning.Farm != null && tl.Spawning.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23)
+                        {
+                            db = db.Where(tl => tl.Spawning != null && tl.Spawning.Farm != null && tl.Spawning.Farm.Code == psmbs[psmb]);
+                        }
+
                         selection = db
                             .GroupBy(tl => tl.Spawning == null ? DateTime.MinValue : tl.Spawning.Date.Date)
                             .OrderBy(g => g.Key)
@@ -203,7 +251,11 @@ namespace BiblioMit.Controllers
                     if (v.HasValue)
                     {
                         var db = _context.Spawnings as IQueryable<Spawning>;
-                        if (psmb != 23) db = db.Where(tl => tl.Farm != null && tl.Farm.Code == psmbs[psmb]);
+                        if (psmb != 23)
+                        {
+                            db = db.Where(tl => tl.Farm != null && tl.Farm.Code == psmbs[psmb]);
+                        }
+
                         selection = db
                             .GroupBy(tl => tl.Date.Date)
                             .OrderBy(g => g.Key)
@@ -217,8 +269,16 @@ namespace BiblioMit.Controllers
                     if (true)
                     {
                         var db = _context.SpecieSeeds as IQueryable<SpecieSeed>;
-                        if (psmb != 23) db = db.Where(tl => tl.Seed != null && tl.Seed.Farm != null && tl.Seed.Farm.Code == psmbs[psmb]);
-                        if (sp != 34) db = db.Where(tl => tl.SpecieId == sps[sp]);
+                        if (psmb != 23)
+                        {
+                            db = db.Where(tl => tl.Seed != null && tl.Seed.Farm != null && tl.Seed.Farm.Code == psmbs[psmb]);
+                        }
+
+                        if (sp != 34)
+                        {
+                            db = db.Where(tl => tl.SpecieId == sps[sp]);
+                        }
+
                         selection = db
                             .GroupBy(tl => tl.Seed == null ? DateTime.MinValue : tl.Seed.Date.Date)
                             .OrderBy(g => g.Key)
@@ -266,8 +326,15 @@ namespace BiblioMit.Controllers
         {
             end = end.AddDays(1);
             int order = 0;
-            if (area > 3) order++;
-            if (area > 100000) order++;
+            if (area > 3)
+            {
+                order++;
+            }
+
+            if (area > 100000)
+            {
+                order++;
+            }
 
             if (!(type == 'v' && id != 4))
             {

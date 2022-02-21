@@ -19,7 +19,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using System.Globalization;
-using System.Net;
 using System.Text.Json.Serialization;
 
 string defaultCulture = "en";
@@ -98,12 +97,6 @@ builder.Services.AddControllersWithViews(
         o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)
     ;
 
-builder.Services.AddProgressiveWebApp(new PwaOptions
-{
-    RegisterServiceWorker = true,
-    RoutesToPreCache = "/Home/Index"
-});
-
 // this enables compatibility with different browsers
 //builder.Services.ConfigureNonBreakingSameSiteCookies();
 
@@ -120,7 +113,6 @@ builder.Services.AddHsts(
 
 builder.Services.AddHttpsRedirection(options =>
 {
-    options.RedirectStatusCode = (int)HttpStatusCode.TemporaryRedirect;
     options.HttpsPort = 443;
 });
 
@@ -151,6 +143,12 @@ builder.Services.AddSignalR(options =>
     options.EnableDetailedErrors = true);
 
 Libman.LoadJson();
+
+builder.Services.AddProgressiveWebApp(new PwaOptions
+{
+    RegisterServiceWorker = true,
+    RoutesToPreCache = "/Home/Index"
+});
 
 bool seed = args.Any(a => a == "seed");
 if (seed)

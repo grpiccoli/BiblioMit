@@ -10,6 +10,7 @@ namespace BiblioMit.Extensions
             Stream stream = await client.GetStreamAsync(url).ConfigureAwait(false);
             using SHA512 sha = SHA512.Create();
             byte[] checksum = sha.ComputeHash(stream);
+            await stream.DisposeAsync().ConfigureAwait(false);
             return "sha512-" + Convert.ToBase64String(checksum);
         }
         public static string Get512Local(string file, int bufferSize = 1_000_000)

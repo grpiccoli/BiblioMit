@@ -1,5 +1,6 @@
 ﻿using BiblioMit.Models.Entities.Centres;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -7,7 +8,8 @@ namespace BiblioMit.Models
     {
         public int Id { get; set; }
         public int FarmId { get; set; }
-        public virtual Farm? Farm { get; set; }
+        [AllowNull]
+        public virtual Farm Farm { get; set; }
         public DateTime Date { get; set; }
         [Range(0, 100)]
         [Display(Description = "%")]

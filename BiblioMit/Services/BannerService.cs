@@ -60,9 +60,16 @@ namespace BiblioMit.Services
                 var active = item.i == 0 ? "active" : "";
                 var lang = _localizer["en"].Value;
                 var text = item?.value.Texts?.FirstOrDefault(t => t.Lang.ToString() == lang);
-                if (text == null) continue;
-                if(item != null)
+                if (text == null)
+                {
+                    continue;
+                }
+
+                if (item != null)
+                {
                     modelo.Indicators.Add(GetCarouselButton(item.i, active));
+                }
+
                 string btns = string.Empty;
                 if (item != null && item.value.Rgbs != null && item.value.Rgbs.Any())
                 {
@@ -84,7 +91,10 @@ role=""button"" rel=""nofollow"" target=""_blank"">{b.Title}</a>"));
                 }
                 mask = $@".banner-{item?.i} .mask{{{mask};}}";
                 if (!string.IsNullOrWhiteSpace(text.Color))
+                {
                     mask += $@"[id=""{text.Id}""]{{color:{text.Color} !important}}";
+                }
+
                 modelo.Styles.Add(string.Join(" ", item?.value.Imgs is null ? new List<string>() : item.value.Imgs.Select(i => $@"@media (max-width: {(int)i.Size}px){{ 
 .banner-{item.i}{{background-image: url('../Home/GetBanner?f={i.FileName}');}}}}")) + mask);
                 modelo.Items.Add(@$"<div class=""carousel-item banner-{item?.i} {active}"">

@@ -38,7 +38,7 @@ namespace BiblioMit.Pwa
                 string fileName = _options.Strategy + ".js";
                 Assembly assembly = typeof(PwaController).Assembly;
                 Stream? resourceStream = assembly.GetManifestResourceStream($"BiblioMit.Pwa.ServiceWorker.Files.{fileName}");
-                if(resourceStream != null)
+                if (resourceStream != null)
                 {
                     using StreamReader reader = new(resourceStream);
                     string js = await reader.ReadToEndAsync();
@@ -68,7 +68,11 @@ namespace BiblioMit.Pwa
 
             Assembly assembly = typeof(PwaController).Assembly;
             Stream? resourceStream = assembly.GetManifestResourceStream("BiblioMit.Pwa.ServiceWorker.Files.offline.html");
-            if(resourceStream == null) return NotFound();
+            if (resourceStream == null)
+            {
+                return NotFound();
+            }
+
             using var reader = new StreamReader(resourceStream);
             return Content(await reader.ReadToEndAsync());
         }

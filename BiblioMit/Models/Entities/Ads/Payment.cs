@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models.Entities.Ads
 {
@@ -16,7 +17,8 @@ namespace BiblioMit.Models.Entities.Ads
         [Display(Name = "Period")]
         [DataType(DataType.Date)]
         public DateTime PeriodDate { get; set; }
-        public virtual Banner Banner { get; set; } = new Banner();
+        [AllowNull]
+        public virtual Banner Banner { get; set; }
         public int BannerId { get; set; }
         public bool Paid() => PaidDate.HasValue;
         public bool OverDue() => DueDate < DateTime.Today && !Paid();

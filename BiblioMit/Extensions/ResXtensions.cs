@@ -12,7 +12,11 @@ namespace BiblioMit.Extensions
                 throw new ArgumentException($"{t} text is null");
             }
             var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
-            if (lang == "en") return text;
+            if (lang == "en")
+            {
+                return text;
+            }
+
             try
             {
                 string? nameSpace = typeof(T).Namespace;

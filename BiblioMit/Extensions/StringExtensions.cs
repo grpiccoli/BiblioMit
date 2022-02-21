@@ -32,7 +32,10 @@ namespace BiblioMit.Extensions
             //var req = WebRequest.Create(url);
             //Stream urlStream = req.GetResponse().GetResponseStream();
             var urlHash = sha.ComputeHash(urlStream);
-            if (urlHash == localHash) return Convert.ToBase64String(localHash);
+            if (urlHash == localHash)
+            {
+                return Convert.ToBase64String(localHash);
+            }
             //Console.WriteLine("Error: {0}", $"local and source hash differ in file {local}");
             return null;
         }
@@ -62,7 +65,10 @@ namespace BiblioMit.Extensions
         {
             var value = string.Empty;
             if (index >= letters.Length)
+            {
                 value += letters[index / letters.Length - 1];
+            }
+
             value += letters[index % letters.Length];
             return value;
         }
@@ -73,7 +79,11 @@ namespace BiblioMit.Extensions
         public static int Cell2Row(this string cell) => cell.ParseInt() ?? 0;
         public static string? AddColumnRow(this string cell, int columns = 0, int rows = 0)
         {
-            if (cell == null) return null;
+            if (cell == null)
+            {
+                return null;
+            }
+
             int startIndex = cell.IndexOfAny("0123456789".ToCharArray());
             string column = cell[..startIndex];
             var rowParsed = int.TryParse(cell[startIndex..], out int row);
@@ -82,14 +92,20 @@ namespace BiblioMit.Extensions
         public static Collection<int>? AllIndexesOf(this string str, string value)
         {
             if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(str))
+            {
                 //throw new ArgumentException("El texto a buscar no puede estar vacío", nameof(value));
                 return null;
+            }
+
             Collection<int> indexes = new();
             for (int index = 0; ; index += value.Length)
             {
                 index = str.IndexOf(value, index, StringComparison.InvariantCultureIgnoreCase);
                 if (index == -1)
+                {
                     return indexes;
+                }
+
                 indexes.Add(index);
             }
         }
@@ -152,14 +168,20 @@ namespace BiblioMit.Extensions
         }
         public static string RemoveDiacritics(this string text)
         {
-            if (string.IsNullOrWhiteSpace(text)) return text;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return text;
+            }
+
             var normalizedString = text.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
             foreach (var c in normalizedString)
             {
                 var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
                 if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
                     stringBuilder.Append(c);
+                }
             }
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
@@ -171,16 +193,27 @@ namespace BiblioMit.Extensions
         }
         public static string CleanCell(this string text)
         {
-            if (string.IsNullOrWhiteSpace(text)) return text;
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                return text;
+            }
             //first toupper to gain speed
             //< ( ) needed for species - , and . needed for numbers spaces needed for everything else
             string? noDiacritics = text.ToUpperInvariant().RemoveDiacritics();
-            if (string.IsNullOrWhiteSpace(noDiacritics)) return noDiacritics;
+            if (string.IsNullOrWhiteSpace(noDiacritics))
+            {
+                return noDiacritics;
+            }
+
             return Regex.Replace(Regex.Replace(noDiacritics.Trim(), @"\s{2,}", " "), @"[^A-Z0-9 _\.\-,\/\<\(\)\@;\:]", "");
         }
         public static string CleanScientificName(this string name)
         {
-            if (string.IsNullOrWhiteSpace(name)) return name;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return name;
+            }
+
             return Regex.Replace(Regex.Replace(name, @"\d|\.|\s*<.*|\s*\(.*\)|\s*ESTADO.*|PSEUDO\-|\b[\w']{1,3}\b", "").Trim(), @" {2,}", " ");
             //name = Regex.Replace(name, @"\s{2,}", " ");
             //name = Regex.Replace(name, @"^\s|\s$", "");

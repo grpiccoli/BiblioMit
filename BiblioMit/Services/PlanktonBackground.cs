@@ -88,7 +88,11 @@ namespace BiblioMit.Services
         // Protected implementation of Dispose pattern.
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
+            if (_disposed)
+            {
+                return;
+            }
+
             if (disposing)
             {
                 _timer.Dispose();
@@ -104,7 +108,10 @@ namespace BiblioMit.Services
 
             int daysUntilNextSaturday = (DayOfWeek.Saturday - now.DayOfWeek + 7) % 7;
 
-            if (daysUntilNextSaturday == 0) daysUntilNextSaturday = 7;
+            if (daysUntilNextSaturday == 0)
+            {
+                daysUntilNextSaturday = 7;
+            }
 
             TimeSpan midnight = TimeSpan.FromDays(1);
 

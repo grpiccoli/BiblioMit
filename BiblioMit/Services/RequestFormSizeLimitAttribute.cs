@@ -19,7 +19,11 @@ namespace BiblioMit.Services
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var features = context.HttpContext.Features;
             var formFeature = features.Get<IFormFeature>();
 

@@ -23,7 +23,11 @@ namespace BiblioMit.Services
             _urlHelper = urlHelper;
             _environment = environment;
             _httpContextAccessor = httpContextAccessor;
-            if (settings.Value == null) throw new ArgumentNullException(nameof(settings));
+            if (settings.Value == null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
             _settings = settings.Value;
             _os = Environment.OSVersion.Platform.ToString();
         }

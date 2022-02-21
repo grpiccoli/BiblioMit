@@ -46,12 +46,16 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             var banner = await _context.Banners
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (banner == null)
+            {
                 return NotFound();
+            }
 
             return View(banner);
         }
@@ -85,11 +89,16 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             var banner = await _context.Banners.FindAsync(id).ConfigureAwait(false);
             if (banner == null)
+            {
                 return NotFound();
+            }
+
             return View(banner);
         }
 
@@ -101,9 +110,15 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Edit(int id, [Bind("Id,MaskAngle")] Banner banner)
         {
-            if (banner is null) throw new ArgumentNullException(nameof(banner));
+            if (banner is null)
+            {
+                throw new ArgumentNullException(nameof(banner));
+            }
+
             if (id != banner.Id)
+            {
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -115,9 +130,13 @@ namespace BiblioMit.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!BannerExists(banner.Id))
+                    {
                         return NotFound();
+                    }
                     else
+                    {
                         throw;
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -128,9 +147,15 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> EditCaption(int id, [Bind("Id,Title,Subtitle,Position,Lang,Color")] CaptionVM caption)
         {
-            if (caption is null) throw new ArgumentNullException(nameof(caption));
+            if (caption is null)
+            {
+                throw new ArgumentNullException(nameof(caption));
+            }
+
             if (id != caption.Id)
+            {
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -151,9 +176,13 @@ namespace BiblioMit.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!BannerExists(caption.Id))
+                    {
                         return NotFound();
+                    }
                     else
+                    {
                         throw;
+                    }
                 }
             }
             return RedirectToAction(nameof(Index));
@@ -163,9 +192,15 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> EditBtn(int id, [Bind("Id,Title,Uri")] Btn btn)
         {
-            if (btn is null) throw new ArgumentNullException(nameof(btn));
+            if (btn is null)
+            {
+                throw new ArgumentNullException(nameof(btn));
+            }
+
             if (id != btn.Id)
+            {
                 return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -177,9 +212,13 @@ namespace BiblioMit.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!BannerExists(btn.Id))
+                    {
                         return NotFound();
+                    }
                     else
+                    {
                         throw;
+                    }
                 }
             }
             return RedirectToAction(nameof(Index));
@@ -203,7 +242,11 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> AddImg([Bind("Size,FileName")] ImgVM img)
         {
-            if (img is null) throw new ArgumentNullException(nameof(img));
+            if (img is null)
+            {
+                throw new ArgumentNullException(nameof(img));
+            }
+
             if (ModelState.IsValid)
             {
                 try
@@ -239,12 +282,16 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
+            {
                 return NotFound();
+            }
 
             var banner = await _context.Banners
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (banner == null)
+            {
                 return NotFound();
+            }
 
             return View(banner);
         }
@@ -256,7 +303,11 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             Banner? banner = await _context.Banners.FindAsync(id).ConfigureAwait(false);
-            if (banner == null) return NotFound();
+            if (banner == null)
+            {
+                return NotFound();
+            }
+
             _context.Banners.Remove(banner);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction(nameof(Index));

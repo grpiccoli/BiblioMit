@@ -1,14 +1,19 @@
-﻿namespace BiblioMit.Models
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace BiblioMit.Models
 {
     public class Polygon
     {
         public int Id { get; set; }
         public int? LocalityId { get; set; }
-        public virtual Locality? Locality { get; set; }
+        [AllowNull]
+        public virtual Locality Locality { get; set; }
         public int? PsmbId { get; set; }
-        public virtual Psmb? Psmb { get; set; }
+        [AllowNull]
+        public virtual Psmb Psmb { get; set; }
         public int? CatchmentAreaId { get; set; }
-        public virtual CatchmentArea? CatchmentArea { get; set; }
+        [AllowNull]
+        public virtual CatchmentArea CatchmentArea { get; set; }
         public virtual ICollection<Coordinate> Vertices { get; } = new List<Coordinate>();
         public double GetSurface()
         {

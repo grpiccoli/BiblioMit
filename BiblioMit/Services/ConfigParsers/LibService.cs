@@ -6,30 +6,20 @@ using System.Text.RegularExpressions;
 
 namespace BiblioMit.Services
 {
+    public class LibHashModel
+    {
+        public string Key { get; set; }
+        public List<SourcesModel> Values { get; set; }
+    }
     public class SourcesModel
     {
-        public SourcesModel(LibManLibrary l, string file)
+        public SourcesModel() { }
+        public SourcesModel SetLibMan(LibManLibrary l, string file)
         {
-            string url;
-            switch (l.Provider)
-            {
-                case "cdnjs":
-                    l.Library = l.Library.Replace("@", "/");
-                    url = "cdnjs.cloudflare.com/ajax/libs";
-                    WgetArgs = $"https://{url}/{l.Library}/{file} -O {l.Destination}/{file}";
-                    break;
-                case "unpkg":
-                    url = "unpkg.com";
-                    WgetArgs = $"https://{url}/{l.Library}/{file} -O {l.Destination}/{file}";
-                    break;
-                default:
-                    WgetArgs = $"https://unpkg.com/{l.Library}/{file} -O {l.Destination}/{file}";
-                    url = "cdn.jsdelivr.net/npm";
-                    break;
-            }
+            if (l.Provider == "cdnjs") l.Library = l.Library.Replace("@", "/");
+            WgetArgs = $"{Href} -O {l.Destination}/{file}";
             Fallback = $"{l.Destination}/{file}";
             //https required for this
-            Href = $"https://{url}/{l.Library}/{file}";
             Extension = Path.GetExtension(file).TrimStart('.');
             Hash = Extensions.Hash.Get512Async(new Uri(Href)).Result;
             Preload = !l.Library.StartsWith("nanogallery2");
@@ -39,6 +29,17 @@ namespace BiblioMit.Services
                 "css" => LibType.cssRemote,
                 _ => Preload ? LibType.fontRemotePreload : LibType.fontRemote
             };
+            return this;
+        }
+        public SourcesModel(LibManLibrary library, string file)
+        {
+            string url = library.Provider switch
+            {
+                "cdnjs" => "cdnjs.cloudflare.com/ajax/libs",
+                "unpkg" => "unpkg.com",
+                _ => "cdn.jsdelivr.net/npm"
+            };
+            Href = $"https://{url}/{library.Library}/{file}";
         }
         public SourcesModel(BundleConfig bundle)
         {
@@ -78,20 +79,53 @@ namespace BiblioMit.Services
     public static class Libman
     {
         private const string _latestVersion = "1.0";
-        private const string _fileName = "libman.json";
+        private const string _filename = "libhash.json";
+        private const string _libman = "libman.json";
         private const string _bundler = "bundleconfig.json";
         private const string _compiler = "compilerconfig.json";
         private static SortedDictionary<string, HashSet<SourcesModel>> Libs { get; set; } = new();
         public static void LoadJson()
         {
-            using StreamReader r = new(_fileName);
+            using StreamReader r = new(_filename);
             string json = r.ReadToEnd();
+            SortedDictionary<string, HashSet<SourcesModel>>? libhashes = JsonSerializer.Deserialize<SortedDictionary<string, HashSet<SourcesModel>>>(json);
+            if (libhashes == null)
+            {
+                throw new FileLoadException($"Unable to read file {_libman}");
+            }
+            r.Close();
+            Libs = libhashes;
+
+            using StreamReader l = new(_libman);
+            json = l.ReadToEnd();
             Libs? libs = JsonSerializer.Deserialize<Libs>(json, JsonCase.Camel);
-            if (libs == null || libs.Libraries == null) throw new FileLoadException($"Unable to read file {_fileName}");
-            Libs = new SortedDictionary<string, HashSet<SourcesModel>>(libs.Libraries.ToDictionary(
-                a => Regex.Replace(a.Library, @"@[^@]+$", ""),
-                a => new HashSet<SourcesModel>(a.Files.Where(f => !f.EndsWith("gif") && !f.EndsWith("png")).Select(f => new SourcesModel(a, f)))
-                ));
+            if (libs == null || libs.Libraries == null)
+            {
+                throw new FileLoadException($"Unable to read file {_libman}");
+            }
+
+            foreach(LibManLibrary library in libs.Libraries)
+            {
+                string key = Regex.Replace(library.Library, @"@[^@]+$", "");
+                IEnumerable<string> files = library.Files
+                        .Where(f => !f.EndsWith("gif") && !f.EndsWith("png"));
+                if (Libs.ContainsKey(key))
+                {
+                    foreach(string file in files)
+                    {
+                        SourcesModel model = new(library, file);
+                        if(!Libs[key].Any(x => x.Href == model.Href))
+                        {
+                            model.SetLibMan(library, file);
+                            Libs[key].Add(model);
+                        }
+                    }
+                }
+                else
+                {
+                    Libs.Add(key, new HashSet<SourcesModel>(files.Select(f => new SourcesModel(library, f).SetLibMan(library, f))));
+                }
+            }
             PlatformID os = Environment.OSVersion.Platform;
             if (PlatformID.Win32NT != os && libs.Version == _latestVersion)
             {
@@ -132,7 +166,9 @@ namespace BiblioMit.Services
                 {
                     string key = Regex.Replace(bundle.OutputFileName ?? string.Empty, @"^wwwroot/.*/(.*)(.min)?.(css|js|woff2|woff|ttf)$", "$1").Replace(".min", "");
                     if (!Libs.ContainsKey(key))
+                    {
                         Libs[key] = new HashSet<SourcesModel>();
+                    }
                     Libs[key].Add(new SourcesModel(bundle));
                 }
             }
@@ -149,10 +185,15 @@ namespace BiblioMit.Services
 #endif
                         ;
                     if (!Libs.ContainsKey(key))
+                    {
                         Libs[key] = new HashSet<SourcesModel>();
+                    }
+
                     Libs[key].Add(new SourcesModel(compile));
                 }
             }
+            using StreamWriter w = new(_filename);
+            w.Write(JsonSerializer.Serialize(Libs));
         }
 #if DEBUG
         public static HashSet<SourcesModel> GetLibs(string lib) =>

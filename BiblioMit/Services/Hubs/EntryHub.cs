@@ -7,8 +7,11 @@ namespace BiblioMit.Services
     {
         private async Task Send(string user, SendFunction function, object message)
         {
-            if (user != "nofeed") await Clients.User(user).SendAsync("Update", function.ToString(), message)
+            if (user != "nofeed")
+            {
+                await Clients.User(user).SendAsync("Update", function.ToString(), message)
             .ConfigureAwait(false);
+            }
         }
         public async Task SendAdded(string user, int message) =>
             await Send(user, SendFunction.agregada, message).ConfigureAwait(false);

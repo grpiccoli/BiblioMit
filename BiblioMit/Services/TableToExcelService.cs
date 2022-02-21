@@ -35,23 +35,36 @@ namespace BiblioMit.Services
             var elements = document.All.Where(e => (e.LocalName == "tr" && !e.InnerHtml.Contains("<tr", StringComparison.InvariantCultureIgnoreCase))
             || e.LocalName == "br");
             foreach (var e in elements)
+            {
                 ProcessRows(e);
+            }
+
             return excel;
         }
         private void ProcessRows(IElement row)
         {
-            if (sheet == null) return;
+            if (sheet == null)
+            {
+                return;
+            }
+
             int rowIndex = 1;
             int colIndex;
             if (maxRow > 0)
+            {
                 rowIndex = maxRow;
+            }
+
             if (string.IsNullOrWhiteSpace(row.InnerHtml))
             {
                 colIndex = 1;
                 sheet.Cells[rowIndex, colIndex].Value = string.Empty;
                 ++rowIndex;
                 if (rowIndex > maxRow)
+                {
                     maxRow = rowIndex;
+                }
+
                 return;
             }
 
@@ -63,7 +76,9 @@ namespace BiblioMit.Services
             }
             ++rowIndex;
             if (rowIndex > maxRow)
+            {
                 maxRow = rowIndex;
+            }
         }
         public async Task<Dictionary<(int, int), string>> HtmlTable2Matrix(string filePath)
         {
@@ -79,9 +94,16 @@ namespace BiblioMit.Services
             var elements = document.All.Where(e => (e.LocalName.Equals("tr", StringComparison.Ordinal)
             && !e.InnerHtml.Contains("<tr", StringComparison.Ordinal))
             || e.LocalName.Equals("br", StringComparison.Ordinal));
-            if (!elements.Any()) throw new FormatException(_localizer["El archivo ingresado no contiene registros ni tablas de ningún tipo"]);
+            if (!elements.Any())
+            {
+                throw new FormatException(_localizer["El archivo ingresado no contiene registros ni tablas de ningún tipo"]);
+            }
+
             foreach (var e in elements)
+            {
                 ProcessRowsString(e);
+            }
+
             return Matrix;
         }
         private void ProcessRowsString(IElement row)
@@ -92,9 +114,12 @@ namespace BiblioMit.Services
             {
                 string content = td.TextContent.CleanCell();
                 if (!string.IsNullOrWhiteSpace(content))
+                {
                     Matrix.Add(
                         (ColumnIndex, RowIndex), content
                     );
+                }
+
                 ++ColumnIndex;
             }
             ++RowIndex;

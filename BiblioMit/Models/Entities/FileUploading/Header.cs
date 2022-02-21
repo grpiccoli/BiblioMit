@@ -1,5 +1,6 @@
 ﻿using BiblioMit.Extensions;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models.Entities.Digest
 {
@@ -8,7 +9,8 @@ namespace BiblioMit.Models.Entities.Digest
         public int Id { get; set; }
         [Display(Name = "Texto del encabezado de dato a extraer")]
         public int RegistryId { get; set; }
-        public virtual Registry? Registry { get; set; }
+        [AllowNull]
+        public virtual Registry Registry { get; set; }
         public string? Name { get; private set; }
         public void SetName(string value)
         {

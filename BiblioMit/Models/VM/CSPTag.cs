@@ -24,14 +24,23 @@
             ConnectSrc.Add($"wss://localhost:*");
             ConnectSrc.Add($"ws://localhost:*");
             ConnectSrc.Add($"https://dc.services.visualstudio.com/");
-            ScriptSrcElem.Add("'sha256-963QZmPvTsPUE3uwDlRCl3mQq0qQZQXE3XI9lYpIIVg='");
+#else
+            ConnectSrc.Add($"wss://bibliomit:*");
+            ConnectSrc.Add($"ws://bibliomit:*");
 #endif
+            ScriptSrcElem.Add("'sha256-963QZmPvTsPUE3uwDlRCl3mQq0qQZQXE3XI9lYpIIVg='");
             StyleSrcElem.Add("'unsafe-inline'");
             //string noport = baseUrl.Value.Split(":")[0];
             if (StyleSrcElem.Contains("'unsafe-inline'"))
+            {
                 StyleSrcElem.RemoveWhere(s => s.StartsWith("'nonce", StringComparison.Ordinal) || s.StartsWith("'sha", StringComparison.Ordinal));
+            }
+
             if (ScriptSrcElem.Contains("'unsafe-inline'"))
+            {
                 ScriptSrcElem.RemoveWhere(s => s.StartsWith("'nonce", StringComparison.Ordinal) || s.StartsWith("'sha", StringComparison.Ordinal));
+            }
+
             return $"base-uri 'self' {string.Join(" ", BaseUri)} ; " +
                 $"block-all-mixed-content;" +
                 $"default-src 'self' {string.Join(" ", DefaultSrc)} ; " +
@@ -48,7 +57,7 @@
         }
         public static string GetAccessControlString()
         {
-            return string.Join(" ", AccessControlUrls);
+            return string.Join(" ", "https://web.facebook.com", AccessControlUrls);
         }
         public static void Clear()
         {

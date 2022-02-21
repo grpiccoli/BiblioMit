@@ -5,7 +5,7 @@ namespace BiblioMit.Services
     public class DefaultImageMiddleware
     {
         private readonly RequestDelegate _next;
-        public static string DefaultImagePath { get; set; }
+        public static string DefaultImagePath { get; set; } = "";
         public DefaultImageMiddleware(RequestDelegate next)
         {
             _next = next;

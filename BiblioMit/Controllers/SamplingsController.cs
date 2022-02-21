@@ -75,7 +75,11 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Create([Bind("Id,CentreId,Date,Salinity,Temp,O2")] Sampling sampling)
         {
-            if (sampling == null) return NotFound();
+            if (sampling == null)
+            {
+                return NotFound();
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(sampling);
@@ -111,9 +115,9 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public async Task<IActionResult> AddIndividual(int sampleId)
         {
-            var sample = await _context.Samplings
+            Sampling sample = await _context.Samplings
                 .Include(i => i.Individuals)
-                .SingleOrDefaultAsync(s => s.Id == sampleId).ConfigureAwait(false);
+                .SingleAsync(s => s.Id == sampleId).ConfigureAwait(false);
 
             Individual model = new()
             {
@@ -189,8 +193,8 @@ namespace BiblioMit.Controllers
                     .Select(t => new TissueView
                     {
                         Check = softs.Any(s => s.Tissue == t),
-                        Count = softs.Any(s => s.Tissue == t) ? softs.FirstOrDefault(s => s.Tissue == t).Count : null,
-                        Degree = softs.Any(s => s.Tissue == t) ? softs.FirstOrDefault(s => s.Tissue == t).Degree : null,
+                        Count = softs.Any(s => s.Tissue == t) ? softs.First(s => s.Tissue == t).Count : null,
+                        Degree = softs.Any(s => s.Tissue == t) ? softs.First(s => s.Tissue == t).Degree : null,
                         Text = t.GetAttrName(),
                         Value = ((int)t).ToString(CultureInfo.InvariantCulture),
                     }).ToList().ForEach(t => model.Tissues.Add(t));
@@ -224,7 +228,7 @@ namespace BiblioMit.Controllers
                             .Cast<Tissue>()
                             .Select(t => new
                             {
-                                Count = softs.Any(s => s.Tissue == t) ? softs.FirstOrDefault(s => s.Tissue == t).Count : null
+                                Count = softs.Any(s => s.Tissue == t) ? softs.First(s => s.Tissue == t).Count : null
                             }).ToList();
                             for (int i = 0; i < Options.Count; i++)
                             {
@@ -233,7 +237,7 @@ namespace BiblioMit.Controllers
                                     if (individual.Tissues[i].Count == 0)
                                     {
                                         var soft = await softs
-                                                                .SingleOrDefaultAsync(s =>
+                                                                .SingleAsync(s =>
                                                                 s.IndividualId == individual.Id
                                                                 && s.SoftType == individual.SoftType
                                                                 && s.Tissue == (Tissue)i).ConfigureAwait(false);
@@ -243,7 +247,7 @@ namespace BiblioMit.Controllers
                                     {
                                         if (softs.Any(s => s.Tissue == (Tissue)i))
                                         {
-                                            var soft = softs.SingleOrDefault(s => s.Tissue == (Tissue)i);
+                                            var soft = softs.Single(s => s.Tissue == (Tissue)i);
                                             soft.Count = individual.Tissues[i].Count;
                                             _context.Softs.Update(soft);
                                         }
@@ -270,7 +274,7 @@ namespace BiblioMit.Controllers
                                 .Cast<Tissue>()
                                 .Select(t => new
                                 {
-                                    Degree = softs.Any(s => s.Tissue == t) ? softs.FirstOrDefault(s => s.Tissue == t).Degree : null
+                                    Degree = softs.Any(s => s.Tissue == t) ? softs.First(s => s.Tissue == t).Degree : null
                                 }).ToList();
                                 for (int c = 0; c < Options.Count; c++)
                                 {
@@ -283,7 +287,7 @@ namespace BiblioMit.Controllers
                                         else
                                         {
                                             var soft = await softs
-                                                            .SingleOrDefaultAsync(s =>
+                                                            .SingleAsync(s =>
                                                             s.IndividualId == individual.Id
                                                             && s.SoftType == individual.SoftType
                                                             && s.Tissue == (Tissue)c).ConfigureAwait(false);
@@ -303,7 +307,7 @@ namespace BiblioMit.Controllers
                                     }
                                     else if (individual.Tissues[c].Degree != Options[c].Degree)
                                     {
-                                        var soft = softs.SingleOrDefault(s => s.Tissue == (Tissue)c);
+                                        var soft = softs.Single(s => s.Tissue == (Tissue)c);
                                         soft.Degree = individual.Tissues[c].Degree;
                                         _context.Softs.Update(soft);
                                     }
@@ -334,7 +338,7 @@ namespace BiblioMit.Controllers
                                         else
                                         {
                                             var soft = await softs
-                                                                    .SingleOrDefaultAsync(s =>
+                                                                    .SingleAsync(s =>
                                                                     s.IndividualId == individual.Id
                                                                     && s.SoftType == individual.SoftType
                                                                     && s.Tissue == (Tissue)i).ConfigureAwait(false);
@@ -537,7 +541,7 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sampling = await _context.Samplings.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            var sampling = await _context.Samplings.SingleAsync(m => m.Id == id).ConfigureAwait(false);
             _context.Samplings.Remove(sampling);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");

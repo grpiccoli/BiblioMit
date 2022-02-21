@@ -1,20 +1,21 @@
 ﻿using BiblioMit.Models.Entities.Environmental;
 using Microsoft.Build.Framework;
-using System.Globalization;
-
+using System.Diagnostics.CodeAnalysis;
 namespace BiblioMit.Models
 {
     public class SpeciesPhytoplankton
     {
-        public int Id { get; set; }
-        public string? Name { get; private set; }
-        public string? NormalizedName { get; private set; }
-        public void SetName(string value)
+        public SpeciesPhytoplankton() { }
+        public SpeciesPhytoplankton(string value)
         {
-            NormalizedName = value;
-            TextInfo text = CultureInfo.InvariantCulture.TextInfo;
-            Name = text.ToLower(value);
+            NormalizedName = value.ToUpperInvariant();
+            Name = value.ToLowerInvariant();
         }
+        public int Id { get; set; }
+        [Required, DisallowNull]
+        public string Name { get; private set; }
+        [Required, DisallowNull]
+        public string NormalizedName { get; private set; }
         //public string GetFullName()
         //{
         //    var n = string.IsNullOrWhiteSpace(Name) ? "sp" : Name;
@@ -22,7 +23,8 @@ namespace BiblioMit.Models
         //}
         [Required]
         public int GenusId { get; set; }
-        public virtual GenusPhytoplankton? Genus { get; set; }
+        [AllowNull]
+        public virtual GenusPhytoplankton Genus { get; set; }
         public virtual ICollection<Phytoplankton> Phytoplanktons { get; } = new List<Phytoplankton>();
     }
 }

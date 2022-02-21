@@ -1,5 +1,6 @@
 ﻿using BiblioMit.Models.Entities.Histopathology;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -10,7 +11,8 @@ namespace BiblioMit.Models
         public int Id { get; set; }
         public int IndividualId { get; set; }
         //Parent
-        public virtual Individual? Individual { get; set; }
+        [AllowNull]
+        public virtual Individual Individual { get; set; }
         //ATT
         public ValveType ValveType { get; set; }
         public string? Species { get; set; }

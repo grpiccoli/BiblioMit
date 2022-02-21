@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BiblioMit.Models
 {
@@ -35,7 +36,8 @@ namespace BiblioMit.Models
         [Range(-80, -60)]
         public double Longitude { get; set; }
         public int PolygonId { get; set; }
-        public virtual Polygon? Polygon { get; set; }
+        [AllowNull]
+        public virtual Polygon Polygon { get; set; }
         [Display(Name = "Vertex")]
         [Range(1, 200)]
         public int Order { get; set; }

@@ -151,7 +151,11 @@ namespace BiblioMit.Controllers
         {
             Forum? forum = p.Forum;
 
-            if (forum == null) return new ForumListingModel();
+            if (forum == null)
+            {
+                return new ForumListingModel();
+            }
+
             return BuildForumListing(forum);
         }
 

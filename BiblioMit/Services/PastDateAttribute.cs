@@ -10,7 +10,11 @@ namespace CustomDataAnnotations
 
         public override bool IsValid(object? value)
         {
-            if (value == null) return false;
+            if (value == null)
+            {
+                return false;
+            }
+
             DateTime dt = (DateTime)value;
             if (dt <= DateTime.Now)
             {

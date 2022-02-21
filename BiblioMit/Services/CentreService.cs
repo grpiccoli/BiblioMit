@@ -21,7 +21,7 @@ namespace BiblioMit.Services
                     .Where(c =>
                     (c.Address != null && c.Address.Contains(normalized, StringComparison.Ordinal)) ||
                     (c.Company != null && c.Company.BusinessName != null && c.Company.BusinessName.Contains(normalized, StringComparison.Ordinal)) ||
-                    (c.Commune != null && c.Commune.Name != null && c.Commune.Name.Contains(normalized, StringComparison.Ordinal) ))
+                    (c.Commune != null && c.Commune.Name != null && c.Commune.Name.Contains(normalized, StringComparison.Ordinal)))
                     .OrderBy(c => c.Id)
                     .ToList()
                     .GetRange(page * rpp - 1, rpp));
