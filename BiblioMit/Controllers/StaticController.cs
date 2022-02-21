@@ -8,6 +8,11 @@ namespace BiblioMit.Controllers
     [ApiController]
     public class StaticController : ControllerBase
     {
+        private readonly IWebHostEnvironment _env;
+        public StaticController(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
         [AllowAnonymous, HttpGet("json/{lang?}/{name?}")]
         [ResponseCache(Duration = 60)]
         public IActionResult GetJson(string lang, string name)
@@ -30,7 +35,7 @@ namespace BiblioMit.Controllers
                 }
             }
             var file = Path.Combine(
-                Directory.GetCurrentDirectory(),
+                _env.ContentRootPath,
                 "StaticFiles",
                 "json", lang, name);
             //var physical = System.IO.File.Exists(file) ? file
@@ -51,7 +56,7 @@ namespace BiblioMit.Controllers
                 throw new AuthenticationException($"Please log in to view this content {name}");
             }
 
-            var file = Path.Combine(Directory.GetCurrentDirectory(), "html", name);
+            var file = Path.Combine(_env.ContentRootPath, "StaticFiles", "html", name);
             //var physical = System.IO.File.Exists(file) ? file
             //    : Path.Combine(Directory.GetCurrentDirectory(), DefaultStaticMiddleware.DefaultImagePath);
             return PhysicalFile(file, "text/html");

@@ -84,7 +84,7 @@ namespace BiblioMit.Controllers
         public IActionResult ProvinciaList()
         {
             string full = Path.Combine(
-                Directory.GetCurrentDirectory(),
+                _environment.ContentRootPath,
                 "StaticFiles",
                 "json",
                 CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,

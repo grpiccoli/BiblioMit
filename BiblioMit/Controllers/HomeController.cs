@@ -31,7 +31,9 @@ namespace BiblioMit.Controllers
         //private readonly INodeService _nodeService;
         private readonly DateTime _startDate;
         private readonly ILogger<HomeController> _logger;
+        private readonly IWebHostEnvironment _env;
         public HomeController(
+            IWebHostEnvironment env,
             IPuppet puppet,
             IBannerService banner,
             SignInManager<ApplicationUser> signInManager,
@@ -41,6 +43,7 @@ namespace BiblioMit.Controllers
             //INodeService nodeService
             )
         {
+            _env = env;
             _signInManager = signInManager;
             _startDate = new DateTime(2018, 8, 28);
             _banner = banner;
@@ -67,7 +70,7 @@ namespace BiblioMit.Controllers
         {
             var name = Regex.Replace(f, ".*/", "");
 
-            var full = Path.Combine(Directory.GetCurrentDirectory(),
+            var full = Path.Combine(_env.ContentRootPath,
                                     "StaticFiles", "BannerImgs", name);
 
             return PhysicalFile(full, "image/jpg");
