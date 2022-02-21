@@ -27,6 +27,7 @@
 #else
             ConnectSrc.Add($"wss://bibliomit:*");
             ConnectSrc.Add($"ws://bibliomit:*");
+            StyleSrc.Add("'unsafe-inline'");
 #endif
             ScriptSrcElem.Add("'sha256-963QZmPvTsPUE3uwDlRCl3mQq0qQZQXE3XI9lYpIIVg='");
             StyleSrcElem.Add("'unsafe-inline'");
@@ -39,6 +40,11 @@
             if (ScriptSrcElem.Contains("'unsafe-inline'"))
             {
                 ScriptSrcElem.RemoveWhere(s => s.StartsWith("'nonce", StringComparison.Ordinal) || s.StartsWith("'sha", StringComparison.Ordinal));
+            }
+
+            if (StyleSrc.Contains("'unsafe-inline'"))
+            {
+                ScriptSrc.RemoveWhere(s => s.StartsWith("'nonce", StringComparison.Ordinal) || s.StartsWith("'sha", StringComparison.Ordinal));
             }
 
             return $"base-uri 'self' {string.Join(" ", BaseUri)} ; " +
