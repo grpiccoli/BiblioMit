@@ -37,6 +37,7 @@ var choiceOps: any = {
     maxItemCount: 50,
     removeItemButton: true,
     duplicateItemsAllowed: false,
+    allowHTML: true,
     paste: false,
     searchResultLimit: 10,
     shouldSort: false,
@@ -622,9 +623,9 @@ $('#table2excel').click(function () {
     tableToExcel('newTable', 'Ensayos');
 });
 //overflow scroll legend if to many elements added
-document.getElementById('legenddiv').addEventListener('DOMSubtreeModified', function (_e) {
+new MutationObserver(() => {
     document.getElementById("legenddiv").style.height = chart.legend.contentHeight + "px";
-});
+}).observe(document.getElementById('legenddiv'), { childList: true });
 document.getElementById("pin-switch").addEventListener('change', async function () {
     if ((<HTMLInputElement>this).checked) {
         (await clusters).addMarkers(markers);

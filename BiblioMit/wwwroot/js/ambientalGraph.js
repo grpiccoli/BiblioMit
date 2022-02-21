@@ -40,8 +40,8 @@ var esp = lang === 'es';
 var choiceOps = {
     maxItemCount: 50,
     removeItemButton: true,
-    allowHTML: true,
     duplicateItemsAllowed: false,
+    allowHTML: true,
     paste: false,
     searchResultLimit: 10,
     shouldSort: false,
@@ -603,9 +603,9 @@ $('#fetchPlankton').click(fetchPlankton);
 $('#table2excel').click(function () {
     tableToExcel('newTable', 'Ensayos');
 });
-document.getElementById('legenddiv').addEventListener('DOMSubtreeModified', function (_e) {
+new MutationObserver(() => {
     document.getElementById("legenddiv").style.height = chart.legend.contentHeight + "px";
-});
+}).observe(document.getElementById('legenddiv'), { childList: true });
 document.getElementById("pin-switch").addEventListener('change', function () {
     return __awaiter(this, void 0, void 0, function* () {
         if (this.checked) {
