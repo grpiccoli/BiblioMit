@@ -959,7 +959,7 @@ namespace BiblioMit.Services
                                     await _context.GenusPhytoplanktons.AddAsync(genus).ConfigureAwait(false);
                                     await _context.SaveChangesAsync().ConfigureAwait(false);
                                 }
-                                InSet[nameof(GenusPhytoplankton)].Add(genus.NormalizedName, genus.Id);
+                                InSet[nameof(GenusPhytoplankton)].Add(genus.NormalizedName ?? string.Empty, genus.Id);
                             }
                             int genusId = InSet[nameof(GenusPhytoplankton)][genusSp[0]];
                             if (genusSp.Count == 1)
@@ -1143,13 +1143,13 @@ namespace BiblioMit.Services
         {
             string name = typeof(T).Name;
             int? id = (int?)item[$"{name}Id"];
-            T entity = (T)item[name];
+            T? entity = (T?)item[name];
             if (!InSet[name].ContainsKey(GetKey(entity, key)) && id.HasValue)
             {
                 InSet[name].Add(GetKey(entity, key), id.Value);
             }
         }
-        private static string GetKey<T>(T item, string key) where T : IHasBasicIndexer => item[key] as string;
+        private static string GetKey<T>(T? item, string key) where T : IHasBasicIndexer => item?[key]?.ToString() ?? string.Empty;
         private async Task<TEntity?> FindParsedAsync<TEntity>(Indexed? item, string attribute, string normalized) where TEntity : class, IHasBasicIndexer
         {
             //return null if arguments null
@@ -1183,7 +1183,7 @@ namespace BiblioMit.Services
 
             if (firstOrDefaultAsyncMethod != null)
             {
-                TEntity element = (TEntity)await firstOrDefaultAsyncMethod.InvokeAsync(null, new object[] { dbSet, predicate, default }).ConfigureAwait(false);
+                TEntity? element = (TEntity?)await firstOrDefaultAsyncMethod.InvokeAsync(null!, new object[] { dbSet, predicate, default }).ConfigureAwait(false);
 
                 if (element == null)
                 {
@@ -1221,7 +1221,7 @@ namespace BiblioMit.Services
                 return null;
             }
 
-            int id = (int)item[nameof(SeedDeclaration.OriginId)];
+            int? id = (int?)item[nameof(SeedDeclaration.OriginId)];
             string name = nameof(Origin);
             if (InSet[name].ContainsKey(text))
             {
@@ -1230,11 +1230,11 @@ namespace BiblioMit.Services
             }
             Origin? origin = await _context.Origins
                 .FindAsync(id).ConfigureAwait(false);
-            if (origin == null)
+            if (origin == null && id != null)
             {
                 return new Origin
                 {
-                    Id = id,
+                    Id = id.Value,
                     Name = text
                 };
             }
@@ -1344,7 +1344,7 @@ namespace BiblioMit.Services
         private async Task<List<PlanktonAssayEmail>?> ParseEmails(string text, Indexed item)
         {
             List<PlanktonAssayEmail> results = new();
-            object i = item[nameof(PlanktonAssay.Id)];
+            object? i = item[nameof(PlanktonAssay.Id)];
             int? id = i as int?;
             if (text == null || !id.HasValue)
             {
