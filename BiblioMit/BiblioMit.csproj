@@ -32,6 +32,14 @@
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 	</PropertyGroup>
 	<ItemGroup>
+	  <Compile Remove="StaticFiles\**" />
+	  <Content Remove="StaticFiles\**" />
+	  <EmbeddedResource Remove="StaticFiles\**" />
+	  <None Remove="StaticFiles\**" />
+	  <TypeScriptCompile Remove="StaticFiles\**" />
+	  <Content Include="StaticFiles\**" CopyToPublishDirectory="PreserveNewest"/>
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="AngleSharp" Version="0.16.1" />
 		<PackageReference Include="Boxed.AspNetCore.TagHelpers" Version="6.0.0" />
 		<PackageReference Condition="'$(OS)' == 'Windows_NT'" Include="BuildWebCompiler" Version="1.12.405" />
