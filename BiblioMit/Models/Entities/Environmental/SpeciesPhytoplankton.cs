@@ -13,9 +13,9 @@ namespace BiblioMit.Models
         }
         public int Id { get; set; }
         [Required, DisallowNull]
-        public string Name { get; private set; }
+        public string? Name { get; private set; }
         [Required, DisallowNull]
-        public string NormalizedName { get; private set; }
+        public string? NormalizedName { get; private set; }
         //public string GetFullName()
         //{
         //    var n = string.IsNullOrWhiteSpace(Name) ? "sp" : Name;

@@ -308,8 +308,8 @@ namespace BiblioMit.Services
                             .FirstOrDefaultAsync(t => t.SernapescaDeclarationId == item.Id
                             && t.Date == item.Date
                             && t.RawMaterial == rawMaterial
-                            && t.ProductionType == (ProductionType)item[nameof(ProductionDeclaration.ProductionType)]
-                            && t.ItemType == (Item)item[nameof(ProductionDeclaration.ItemType)]).ConfigureAwait(false);
+                            && t.ProductionType == (ProductionType?)item[nameof(ProductionDeclaration.ProductionType)]
+                            && t.ItemType == (Item?)item[nameof(ProductionDeclaration.ItemType)]).ConfigureAwait(false);
                         if (date is null)
                         {
                             date = new()
@@ -319,8 +319,8 @@ namespace BiblioMit.Services
                                 Weight = item.Weight,
                                 RawMaterial = item[nameof(ProductionDeclaration.RawOrProd)]?.ToString()?
                                 .ToUpperInvariant().Contains('M', StringComparison.Ordinal) ?? false,
-                                ProductionType = (ProductionType)item[nameof(ProductionDeclaration.ProductionType)],
-                                ItemType = (Item)item[nameof(ProductionDeclaration.ItemType)]
+                                ProductionType = (ProductionType?)item[nameof(ProductionDeclaration.ProductionType)],
+                                ItemType = (Item?)item[nameof(ProductionDeclaration.ItemType)]
                             };
                             await _context.DeclarationDates.AddAsync(date).ConfigureAwait(false);
                         }

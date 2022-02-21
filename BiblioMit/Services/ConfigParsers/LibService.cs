@@ -8,8 +8,8 @@ namespace BiblioMit.Services
 {
     public class LibHashModel
     {
-        public string Key { get; set; }
-        public List<SourcesModel> Values { get; set; }
+        public string? Key { get; set; }
+        public List<SourcesModel>? Values { get; set; }
     }
     public class SourcesModel
     {
@@ -21,7 +21,8 @@ namespace BiblioMit.Services
             Fallback = $"{l.Destination}/{file}";
             //https required for this
             Extension = Path.GetExtension(file).TrimStart('.');
-            Hash = Extensions.Hash.Get512Async(new Uri(Href)).Result;
+            if(Href is not null)
+                Hash = Extensions.Hash.Get512Async(new Uri(Href)).Result;
             Preload = !l.Library.StartsWith("nanogallery2");
             LibType = Extension switch
             {
@@ -59,7 +60,7 @@ namespace BiblioMit.Services
             LibType = LibType.cssLocal;
         }
         public string? WgetArgs { get; set; }
-        public string Href { get; set; }
+        public string? Href { get; set; }
         public string? Hash { get; set; }
         public string? Fallback { get; set; }
         public string? Extension { get; set; }

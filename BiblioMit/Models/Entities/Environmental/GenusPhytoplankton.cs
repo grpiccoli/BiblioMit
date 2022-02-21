@@ -14,9 +14,9 @@ namespace BiblioMit.Models.Entities.Environmental
         }
         public int Id { get; set; }
         [Required, DisallowNull]
-        public string Name { get; private set; }
+        public string? Name { get; private set; }
         [Required, DisallowNull]
-        public string NormalizedName { get; private set; } = null!;
+        public string? NormalizedName { get; private set; } = null!;
         [Required]
         public int GroupId { get; set; }
         [AllowNull]
