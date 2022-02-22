@@ -100,13 +100,10 @@ namespace BiblioMit.Models.VM
             ConnectSrc.Add($"ws://{baseUrl}");
             ConnectSrc.Add($"wss://{baseUrl}");
 
-            string family = c.UA.Family.ToUpperInvariant();
             string scriptSrc = string.Empty;
             string styleSrc = string.Empty;
-            if (family.Contains("SAFARI") || family.Contains("FIREFOX"))
+            if (c.OS.Family == "iOS" || c.UA.Family == "Firefox")
             {
-                //ScriptSrcElem.Remove("script-src-elem");
-                //StyleSrcElem.Remove("style-src-elem");
                 ScriptSrc.UnionWith(ScriptSrcElem);
                 StyleSrc.UnionWith(StyleSrcElem);
                 if (ScriptSrc.Contains("'unsafe-inline'"))
