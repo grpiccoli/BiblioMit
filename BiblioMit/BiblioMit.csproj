@@ -37,7 +37,7 @@
 	  <EmbeddedResource Remove="StaticFiles\**" />
 	  <None Remove="StaticFiles\**" />
 	  <TypeScriptCompile Remove="StaticFiles\**" />
-	  <Content Include="StaticFiles\**" CopyToPublishDirectory="PreserveNewest"/>
+	  <Content Include="StaticFiles\**" CopyToPublishDirectory="PreserveNewest" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="AngleSharp" Version="0.16.1" />
@@ -63,6 +63,7 @@
 		<PackageReference Include="PuppeteerSharp" Version="6.1.0" />
 		<PackageReference Include="Schema.NET" Version="11.0.0" />
 		<PackageReference Include="SendGrid" Version="9.25.1" />
+		<PackageReference Include="UAParser" Version="3.1.47" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="ServiceWorker\Files\CacheFingerprinted.js" />

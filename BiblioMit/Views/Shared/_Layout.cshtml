@@ -98,7 +98,7 @@
     @this.WriteBlocks("TOPStyles")
     @this.WriteBlocks("Styles")
     @RenderSection("Styles", required: false)
-    <meta http-equiv="Content-Security-Policy" content="@Html.Raw(BiblioMit.Models.VM.CSPTag.GetString(Context.Request.Host))" />
+    <meta http-equiv="Content-Security-Policy" content="@Html.Raw(BiblioMit.Models.VM.CSPTag.GetString(Context.Request))" />
     <meta http-equiv="Access-Control-Allow-Origin" content="@Html.Raw(BiblioMit.Models.VM.CSPTag.GetAccessControlString())" />
     @{ BiblioMit.Models.VM.CSPTag.Clear(); }
 </head>
