@@ -159,7 +159,6 @@ if (seed)
     builder.Services.AddScoped<ISeed, SeedService>();
     builder.Services.AddScoped<IUpdateJsons, UpdateJsons>();
 }
-
 builder.Services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 builder.Services.AddScoped<IUrlHelper>(x =>
 {
@@ -170,7 +169,7 @@ builder.Services.AddScoped<IUrlHelper>(x =>
 });
 
 builder.Services.AddScoped<IPuppet, PuppetService>();
-
+builder.Services.AddSingleton(new PlanktonArguments { Run = args.Any(a => a == "plankton") });
 builder.Services.AddHostedService<PlanktonBackground>();
 builder.Services.AddScoped<IPlanktonService, PlanktonService>();
 

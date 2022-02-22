@@ -9,6 +9,10 @@
 
 namespace BiblioMit.Services
 {
+    public class PlanktonArguments
+    {
+        public bool Run { get; set; }
+    }
     public partial class PlanktonBackground : IHostedService, IDisposable
     {
         private bool _disposed;
@@ -16,12 +20,22 @@ namespace BiblioMit.Services
         private readonly Timer _timer;
         private Task _executingTask;
         private readonly CancellationTokenSource _stoppingCts = new();
+        private readonly PlanktonArguments _arguments;
         public PlanktonBackground(
             IServiceProvider services,
+            PlanktonArguments arguments,
             ILogger<PlanktonBackground> logger)
         {
+            _arguments = arguments;
             _executingTask = Task.CompletedTask;
-            _timer = new Timer(FetchAssays, null, TimeToNextSaturdayMidnight(), TimeSpan.FromMilliseconds(-1));
+            if (arguments.Run)
+            {
+                _timer = new Timer(FetchAssays, null, TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(-1));
+            }
+            else
+            {
+                _timer = new Timer(FetchAssays, null, TimeToNextSaturdayMidnight(), TimeSpan.FromMilliseconds(-1));
+            }
             Services = services;
             _logger = logger;
         }

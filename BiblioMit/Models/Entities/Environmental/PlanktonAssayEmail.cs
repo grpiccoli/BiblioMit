@@ -8,10 +8,10 @@ namespace BiblioMit.Models
         [Required]
         public int EmailId { get; set; }
         [AllowNull]
-        public virtual Email Email { get; set; }
+        public virtual Email? Email { get; set; } = null;
         [Required]
         public int PlanktonAssayId { get; set; }
         [AllowNull]
-        public virtual PlanktonAssay PlanktonAssay { get; set; }
+        public virtual PlanktonAssay? PlanktonAssay { get; set; }
     }
 }

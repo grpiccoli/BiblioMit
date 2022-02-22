@@ -33,7 +33,7 @@ namespace BiblioMit.Services
         private Dictionary<string, Dictionary<string, int>> InSet { get; set; } = new Dictionary<string, Dictionary<string, int>>();
         private MethodInfo? FirstOrDefaultAsyncMethod { get; set; }
         private InputFile InputFile { get; set; } = new();
-        private List<Tdata> Tdatas { get; set; } = new();
+        private List<Tdata?> Tdatas { get; set; } = new();
         private static readonly BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.Public;
         private List<PropertyInfo> FieldInfos { get; } = new();
         private List<Commune> Communes { get; set; } = new();
@@ -253,13 +253,14 @@ namespace BiblioMit.Services
                         object? value = await GetValue(worksheet, d, row, item).ConfigureAwait(false);
                         if (value == null)
                         {
-                            if (Tdatas[d].Name == nameof(SeedDeclaration.Origin))
+                            if (Tdatas[d]?.Name == nameof(SeedDeclaration.Origin))
                             {
                                 continue;
                             }
-
-                            msg =
-                                $">ERROR: Columna '{string.Join(",", Tdatas[d].Q)}' no encontrada en hoja '{worksheet.Name}'. Verificar archivo.\n0 registros procesados.";
+                            IEnumerable<string>? q = Tdatas[d]?.Q;
+                            if (q is not null)
+                                msg =
+                                    $">ERROR: Columna '{string.Join(",", q)}' no encontrada en hoja '{worksheet.Name}'. Verificar archivo.\n0 registros procesados.";
                             entry.OutPut += msg;
                             _context.Update(entry);
                             await _context.SaveChangesAsync()
@@ -272,8 +273,12 @@ namespace BiblioMit.Services
                         }
                         else
                         {
-                            item[Tdatas[d].Name] = value;
-                            Debug.WriteLine($"column:{Tdatas[d].Name}");
+                            string? name = Tdatas[d]?.Name;
+                            if(name is not null)
+                            {
+                                item[name] = value;
+                                Debug.WriteLine($"column:{name}");
+                            }
                         }
                     }
                     //Psmb
@@ -441,11 +446,11 @@ namespace BiblioMit.Services
                         t = t.GetGenericArguments().Single();
                     }
                 }
-                Tdata data = new(r.Headers.Select(h => h.NormalizedName))
+                Tdata data = new(r.Headers.Select(h => h.NormalizedName ?? string.Empty) ?? new List<string>())
                 {
                     FieldName = t.Name,
                     Name = dt.Name,
-                    Operation = r.Operation,
+                    Operation = r.Operation ?? string.Empty,
                     DecimalPlaces = r.DecimalPlaces,
                     DecimalSeparator = r.DecimalSeparator,
                     DeleteAfter2ndNegative = r.DeleteAfter2ndNegative
@@ -869,10 +874,10 @@ namespace BiblioMit.Services
                 if (!(matrix.ContainsKey((1, StartRow))
                     && PhytoStart.Headers.Any(h => h.NormalizedName == matrix.GetValue(1, StartRow))))
                 {
-                    StartRow = matrix.SearchHeaders(PhytoStart.Headers.Select(h => h.NormalizedName)).Item2;
+                    StartRow = matrix.SearchHeaders(PhytoStart.Headers.Select(h => h.NormalizedName ?? string.Empty)).Item2;
                 }
 
-                int end = matrix.SearchHeaders(PhytoEnd.Headers.Select(h => h.NormalizedName)).Item2;
+                int end = matrix.SearchHeaders(PhytoEnd.Headers.Select(h => h.NormalizedName ?? string.Empty)).Item2;
                 if (end == 0 || StartRow == 0)
                 {
                     throw new InputFormatterException($"start {PhytoStart.Description} or end {PhytoEnd.Description} not found");
@@ -1150,7 +1155,7 @@ namespace BiblioMit.Services
             }
         }
         private static string GetKey<T>(T? item, string key) where T : IHasBasicIndexer => item?[key]?.ToString() ?? string.Empty;
-        private async Task<TEntity?> FindParsedAsync<TEntity>(Indexed? item, string attribute, string normalized) where TEntity : class, IHasBasicIndexer
+        private async Task<TEntity?> FindParsedAsync<TEntity>(Indexed? item, string attribute, string normalized) where TEntity : class?, IHasBasicIndexer?
         {
             //return null if arguments null
             if (string.IsNullOrWhiteSpace(normalized))
@@ -1364,7 +1369,7 @@ namespace BiblioMit.Services
                 {
                     PlanktonAssayId = id.Value
                 };
-                emailensayo.Email = await FindParsedAsync<Email>(emailensayo, nameof(Email.Address), email).ConfigureAwait(false) ?? new();
+                emailensayo.Email = await FindParsedAsync<Email?>(emailensayo, nameof(Email.Address), email).ConfigureAwait(false);
                 results.Add(emailensayo);
             }
             return results;
