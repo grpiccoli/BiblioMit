@@ -108,26 +108,26 @@ namespace BiblioMit.Models.VM
                     ScriptSrc.RemoveWhere(s => s.StartsWith("'nonce", StringComparison.Ordinal) || s.StartsWith("'sha", StringComparison.Ordinal));
                 }
                 scriptSrc = string.Join($";{separator}",
-                    string.Join(separator, ScriptSrc.Prepend("script-src")),
-                string.Join(separator, ScriptSrcElem.Prepend("script-src-elem")));
+                    ScriptSrc.Any() ? string.Join(separator, ScriptSrc.Prepend("script-src")) : null,
+                ScriptSrcElem.Any() ? string.Join(separator, ScriptSrcElem.Prepend("script-src-elem")) : null);
                 styleSrc = string.Join($";{separator}",
-                    string.Join(separator, StyleSrc.Prepend("style-src")),
-                string.Join(separator, StyleSrcElem.Prepend("style-src-elem")));
+                     StyleSrc.Any() ? string.Join(separator, StyleSrc.Prepend("style-src")) : null,
+                 StyleSrcElem.Any() ? string.Join(separator, StyleSrcElem.Prepend("style-src-elem")) : null);
             }
 
             ConnectSrc.Add($"ws://{baseUrl}");
 
             return string.Join($";{separator}",
-                string.Join(separator, BaseUri.Prepend("base-uri")),
+                BaseUri.Any() ? string.Join(separator, BaseUri.Prepend("base-uri")) : null,
                 BlockAllMixedContent ? "block-all-mixed-content" : null,
-                string.Join(separator, DefaultSrc.Prepend("default-src")),
-                string.Join(separator, ConnectSrc.Prepend("connect-src")),
-                string.Join(separator, FrameSrc.Prepend("frame-src")),
-                string.Join(separator, ImgSrc.Prepend("img-src")),
-                string.Join(separator, ObjectSrc.Prepend("object-src")),
+                DefaultSrc.Any() ? string.Join(separator, DefaultSrc.Prepend("default-src")) : null,
+                ConnectSrc.Any() ? string.Join(separator, ConnectSrc.Prepend("connect-src")) : null,
+                FrameSrc.Any() ? string.Join(separator, FrameSrc.Prepend("frame-src")) : null,
+                ImgSrc.Any() ? string.Join(separator, ImgSrc.Prepend("img-src")) : null,
+                ObjectSrc.Any() ? string.Join(separator, ObjectSrc.Prepend("object-src")) : null,
                 scriptSrc,
                 styleSrc,
-                string.Join(separator, FontSrc.Prepend("font-src")),
+                FontSrc.Any() ? string.Join(separator, FontSrc.Prepend("font-src")) : null,
                 UpgradeInsecureRequests ? "upgrade-insecure-requests" : null);
         }
         public static string GetAccessControlString() => string.Join(" ", AccessControlUrls);
