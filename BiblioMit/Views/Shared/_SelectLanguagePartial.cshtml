@@ -1,16 +1,4 @@
-﻿@using Microsoft.AspNetCore.Builder
-@*@using Microsoft.AspNetCore.Http.Features*@
-@using Microsoft.AspNetCore.Localization
-@using Microsoft.AspNetCore.Mvc.Localization
-@using Microsoft.Extensions.Options
-
-@inject IViewLocalizer Localizer
-@inject IOptions<RequestLocalizationOptions> LocOptions
-
-@{
-    IRequestCultureFeature? requestCulture = Context.Features.Get<IRequestCultureFeature>();
-    IEnumerable<SelectListItem>? cultureItems = LocOptions.Value.SupportedUICultures?
-        .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName });
+﻿@{
     string returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
 }
 

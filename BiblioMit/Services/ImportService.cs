@@ -274,7 +274,7 @@ namespace BiblioMit.Services
                         else
                         {
                             string? name = Tdatas[d]?.Name;
-                            if(name is not null)
+                            if (name is not null)
                             {
                                 item[name] = value;
                                 Debug.WriteLine($"column:{name}");
@@ -903,12 +903,12 @@ namespace BiblioMit.Services
 
                 item.SamplingDate = (DateTime)samplingDate;
                 //get other values
-                if(Tdatas is not null)
-                for (d++; d < Tdatas.Count; d++)
-                {
-                    object? value = await GetValue(matrix, d, item).ConfigureAwait(false);
-                    if (value != null && Tdatas[d] is not null)
+                if (Tdatas is not null)
+                    for (d++; d < Tdatas.Count; d++)
                     {
+                        object? value = await GetValue(matrix, d, item).ConfigureAwait(false);
+                        if (value != null && Tdatas[d] is not null)
+                        {
 #pragma warning disable CS8602 // This cannot be null here.
                             item[Tdatas[d].Name] = value;
 #pragma warning restore CS8602 // This cannot be null here.
@@ -1385,7 +1385,7 @@ namespace BiblioMit.Services
         private async Task<object?> GetValue(ExcelWorksheet worksheet, int d, int row, Indexed item)
         {
             Tdata? data = Tdatas[d];
-            if (worksheet == null || data is null || !data.Q.Any() )
+            if (worksheet == null || data is null || !data.Q.Any())
             {
                 return null;
             }
@@ -1409,7 +1409,7 @@ namespace BiblioMit.Services
         private async Task<object?> GetValue(Dictionary<(int, int), string> matrix, int d, PlanktonAssay item)
         {
             Tdata? data = Tdatas[d];
-            if (matrix == null || data is null || !data.Q.Any() )
+            if (matrix == null || data is null || !data.Q.Any())
             {
                 return null;
             }

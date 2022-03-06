@@ -126,7 +126,7 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public async Task<IActionResult> Responses()
         {
-            Uri uri = new ("https://docs.google.com/forms/d/e/1FAIpQLSdtgpabkbTL8eXZ1PJuyNzEkyAtX_eIdX7_84cO6aAMHxUKyQ/viewanalytics");
+            Uri uri = new("https://docs.google.com/forms/d/e/1FAIpQLSdtgpabkbTL8eXZ1PJuyNzEkyAtX_eIdX7_84cO6aAMHxUKyQ/viewanalytics");
             Page page = await _puppet
                         .GetPageAsync(uri)
                         .ConfigureAwait(false);

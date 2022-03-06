@@ -8,7 +8,7 @@ namespace BiblioMit.Extensions
     {
         private static readonly BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
         public static IEnumerable<Post> HasQuery(this IEnumerable<Post> posts, string? searchQuery) =>
-            !string.IsNullOrWhiteSpace(searchQuery) ? 
+            !string.IsNullOrWhiteSpace(searchQuery) ?
                 posts.Where(p => (p.Title != null && p.Title.Contains(searchQuery, StringComparison.InvariantCultureIgnoreCase))
                         || (p.Content != null && p.Content.Contains(searchQuery, StringComparison.InvariantCultureIgnoreCase)))
                 : Enumerable.Empty<Post>();

@@ -30,7 +30,7 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            IEnumerable <ProfileModel> profiles = _userService.GetAll()
+            IEnumerable<ProfileModel> profiles = _userService.GetAll()
                 .OrderByDescending(user => user.Rating)
                 .Select(u => new ProfileModel
                 {

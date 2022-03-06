@@ -158,7 +158,7 @@ namespace BiblioMit.Controllers
             {
                 try
                 {
-                    Caption newCaption = new() 
+                    Caption newCaption = new()
                     {
                         Id = caption.Id,
                         Title = caption.Title,

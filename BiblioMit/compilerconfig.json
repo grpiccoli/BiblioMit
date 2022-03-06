@@ -72,6 +72,22 @@
     "inputFile": "src/styles/prueba.scss"
   },
   {
+    "outputFile": "wwwroot/css/flags.css",
+    "inputFile": "src/styles/flags/style.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/icomoon.css",
+    "inputFile": "src/styles/icomoon/style.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/bibico.css",
+    "inputFile": "src/styles/bibico/style.scss"
+  },
+  {
+    "outputFile": "wwwroot/css/bibmono.css",
+    "inputFile": "src/styles/bibmono/style.scss"
+  },
+  {
     "outputFile": "wwwroot/css/bibliomit.css",
     "inputFile": "src/styles/bibliomit.scss"
   },

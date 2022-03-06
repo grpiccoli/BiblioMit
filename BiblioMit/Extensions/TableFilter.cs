@@ -57,7 +57,7 @@ namespace BiblioMit.Extensions
                 }
             }
 
-            ViewDataDictionary ViewData = new (new EmptyModelMetadataProvider(),
+            ViewDataDictionary ViewData = new(new EmptyModelMetadataProvider(),
                 new ModelStateDictionary())
             { };
             ViewData["last"] = (int)Math.Ceiling((double)((decimal)contexto.Count() / rpp));

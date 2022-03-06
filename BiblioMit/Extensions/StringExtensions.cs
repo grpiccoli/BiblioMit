@@ -12,10 +12,10 @@ namespace BiblioMit.Extensions
 {
     public static class StringExtensions
     {
-        private readonly static List<string> romanNumerals =
+        private static readonly List<string> romanNumerals =
             new()
             { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
-        private readonly static List<int> numerals =
+        private static readonly List<int> numerals =
             new()
             { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
         private const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -44,9 +44,9 @@ namespace BiblioMit.Extensions
             const string tagWhiteSpace = @"(>|$)(\W|\n|\r)+<";//matches one or more (white space or line breaks) between '>' and '<'
             const string stripFormatting = @"<[^>]*(>|$)";//match any character between '<' and '>', even when end tag is missing
             const string lineBreak = @"<(br|BR)\s{0,1}\/{0,1}>";//matches: <br>,<br/>,<br />,<BR>,<BR/>,<BR />
-            Regex lineBreakRegex = new (lineBreak, RegexOptions.Multiline);
-            Regex stripFormattingRegex = new (stripFormatting, RegexOptions.Multiline);
-            Regex tagWhiteSpaceRegex = new (tagWhiteSpace, RegexOptions.Multiline);
+            Regex lineBreakRegex = new(lineBreak, RegexOptions.Multiline);
+            Regex stripFormattingRegex = new(stripFormatting, RegexOptions.Multiline);
+            Regex tagWhiteSpaceRegex = new(tagWhiteSpace, RegexOptions.Multiline);
             string text = html;
             //Decode html specific characters
             text = WebUtility.HtmlDecode(text);
@@ -152,7 +152,7 @@ namespace BiblioMit.Extensions
             //    return resultado;
             //}).Result;
 
-            Uri url = new (string.Format(CultureInfo.InvariantCulture,
+            Uri url = new(string.Format(CultureInfo.InvariantCulture,
                 "http://www.google.com/translate_t?hl={0}&ie=UTF8&text={1}&langpair={2}", targetLanguage, input, languagePair));
             using HttpClient hc = new();
             HttpResponseMessage result = hc.GetAsync(url).Result;
@@ -174,7 +174,7 @@ namespace BiblioMit.Extensions
             }
 
             string normalizedString = text.Normalize(NormalizationForm.FormD);
-            StringBuilder stringBuilder = new ();
+            StringBuilder stringBuilder = new();
             foreach (char c in normalizedString)
             {
                 UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);

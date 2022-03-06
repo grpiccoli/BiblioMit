@@ -54,7 +54,7 @@ namespace BiblioMit.Services
                     }
                 }
                 sitemapContent += "</urlset>";
-                using MemoryStream memoryStream = new ();
+                using MemoryStream memoryStream = new();
                 byte[] bytes = Encoding.UTF8.GetBytes(sitemapContent);
                 await memoryStream.WriteAsync(bytes.AsMemory(0, bytes.Length), cancellationToken).ConfigureAwait(false);
                 memoryStream.Seek(0, SeekOrigin.Begin);

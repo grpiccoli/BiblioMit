@@ -6,7 +6,7 @@ namespace BiblioMit.Services
     {
         public string Run(string script, string[] args)
         {
-            using Process process = new ()
+            using Process process = new()
             {
                 StartInfo = new ProcessStartInfo
                 {

@@ -19,7 +19,7 @@ namespace BiblioMit.Views.Components.Nav
         }
         public IViewComponentResult Invoke()
         {
-            NavDDwnVM links = new ()
+            NavDDwnVM links = new()
             {
                 Logo = "fas fa-link",
                 Title = _localizer["Links"],
@@ -131,7 +131,7 @@ namespace BiblioMit.Views.Components.Nav
                 Name = _localizer["Research Centres"],
                 Icon = "fas fa-microscope"
             });
-            NavDDwnVM producers = new ()
+            NavDDwnVM producers = new()
             {
                 Logo = "fas fa-map-marker-alt",
                 Title = _localizer["Maps"],
@@ -144,7 +144,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            NavDDwnVM boletin = new ()
+            NavDDwnVM boletin = new()
             {
                 Logo = "fas fa-chart-line",
                 Title = _localizer["Reports"],
@@ -194,7 +194,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            NavDDwnVM publications = new ()
+            NavDDwnVM publications = new()
             {
                 Logo = "fas fa-search",
                 Title = _localizer["Search"],
@@ -231,7 +231,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            NavDDwnVM gallery = new ()
+            NavDDwnVM gallery = new()
             {
                 Logo = "fas fa-images",
                 Title = _localizer["Images"],
@@ -256,7 +256,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            NavDDwnVM forum = new ()
+            NavDDwnVM forum = new()
             {
                 Logo = "far fa-comment-dots",
                 Title = _localizer["Networking"],
@@ -471,14 +471,19 @@ namespace BiblioMit.Views.Components.Nav
                 });
             }
 
-            List<NavDDwnVM> model = new ()
+            List<NavDDwnVM> model = new()
             {
-                links, producers, boletin, publications, gallery, forum
+                links,
+                producers,
+                boletin,
+                publications,
+                gallery,
+                forum
             };
 
             if (claims.Contains(UserClaims.Banners))
             {
-                NavDDwnVM services = new ()
+                NavDDwnVM services = new()
                 {
                     Logo = "fas fa-concierge-bell",
                     Title = _localizer["Services"]
@@ -587,7 +592,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 });
             }
-            DefaultModel result = new (new ReadOnlyCollection<NavDDwnVM>(model));
+            DefaultModel result = new(new ReadOnlyCollection<NavDDwnVM>(model));
             return View(result);
         }
     }

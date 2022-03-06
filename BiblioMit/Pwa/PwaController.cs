@@ -73,7 +73,7 @@ namespace BiblioMit.Pwa
                 return NotFound();
             }
 
-            using StreamReader reader = new (resourceStream);
+            using StreamReader reader = new(resourceStream);
             return Content(await reader.ReadToEndAsync());
         }
 

@@ -21,7 +21,7 @@ namespace BiblioMit.Services
             Fallback = $"{l.Destination}/{file}";
             //https required for this
             Extension = Path.GetExtension(file).TrimStart('.');
-            if(Href is not null)
+            if (Href is not null)
                 Hash = Extensions.Hash.Get512Async(new Uri(Href)).Result;
             Preload = !l.Library.StartsWith("nanogallery2");
             LibType = Extension switch
@@ -106,7 +106,7 @@ namespace BiblioMit.Services
                 throw new FileLoadException($"Unable to read file {_libman}");
             }
 
-            foreach(LibManLibrary library in libs.Libraries)
+            foreach (LibManLibrary library in libs.Libraries)
             {
                 string key = Regex.Replace(library.Library, @"@[^@]+$", "");
                 IEnumerable<string> files = library.Files
@@ -143,7 +143,7 @@ namespace BiblioMit.Services
                 {
                     foreach (SourcesModel file in lib)
                     {
-                        using Process process = new ()
+                        using Process process = new()
                         {
                             StartInfo = new ProcessStartInfo
                             {
@@ -184,8 +184,8 @@ namespace BiblioMit.Services
                     }
                     else
                     {
-                        SourcesModel model = new (bundle);
-                        if(!Libs[key].Any(l => l.Href == model.Href))
+                        SourcesModel model = new(bundle);
+                        if (!Libs[key].Any(l => l.Href == model.Href))
                         {
                             Libs[key].Add(model);
                         }
@@ -200,10 +200,7 @@ namespace BiblioMit.Services
                 foreach (Compile compile in compiles)
                 {
                     string key = Regex.Replace(compile.OutputFile ?? string.Empty, @"^wwwroot/.*/(.*).css$", "$1")
-#if !DEBUG
-                    .Replace(".css", ".min.css")
-#endif
-                        ;
+                    .Replace(".css", ".min.css");
                     if (!Libs.ContainsKey(key))
                     {
                         Libs[key] = new HashSet<SourcesModel>
@@ -213,7 +210,7 @@ namespace BiblioMit.Services
                     }
                     else
                     {
-                        SourcesModel model = new (compile);
+                        SourcesModel model = new(compile);
                         if (!Libs[key].Any(l => l.Href == model.Href))
                         {
                             Libs[key].Add(model);

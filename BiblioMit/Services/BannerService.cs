@@ -18,7 +18,7 @@ namespace BiblioMit.Services
         {
             _context = context;
         }
-        public Dictionary<string,string> ReadCarousel(bool activeOnly, bool shuffle, string lang)
+        public Dictionary<string, string> ReadCarousel(bool activeOnly, bool shuffle, string lang)
         {
             string which = activeOnly ? "Active" : "All";
             string shuffled = shuffle ? "Shuffled" : string.Empty;
@@ -30,7 +30,7 @@ namespace BiblioMit.Services
         }
         public void UpdateJsons()
         {
-            foreach(CultureInfo culture in Statics.SupportedCultures)
+            foreach (CultureInfo culture in Statics.SupportedCultures)
             {
                 string lang = culture.TwoLetterISOLanguageName;
                 Carousel carousel = GetCarousel(false, false, lang);
@@ -88,7 +88,7 @@ namespace BiblioMit.Services
                 if (!string.IsNullOrWhiteSpace(text.Color))
                     mask += $@"[id=""{text.Id}""] {{ color:{text.Color} !important }}";
 
-                modelo.Styles += string.Join(" ", value.Imgs.Select(img => 
+                modelo.Styles += string.Join(" ", value.Imgs.Select(img =>
 $@"@media (max-width: {(int)img.Size}px) {{ .banner-{i} {{ background-image: url('../Home/GetBanner?f={img.FileName}'); }} }}")) + mask;
                 string btns = text.Btns.Any() ?
                     string.Join("", text.Btns.Select(b =>

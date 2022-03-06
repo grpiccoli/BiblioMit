@@ -12,7 +12,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Data;
-using System.Globalization;
 using System.Security.Claims;
 
 namespace BiblioMit.Services
@@ -444,14 +443,14 @@ END";
 
                     await _context.SaveChangesAsync().ConfigureAwait(false);
                 }
-                List<UserInitializerVM> users = new ()
+                List<UserInitializerVM> users = new()
                 {
                     new UserInitializerVM(
                     //roles
                     new List<string>
                     {
                         RoleData.Administrator.ToString()
-                    }, 
+                    },
                     //claims
                     new List<string>
                     {
@@ -500,11 +499,11 @@ END";
                     {
                         UserClaims.Digest.ToString()
                     })
-                {
-                    Email = "sernapesca@bibliomit.cl",
-                    Key = "Sernapesca@2018",
-                    ImageUri = new Uri("~/images/ico/bibliomit.svg", UriKind.Relative)
-                },
+                    {
+                        Email = "sernapesca@bibliomit.cl",
+                        Key = "Sernapesca@2018",
+                        ImageUri = new Uri("~/images/ico/bibliomit.svg", UriKind.Relative)
+                    },
                     new UserInitializerVM(
                     //roles
                     new List<string>
@@ -519,16 +518,16 @@ END";
                         UserClaims.Forums.ToString(),
                         UserClaims.Banners.ToString()
                     })
-                {
-                    Email = "jefedeproyectos@intemit.cl",
-                    Key = "Intemit@2018",
-                    ImageUri = new Uri("~/images/ico/bibliomit.svg", UriKind.Relative)
-                }
+                    {
+                        Email = "jefedeproyectos@intemit.cl",
+                        Key = "Intemit@2018",
+                        ImageUri = new Uri("~/images/ico/bibliomit.svg", UriKind.Relative)
+                    }
                 };
                 //var hasher = new PasswordHasher<ApplicationUser>();
                 foreach (UserInitializerVM item in users)
                 {
-                    ApplicationUser user = new ()
+                    ApplicationUser user = new()
                     {
                         UserName = item.Email,
                         NormalizedUserName = _normalizer.NormalizeName(item.Email),

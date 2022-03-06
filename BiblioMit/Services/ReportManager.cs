@@ -16,7 +16,7 @@ namespace BiblioMit.Services
         {
             string[] scopes = { AnalyticsReportingService.Scope.AnalyticsReadonly }; //Read-only access to Google Analytics
             GoogleCredential credential;
-            using (FileStream stream = new (keyFileName, FileMode.Open, FileAccess.Read))
+            using (FileStream stream = new(keyFileName, FileMode.Open, FileAccess.Read))
             {
                 credential = GoogleCredential.FromStream(stream).CreateScoped(scopes);
             }

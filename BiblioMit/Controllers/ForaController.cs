@@ -104,7 +104,7 @@ namespace BiblioMit.Controllers
                 imageUri = UploadForumImage(model.ImageUpload);
             }
 
-            Forum forum = new() 
+            Forum forum = new()
             {
                 Title = model?.Title,
                 Description = model?.Description,

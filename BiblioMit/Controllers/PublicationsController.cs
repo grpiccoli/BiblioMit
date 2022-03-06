@@ -5,7 +5,6 @@ using BiblioMit.Data;
 using BiblioMit.Extensions;
 using BiblioMit.Models;
 using BiblioMit.Models.VM;
-using BiblioMit.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -139,7 +138,7 @@ namespace BiblioMit.Controllers
                             break;
                     }
                     (IEnumerable<PublicationVM>, string, int)[]? pubs = await GetPubsAsync(src, q, rpp, pg, sort_by, order, srt_uach, ggl).ConfigureAwait(false);
-                    IEnumerable<PublicationVM>  Publications = pubs.SelectMany(x => x.Item1);
+                    IEnumerable<PublicationVM> Publications = pubs.SelectMany(x => x.Item1);
                     //repositories where any results
                     Dictionary<Typep, Dictionary<string, int>> Results = pubs.Where(x => x.Item1.Any())
                         //group by type of result
@@ -148,7 +147,7 @@ namespace BiblioMit.Controllers
                         .Select(x => new KeyValuePair<Typep, Dictionary<string, int>>(x.Key, x.ToDictionary(x => x.Item2, x => x.Item3)))
                         .ToDictionary(x => x.Key, x => x.Value);
 
-                    List<IEnumerable<ChartResultsItem>> chartData = new ();
+                    List<IEnumerable<ChartResultsItem>> chartData = new();
                     Dictionary<Typep, int> counts = new();
                     foreach (KeyValuePair<Typep, Dictionary<string, int>> r in Results)
                     {
@@ -314,10 +313,10 @@ namespace BiblioMit.Controllers
                 foreach (string fondo in conicyt2_funds)
                 {
                     Dictionary<string, string> values = new()
-                            {
-                                { "valtab", stt },
-                                { "blogid", "20" }
-                            };
+                    {
+                        { "valtab", stt },
+                        { "blogid", "20" }
+                    };
                     using FormUrlEncodedContent content = new(values);
                     using HttpClient bc = new();
                     using HttpResponseMessage response = await bc
@@ -333,7 +332,7 @@ namespace BiblioMit.Controllers
                     string[] formats = { "yyyy", "yyyy-MM", "d-MM-yyyy" };
                     foreach (IElement entry in bc_entrys)
                     {
-                        AgendaVM Entry = new ()
+                        AgendaVM Entry = new()
                         {
                             Company = _context.Companies.FirstOrDefault(c => c.Acronym == "CONICYT"),
                             Fund = Acrn + " (" + Fund + ")",
@@ -1249,13 +1248,13 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         }
         public static async Task<IHtmlDocument> GetDoc(Stream stream)
         {
-            HtmlParser parser = new ();
+            HtmlParser parser = new();
             using HttpClient hc = new();
             return await parser.ParseDocumentAsync(stream).ConfigureAwait(false);
         }
         public static async Task<IHtmlDocument> GetDocStream(Uri rep)
         {
-            HtmlParser parser = new ();
+            HtmlParser parser = new();
             using HttpClient hc = new();
             return await parser.ParseDocumentAsync(await hc.GetStreamAsync(rep).ConfigureAwait(false)).ConfigureAwait(false);
         }

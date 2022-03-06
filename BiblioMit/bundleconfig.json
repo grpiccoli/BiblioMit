@@ -158,33 +158,9 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/css/icomoon.min.css",
-    "inputFiles": [
-      "src/styles/icomoon/style.css"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/css/flags.min.css",
-    "inputFiles": [
-      "src/styles/flags/style.css"
-    ]
-  },
-  {
     "outputFileName": "wwwroot/js/publicationsIndex.min.js",
     "inputFiles": [
       "src/scripts/statsGraph.js"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/css/bibico.min.css",
-    "inputFiles": [
-      "src/styles/bibico/style.css"
-    ]
-  },
-  {
-    "outputFileName": "wwwroot/css/bibmono.min.css",
-    "inputFiles": [
-      "src/styles/bibmono/style.css"
     ]
   },
   {

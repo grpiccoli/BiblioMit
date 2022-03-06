@@ -31,7 +31,7 @@ namespace BiblioMit.Services
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             ExcelPackage excel = new();
             sheet = excel.Workbook.Worksheets.Add("sheet1");
-            HtmlParser parser = new ();
+            HtmlParser parser = new();
             IHtmlDocument document = await parser.ParseDocumentAsync(html).ConfigureAwait(false);
             IEnumerable<IElement> elements = document.All.Where(e => (e.LocalName == "tr" && !e.InnerHtml.Contains("<tr", StringComparison.InvariantCultureIgnoreCase))
             || e.LocalName == "br");
@@ -90,7 +90,7 @@ namespace BiblioMit.Services
         {
             Matrix = new();
             RowIndex = 1;
-            HtmlParser parser = new ();
+            HtmlParser parser = new();
             IHtmlDocument document = await parser.ParseDocumentAsync(html).ConfigureAwait(false);
             IEnumerable<IElement> elements = document.All.Where(e => (e.LocalName.Equals("tr", StringComparison.Ordinal)
             && !e.InnerHtml.Contains("<tr", StringComparison.Ordinal))

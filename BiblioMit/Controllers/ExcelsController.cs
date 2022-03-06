@@ -20,7 +20,7 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return View((IQueryable<InputFile>)_context.InputFiles.Include(e => e.Registries));
+            return View(_context.InputFiles.Include(e => e.Registries));
         }
 
         // GET: Excels/Details/5

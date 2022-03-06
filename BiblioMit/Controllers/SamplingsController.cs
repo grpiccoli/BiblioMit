@@ -252,7 +252,7 @@ namespace BiblioMit.Controllers
                                         }
                                         else
                                         {
-                                            Soft soft = new ()
+                                            Soft soft = new()
                                             {
                                                 IndividualId = individual.Id,
                                                 SoftType = individual.SoftType,
@@ -362,7 +362,7 @@ namespace BiblioMit.Controllers
                             {
                                 if (individual.Count > 0)
                                 {
-                                    Soft nuevo = new ()
+                                    Soft nuevo = new()
                                     {
                                         IndividualId = individual.Id,
                                         SoftType = individual.SoftType,
@@ -388,7 +388,7 @@ namespace BiblioMit.Controllers
                         {
                             if (soft == null && individual.Check)
                             {
-                                Soft nuevo = new ()
+                                Soft nuevo = new()
                                 {
                                     IndividualId = individual.Id,
                                     SoftType = individual.SoftType

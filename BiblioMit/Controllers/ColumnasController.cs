@@ -39,7 +39,7 @@ namespace BiblioMit.Controllers
                 ViewData["Filters"] is IDictionary<string, List<string>> Filters && Filters.ContainsKey("ExcelId") ?
                 Filters["ExcelId"] : null);
 
-            IIncludableQueryable<Registry, ICollection<Header>> regs = 
+            IIncludableQueryable<Registry, ICollection<Header>> regs =
                 _context.Registries.Include(r => r.InputFile).Include(r => r.Headers);
 
             bool two2five = User.Claims.Any(c => c.Value == UserClaims.Digest.ToString());

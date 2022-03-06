@@ -59,19 +59,21 @@ namespace BiblioMit.Controllers
                 return null;
             }
 
-            Dictionary<int, int> psmbs = new() {
+            Dictionary<int, int> psmbs = new()
+            {
                 //Quetalco
-                {20, 101990},
+                { 20, 101990 },
                 //Vilipulli
-                {21, 101017},
+                { 21, 101017 },
                 //Carahue
-                {22, 103633}
+                { 22, 103633 }
             };
             //1 chorito, 2 cholga, 3 choro, 4 all
-            Dictionary<int, int> sps = new() {
-                {31, 1},
-                {32, 2},
-                {33, 3}
+            Dictionary<int, int> sps = new()
+            {
+                { 31, 1 },
+                { 32, 2 },
+                { 33, 3 }
             };
             //TallaRange 0-7
             //LarvaType 0 D, 1 U, 2 O
