@@ -26,16 +26,12 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             VariableType? variableType = await _context.VariableTypes
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (variableType == null)
-            {
                 return NotFound();
-            }
 
             return View(variableType);
         }
@@ -69,15 +65,11 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             VariableType? variableType = await _context.VariableTypes.FindAsync(id).ConfigureAwait(false);
             if (variableType == null)
-            {
                 return NotFound();
-            }
             return View(variableType);
         }
 
@@ -90,9 +82,7 @@ namespace BiblioMit.Controllers
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Units")] VariableType variableType)
         {
             if (id != variableType?.Id)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
