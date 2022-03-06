@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.ResponseCaching;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -264,9 +265,16 @@ app.Use(async (context, next) =>
     context.Response.GetTypedHeaders().CacheControl =
     new CacheControlHeaderValue()
     {
-        Public = true,
+        Public = context.Request.Method == "GET",
         MaxAge = TimeSpan.FromSeconds(60)
     };
+    IResponseCachingFeature? responseCachingFeature = context.Features.Get<IResponseCachingFeature>();
+
+    if(responseCachingFeature != null)
+    {
+        responseCachingFeature.VaryByQueryKeys = new[] { "*" };
+    }
+
     context.Response.Headers[HeaderNames.Vary] =
         new string[] { "Accept-Encoding" };
 
