@@ -36,7 +36,7 @@
 <hr class="section-heading-spacer">
 <form id="search" asp-action="Index" method="get" class="form-inline">
     <div class="input-group mb-3">
-        <select name="src" data-language="@Localizer["en"]"
+        <select name="src" data-language="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName"
                 placeholder="@Localizer["Select at least 1 repository to search"]"
                 class="custom-select selectpicker form-control" multiple data-live-search="true"
                 data-actions-box="true" data-size="5"
@@ -131,9 +131,9 @@
         { Typep.Thesis, 0 } 
     };
     int sum = counts.Sum(s => s.Value);
-    var percentages = counts.ToDictionary(c => c.Key, c => c.Value * 100 / sum);
-    var multipleRepos = src.Count() > 1;
-    var titles = new List<string> { $"{sum} Total" };
+    Dictionary<Typep, int> percentages = counts.ToDictionary(c => c.Key, c => c.Value * 100 / sum);
+    bool multipleRepos = src.Count() > 1;
+    List<string> titles = new () { $"{sum} Total" };
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <div class="col-6 col-md-3 btn-group-vertical">
@@ -144,9 +144,9 @@
                         <span><strong>@sum</strong> @Localizer["Results in"] <strong>@src.Length</strong> Reps.</span>
                     </button>
                 }
-                @foreach (var count in counts)
+                @foreach (KeyValuePair<Typep, int> count in counts)
                 {
-                    var name = count.Key.GetAttrName();
+                    string name = count.Key.GetAttrName();
                     <button type="button" onclick="selectData(1);" class="stat btn btn-block btn-sm btn-outline-warning">
                         <i class="fas fa-book fa-fw"></i>
                         <span><strong>@count.Value</strong> @name (@percentages[count.Key]%)</span>
@@ -183,9 +183,9 @@
                     </th>
                     <th>
                         <a asp-action="Index" asp-route-src="@ViewData["srcs"]" asp-route-q="@ViewData["q"]"
-                           asp-route-srt="title" asp-route-asc="@(!(bool)ViewData["asc"])">
+                           asp-route-srt="title" asp-route-asc="@(!(bool?)ViewData["asc"])">
                             @Localizer[Html.DisplayNameFor(model => model.Title)]
-                            @if ((string)ViewData["srt"] == "title")
+                            @if ((string?)ViewData["srt"] == "title")
                             {
                                 <text>@Html.Raw(ViewData["arrow"])</text>
                             }
@@ -193,9 +193,9 @@
                     </th>
                     <th>
                         <a asp-action="Index" asp-route-src="@ViewData["srcs"]" asp-route-q="@ViewData["q"]"
-                           asp-route-srt="date" asp-route-asc="@(!(bool)ViewData["asc"])">
+                           asp-route-srt="date" asp-route-asc="@(!(bool?)ViewData["asc"])">
                             @Html.DisplayNameFor(model => model.Date)
-                            @if ((string)ViewData["srt"] == "date")
+                            @if ((string?)ViewData["srt"] == "date")
                             {
                                 <text>@Html.Raw(ViewData["arrow"])</text>
                             }
@@ -205,7 +205,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (PublicationVM item in Model)
                 {
                     <tr>
                         <td class="d-none d-sm-table-cell">
@@ -266,12 +266,12 @@
                                 </p>
                                 @if (item.Authors != null && item.Authors.Any())
                                 {
-                                    var last = item.Authors.Last();
-                                    var sep = ";";
+                                    AuthorVM last = item.Authors.Last();
+                                    char sep = ';';
                                     <p>
-                                        @foreach (var author in item.Authors)
+                                        @foreach (AuthorVM author in item.Authors)
                                         {
-                                            if (author.Equals(last)) sep = ".";
+                                            if (author.Equals(last)) sep = '.';
                                             <a asp-action="Index" asp-route-src="@ViewData["srcs"]"
                                                asp-route-q="@author.Last, @author.Name"
                                                asp-route-srt="@ViewData["srt"]" asp-route-asc="@ViewData["asc"]"

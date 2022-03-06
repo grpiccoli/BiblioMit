@@ -28,10 +28,13 @@
                 <select data-val="true"
                         data-val-required="@Localizer["The Subject field is required"]"
                         id="IndividualId" name="IndividualId" data-live-search="true" class="selectpicker form-control">
-                    @foreach(var group in ViewData["IndividualId"] as IEnumerable<IGrouping<int, Individual>>)
+                    @{
+                        IEnumerable<IGrouping<int, Individual>>? groups = (IEnumerable<IGrouping<int, Individual>>?)ViewData["IndividualId"];
+                    }
+                    @if(groups is not null) foreach(IGrouping<int,Individual> group in groups)
                     {
                         <optgroup label="Sample @group.Key">
-                            @foreach (var ind in group.OrderBy(g => g.Number))
+                            @foreach (Individual ind in group.OrderBy(g => g.Number))
                             {
                                 <option value="@ind.Id" data-tokens="@group.Key @ind.Number @ind.Id">
                                     @Localizer["Subject"] @ind.Number@(ind.Depth.HasValue ? ", "+Localizer["Depth"].Value+" "+ind.Depth+"m" : "")

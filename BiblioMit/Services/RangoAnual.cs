@@ -7,7 +7,7 @@ namespace BiblioMit.Services
     {
         public static SelectList Get(int i, bool ab)
         {
-            var meses = ab ? DateTimeFormatInfo.CurrentInfo.AbbreviatedMonthNames : DateTimeFormatInfo.CurrentInfo.MonthNames;
+            string[] meses = ab ? DateTimeFormatInfo.CurrentInfo.AbbreviatedMonthNames : DateTimeFormatInfo.CurrentInfo.MonthNames;
             return new SelectList(
                 from int n in Enumerable.Range(0, 12 / i).ToArray()
                 select new

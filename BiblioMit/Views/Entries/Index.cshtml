@@ -3,14 +3,14 @@
 
 @{
     ViewData["Title"] = "Archivos";
-    var id = (string)ViewContext.RouteData.Values["id"];
-    ViewData["controller"] = this.ViewContext.RouteData.Values["controller"].ToString();
-    ViewData["action"] = this.ViewContext.RouteData.Values["action"].ToString();
-    var processing = id != null;
-    var _id = Convert.ToInt32(id);
-    var entry = processing ? Model.Single(e => e.Id == _id) : null;
-    var success = processing ? entry.Success : false;
-    var error = entry != null && !String.IsNullOrWhiteSpace(entry.OutPut) && !entry.Success;
+    string? id = (string?)ViewContext.RouteData.Values["id"];
+    ViewData["controller"] = this.ViewContext.RouteData.Values["controller"]?.ToString();
+    ViewData["action"] = this.ViewContext.RouteData.Values["action"]?.ToString();
+    bool processing = id != null;
+    int _id = Convert.ToInt32(id);
+    SernapescaEntry entry = processing ? Model.Single(e => e.Id == _id) : new();
+    bool success = processing ? entry.Success : false;
+    bool error = entry != null && !String.IsNullOrWhiteSpace(entry.OutPut) && !entry.Success;
 }
 
 <partial name="_Libs" model='new List<string> { "@aspnet/signalr", "dinamicTable", "entry" }' />
@@ -37,7 +37,7 @@
         @*<button class="btn" data-clipboard-snippet="">
                 <img class="clippy" width="13" src="~/images/clippy.svg" alt="Copy to clipboard">
             </button>*@
-        <p>@(error || success ? entry.OutPut : "Processing...")</p>
+        <p>@(error || success ? entry?.OutPut : "Processing...")</p>
     </div>
 }
 <div class="d-flex">
@@ -109,7 +109,7 @@
                     <partial name="_TableFilter" view-data="@ViewData" model='new TableFilterVM
                    {
                        Id = "AppUserId",
-                       Val = (string)ViewData["srt"] == "AppUserId" ? (string)ViewData["val"] : "",
+                       Val = (string?)ViewData["srt"] == "AppUserId" ? (string?)ViewData["val"] : "",
                        Name = Html.DisplayNameFor(model => model.ApplicationUserId),
                        MaxOptions = 10,
                        LiveSearch = true,
@@ -133,7 +133,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (SernapescaEntry item in Model)
             {
                 <tr>
                     <td>

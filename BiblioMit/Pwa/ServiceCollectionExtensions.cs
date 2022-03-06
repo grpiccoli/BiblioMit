@@ -70,11 +70,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddSingleton(sp =>
             {
-                IWebHostEnvironment? env = sp.GetService<IWebHostEnvironment>();
+                IWebHostEnvironment env = sp.GetRequiredService<IWebHostEnvironment>();
                 return new WebManifestCache(env, manifestFileName);
             });
 
-            services.AddScoped(sp => sp.GetService<WebManifestCache>()?.GetManifest());
+            services.AddScoped(sp => sp.GetRequiredService<WebManifestCache>().GetManifest());
 
             return services;
         }
@@ -84,11 +84,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The service collection.</param>
         /// <param name="manifestFileName">The path to the Web App Manifest file relative to the wwwroot folder.</param>
-        public static IServiceCollection AddProgressiveWebApp(this IServiceCollection services, string manifestFileName = Constants.WebManifestFileName)
-        {
-            return services.AddWebManifest(manifestFileName)
+        public static IServiceCollection AddProgressiveWebApp
+            (this IServiceCollection services, string manifestFileName = Constants.WebManifestFileName) =>
+            services.AddWebManifest(manifestFileName)
                            .AddServiceWorker();
-        }
 
         /// <summary>
         /// Adds Web App Manifest and Service Worker to the specified <see cref="IServiceCollection"/>.
@@ -96,10 +95,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">The service collection.</param>
         /// <param name="manifestFileName">The path to the Web App Manifest file relative to the wwwroot folder.</param>
         /// <param name="options">Options for the service worker and Web App Manifest</param>
-        public static IServiceCollection AddProgressiveWebApp(this IServiceCollection services, PwaOptions options, string manifestFileName = Constants.WebManifestFileName)
-        {
-            return services.AddWebManifest(manifestFileName)
+        public static IServiceCollection AddProgressiveWebApp
+            (this IServiceCollection services, PwaOptions options, string manifestFileName = Constants.WebManifestFileName) =>
+            services.AddWebManifest(manifestFileName)
                            .AddServiceWorker(options);
-        }
     }
 }

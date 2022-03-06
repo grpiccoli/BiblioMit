@@ -3,6 +3,7 @@ using BiblioMit.Models.Entities.Variables;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace BiblioMit.Controllers
 {
@@ -17,10 +18,10 @@ namespace BiblioMit.Controllers
 
         // GET: Variables
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var applicationDbContext = _context.Variables.Include(v => v.Psmb).Include(v => v.VariableType);
-            return View(await applicationDbContext.ToListAsync().ConfigureAwait(false));
+            IIncludableQueryable<Variable, VariableType> applicationDbContext = _context.Variables.Include(v => v.Psmb).Include(v => v.VariableType);
+            return View(applicationDbContext);
         }
 
         // GET: Variables/Details/5
@@ -32,7 +33,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var variable = await _context.Variables
+            Variable? variable = await _context.Variables
                 .Include(v => v.Psmb)
                 .Include(v => v.VariableType)
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
@@ -81,7 +82,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var variable = await _context.Variables.FindAsync(id).ConfigureAwait(false);
+            Variable? variable = await _context.Variables.FindAsync(id).ConfigureAwait(false);
             if (variable == null)
             {
                 return NotFound();
@@ -138,7 +139,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var variable = await _context.Variables
+            Variable? variable = await _context.Variables
                 .Include(v => v.Psmb)
                 .Include(v => v.VariableType)
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);

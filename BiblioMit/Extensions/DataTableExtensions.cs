@@ -8,7 +8,7 @@ namespace BiblioMit.Extensions
         public static DataTable SetColumnsOrder(this DataTable table, params string[] columnNames)
         {
             int columnIndex = 0;
-            foreach (var columnName in columnNames)
+            foreach (string columnName in columnNames)
             {
                 table.Columns[columnName]?.SetOrdinal(columnIndex);
                 columnIndex++;

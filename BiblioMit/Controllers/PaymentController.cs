@@ -27,7 +27,7 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var model = new Payment
+            Payment model = new()
             {
                 Id = 0,
                 Price = 100000,

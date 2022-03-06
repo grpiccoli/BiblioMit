@@ -10,6 +10,7 @@ using BiblioMit.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System.Data;
 using System.Globalization;
 using System.Security.Claims;
@@ -340,9 +341,6 @@ namespace BiblioMit.Services
                     await AddBulkFiles(path).ConfigureAwait(false);
                 }
 
-                CultureInfo.CurrentUICulture = new CultureInfo("en");
-                _update.SeedUpdate();
-                CultureInfo.CurrentUICulture = new CultureInfo("es");
                 _update.SeedUpdate();
             }
             catch (Exception ex)
@@ -354,7 +352,7 @@ namespace BiblioMit.Services
         public async Task AddProcedures()
         {
             string query = "select * from sysobjects where type='P' and name='BulkInsert'";
-            var sp = @"CREATE PROCEDURE BulkInsert(@TableName NVARCHAR(50), @Tsv NVARCHAR(100))
+            string sp = @"CREATE PROCEDURE BulkInsert(@TableName NVARCHAR(50), @Tsv NVARCHAR(100))
 AS
 BEGIN 
 DECLARE @SQLSelectQuery NVARCHAR(MAX)=''
@@ -404,19 +402,19 @@ END";
         }
         public async Task Insert<TEntity>(string path) where TEntity : class
         {
-            var type = typeof(TEntity);
-            var mapping = _context.Model.FindEntityType(type);
+            Type type = typeof(TEntity);
+            IEntityType? mapping = _context.Model.FindEntityType(type);
             string? name = mapping?.GetTableName();
             //_context.Database.SetCommandTimeout(10000);
-            var tsv = Path.Combine(path, $"{name}.tsv");
-            var tmp = Path.Combine(Path.GetTempPath(), $"{name}.tsv");
+            string tsv = Path.Combine(path, $"{name}.tsv");
+            string tmp = Path.Combine(Path.GetTempPath(), $"{name}.tsv");
             if (!File.Exists(tsv))
             {
                 return;
             }
 
             File.Copy(tsv, tmp, true);
-            var dbo = $"dbo.{name}";
+            string dbo = $"dbo.{name}";
             await _context.Database
                 .ExecuteSqlInterpolatedAsync($"BulkInsert {dbo}, {tmp}")
                 .ConfigureAwait(false);
@@ -430,14 +428,14 @@ END";
             {
                 if (!_context.ApplicationRoles.Any())
                 {
-                    var aprolls = RoleData.Administrator.Enum2ListNames().Select(r => new ApplicationRole
+                    IEnumerable<ApplicationRole> aprolls = RoleData.Administrator.Enum2ListNames().Select(r => new ApplicationRole
                     {
                         CreatedDate = DateTime.Now,
                         Name = r,
                         Description = r,
                         NormalizedName = _normalizer.NormalizeName(r)
                     });
-                    foreach (var r in aprolls)
+                    foreach (ApplicationRole r in aprolls)
                     {
                         await _context.ApplicationRoles
                             .AddAsync(r)
@@ -446,7 +444,7 @@ END";
 
                     await _context.SaveChangesAsync().ConfigureAwait(false);
                 }
-                var users = new List<UserInitializerVM>
+                List<UserInitializerVM> users = new ()
                 {
                     new UserInitializerVM(
                     //roles
@@ -528,9 +526,9 @@ END";
                 }
                 };
                 //var hasher = new PasswordHasher<ApplicationUser>();
-                foreach (var item in users)
+                foreach (UserInitializerVM item in users)
                 {
-                    var user = new ApplicationUser
+                    ApplicationUser user = new ()
                     {
                         UserName = item.Email,
                         NormalizedUserName = _normalizer.NormalizeName(item.Email),
@@ -587,6 +585,8 @@ END";
             }
         }
         [LoggerMessage(33, LogLevel.Error, "There has been an error while seeding the database {message}.")]
+#pragma warning disable IDE0060 // Remove unused parameter
         static partial void LogError(ILogger logger, string message);
+#pragma warning restore IDE0060 // Remove unused parameter
     }
 }

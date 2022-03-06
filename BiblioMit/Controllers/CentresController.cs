@@ -26,7 +26,7 @@ namespace BiblioMit.Controllers
                 throw new ArgumentNullException($"Argument c {c} and i {i} cannot be null");
             }
 
-            var list = type switch
+            IQueryable<Psmb> list = type switch
             {
                 PsmbType.Farm => GetEntitiesAsync<Farm>(c, i),
                 PsmbType.ResearchCentre => GetEntitiesAsync<ResearchCentre>(c, i),
@@ -66,13 +66,11 @@ namespace BiblioMit.Controllers
             IQueryable<TEntity> centres = _context.Set<TEntity>()
                         .Where(a => a.PolygonId.HasValue
                 && a.CompanyId.HasValue);
-            //if (map) centres = centres.Include(a => a.Polygon).ThenInclude(a => a.Vertices);
-            //var list = await centres.ToListAsync().ConfigureAwait(false);
-            foreach (var sc in c)
+            foreach (int sc in c)
             {
                 centres = centres.Where(a => a.CommuneId.HasValue && a.CommuneId.Value == sc);
             }
-            foreach (var si in i)
+            foreach (int si in i)
             {
                 centres = centres.Where(a => a.CommuneId.HasValue && a.CommuneId.Value == si);
             }
@@ -151,7 +149,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var centre = await _context.Farms.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Farm? centre = await _context.Farms.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (centre is null)
             {
                 return NotFound();
@@ -159,9 +157,6 @@ namespace BiblioMit.Controllers
 
             ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", centre.CompanyId);
             ViewData["ComunaId"] = new SelectList(_context.Communes, "Id", "Name", centre.CommuneId);
-            //var values = from CentreType e in Enum.GetValues(typeof(CentreType))
-            //             select new { Id = e, Name = e.ToString() };
-            //ViewData["Type"] = new SelectList(values, "Id", "Name", centre.Type);
             return View(centre);
         }
 

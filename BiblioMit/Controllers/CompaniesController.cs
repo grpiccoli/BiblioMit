@@ -22,13 +22,12 @@ namespace BiblioMit.Controllers
         [Authorize(Roles = nameof(RoleData.Editor))]
         [Authorize(Roles = nameof(RoleData.Guest))]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Companies
+            return View(_context.Companies
                 .Include(c => c.Psmbs)
                     .ThenInclude(c => c.Polygon)
-                .AsNoTracking()
-                .ToListAsync().ConfigureAwait(false));
+                .AsNoTracking());
         }
 
         // GET: Companies/Details/5
@@ -40,7 +39,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies
+            Company? company = await _context.Companies
                 .Include(c => c.Psmbs)
                     .ThenInclude(c => c.Contacts)
                 .Include(c => c.Psmbs)
@@ -174,7 +173,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Companies
+            Company? company = await _context.Companies
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (company == null)
             {

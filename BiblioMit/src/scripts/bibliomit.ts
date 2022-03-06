@@ -1,18 +1,16 @@
 ﻿async function translate(text: string) {
     var lang = document.querySelector("html").getAttribute("lang");
-    var token = document.querySelector("input[name='__RequestVerificationToken']");
-    if (lang && token) {
-        var data = {
-            text: text.replace(/[\n\r]+/g, " ").replace(/&nbsp;/g, " "),
-            to: lang,
-            '__RequestVerificationToken': (token as HTMLInputElement).value
-        };
-        return await fetch('/home/translate', {
-            method: 'post',
-            headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }),
-            body: JSON.stringify(data),
-        }).then(r => r.text());
-    }
+    var text = text.replace(/[\n\r]+/g, " ").replace(/&nbsp;/g, " ");
+    return await fetch("https://libretranslate.com/translate", {
+        method: "POST",
+        body: JSON.stringify({
+            q: text,
+            source: "auto",
+            target: lang
+        }),
+        headers: { "Content-Type": "application/json" }
+    }).then(r => r.json())
+        .then(j => j.translatedText);
 }
 $("#search").submit((_: any) => {
     if ($("#src").val() === "") {

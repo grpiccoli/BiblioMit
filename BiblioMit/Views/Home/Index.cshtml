@@ -1,4 +1,4 @@
-﻿@model Carousel
+﻿@model Dictionary<string,string>
 @{
     ViewData["Title"] = "Home";
     ViewData["footer-text"] = "text-light";
@@ -6,14 +6,14 @@
     ViewData["footer-logo"] = "~/epic_light_hor.svg";
 
     //carousel dynamic style
-    var styleNonce = Hash.Nonce();
+    string styleNonce = Hash.Nonce();
     BiblioMit.Models.VM.CSPTag.StyleSrcElem.Add($"'nonce-{styleNonce}'");
 }
 @* "signalr", "/chat.min"*@
 <partial name="_Pg" />
 
 @section Styles{
-    <style nonce="@styleNonce">@Html.Raw(string.Join(string.Empty, Model.Styles))</style>
+    <style nonce="@styleNonce">@Html.Raw(Model["Styles"])</style>
 }
 
 @section Headers{
@@ -21,13 +21,13 @@
     <div id="introCarousel" class="carousel slide carousel-fade shadow-2-strong" data-bs-ride="carousel">
         <!-- Indicators -->
         <div class="carousel-indicators">
-            @Html.Raw(string.Join(string.Empty,Model.Indicators))
+            @Html.Raw(Model["Indicators"])
         </div>
 
         <!-- Inner -->
         <div class="carousel-inner">
             <!-- Single item -->
-            @Html.Raw(string.Join(string.Empty, Model.Items))
+            @Html.Raw(Model["Items"])
         </div>
         <!-- Inner -->
         <!-- Controls -->

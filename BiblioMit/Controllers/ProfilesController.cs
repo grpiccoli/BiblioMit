@@ -30,7 +30,7 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var profiles = _userService.GetAll()
+            IEnumerable <ProfileModel> profiles = _userService.GetAll()
                 .OrderByDescending(user => user.Rating)
                 .Select(u => new ProfileModel
                 {
@@ -41,7 +41,7 @@ namespace BiblioMit.Controllers
                     MemberSince = u.MemberSince
                 });
 
-            var model = new ProfileListModel
+            ProfileListModel model = new()
             {
                 Profiles = profiles
             };
@@ -49,12 +49,12 @@ namespace BiblioMit.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Details(string id)
+        public async Task<IActionResult> Details(string id)
         {
-            var user = _userService.GetById(id);
-            var userRoles = _userManager.GetRolesAsync(user).Result;
+            ApplicationUser user = _userService.GetById(id);
+            IList<string> userRoles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
 
-            var model = new ProfileModel()
+            ProfileModel model = new()
             {
                 UserId = user.Id,
                 UserName = user.UserName,
@@ -75,7 +75,7 @@ namespace BiblioMit.Controllers
             //IFormFile file
             )
         {
-            var userId = _userManager.GetUserId(User);
+            string userId = _userManager.GetUserId(User);
 
             //var accessKey = "AKIAISMYGSV5LKLHP25A";
             //var secretKey = "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";

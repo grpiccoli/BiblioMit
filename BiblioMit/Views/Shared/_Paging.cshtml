@@ -1,15 +1,17 @@
-﻿@{
-    var prevDisabled = (int)ViewData["pg"] == 1 ? "disabled" : "";
-    var nextDisabled = (int)ViewData["pg"] == (int)ViewData["last"] ? "disabled" : "";
-    var Model = new BiblioMit.Models.ViewModels.PagingPartial
+﻿@using BiblioMit.Models.ViewModels
+
+@{
+    string prevDisabled = (int?)ViewData["pg"] == 1 ? "disabled" : "";
+    string nextDisabled = (int?)ViewData["pg"] == (int?)ViewData["last"] ? "disabled" : "";
+    PagingPartial Model = new()
     {
-        Controller = (string)ViewData["controller"],
-        Action = (string)ViewData["action"],
-        Pg = (int)ViewData["pg"],
-        Last = (int)ViewData["last"],
-        Srt = (string)ViewData["srt"],
-        Asc = (bool)ViewData["asc"],
-        Rpp = (int)ViewData["rpp"]
+        Controller = (string?)ViewData["controller"],
+        Action = (string?)ViewData["action"],
+        Pg = (int?)ViewData["pg"] ?? 1,
+        Last = (int?)ViewData["last"] ?? 1,
+        Srt = (string?)ViewData["srt"],
+        Asc = (bool?)ViewData["asc"] ?? false,
+        Rpp = (int?)ViewData["rpp"] ?? 20
     };
 }
 

@@ -11,7 +11,7 @@ namespace BiblioMit.Extensions
             {
                 throw new ArgumentException($"{t} text is null");
             }
-            var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+            string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
             if (lang == "en")
             {
                 return text;

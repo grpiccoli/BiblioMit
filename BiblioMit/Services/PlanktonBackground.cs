@@ -28,7 +28,7 @@ namespace BiblioMit.Services
         {
             _arguments = arguments;
             _executingTask = Task.CompletedTask;
-            if (arguments.Run)
+            if (_arguments.Run)
             {
                 _timer = new Timer(FetchAssays, null, TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(-1));
             }
@@ -56,8 +56,8 @@ namespace BiblioMit.Services
         }
         private async Task FetchAssaysAsync(CancellationToken stoppingToken)
         {
-            using var scope = Services.CreateScope();
-            var scopedProcessingService = scope.ServiceProvider.GetRequiredService<IPlanktonService>();
+            using IServiceScope scope = Services.CreateScope();
+            IPlanktonService scopedProcessingService = scope.ServiceProvider.GetRequiredService<IPlanktonService>();
 
             try
             {
@@ -134,8 +134,10 @@ namespace BiblioMit.Services
             return TimeSpan.FromDays(daysUntilNextSaturday) + TimeSpanTilmidnight;
         }
         [LoggerMessage(27, LogLevel.Information, "Plankton Service running is working.")]
+#pragma warning disable IDE0060 // Remove unused parameter
         static partial void LogPlanktonServiceRunning(ILogger logger);
         [LoggerMessage(28, LogLevel.Information, "Plankton Service stopped.")]
         static partial void LogPlanktonServiceStopped(ILogger logger);
+#pragma warning restore IDE0060 // Remove unused parameter
     }
 }

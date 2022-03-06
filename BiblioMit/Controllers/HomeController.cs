@@ -15,7 +15,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using PuppeteerSharp;
 using System.Globalization;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 
 namespace BiblioMit.Controllers
@@ -56,9 +58,8 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Flowpaper(string n)
         {
-            //var name = Request.Path.Value.Split("/").Last();
-            var locale = _localizer["en_US"].Value;
-            var model = n switch
+            string locale = _localizer["en_US"].Value;
+            Flowpaper model = n switch
             {
                 "gallery" => new Flowpaper { Name = "colecci-n-virtual", Reload = 1516301843374, LocaleChain = locale },
                 _ => new Flowpaper { Name = "MANUAL_DE_USO_BIBLIOMIT", Reload = 1512490982155, LocaleChain = locale }
@@ -68,11 +69,9 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult GetBanner(string f)
         {
-            var name = Regex.Replace(f, ".*/", "");
-
-            var full = Path.Combine(_env.ContentRootPath,
+            string name = Regex.Replace(f, ".*/", "");
+            string full = Path.Combine(_env.ContentRootPath,
                                     "StaticFiles", "BannerImgs", name);
-
             return PhysicalFile(full, "image/jpg");
         }
         [HttpPost]
@@ -80,12 +79,12 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> Login([Bind("Email,Password,RememberMe")] LoginDropdownModel Input)
         {
-            var returnUrl = HttpContext.Request.Path.Value ?? "~/";
+            string returnUrl = HttpContext.Request.Path.Value ?? "~/";
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -126,11 +125,11 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public async Task<IActionResult> Responses()
         {
-            var uri = new Uri("https://docs.google.com/forms/d/e/1FAIpQLSdtgpabkbTL8eXZ1PJuyNzEkyAtX_eIdX7_84cO6aAMHxUKyQ/viewanalytics");
-            var page = await _puppet
+            Uri uri = new ("https://docs.google.com/forms/d/e/1FAIpQLSdtgpabkbTL8eXZ1PJuyNzEkyAtX_eIdX7_84cO6aAMHxUKyQ/viewanalytics");
+            Page page = await _puppet
                         .GetPageAsync(uri)
                         .ConfigureAwait(false);
-            var model = await page.GetContentAsync().ConfigureAwait(false);
+            string model = await page.GetContentAsync().ConfigureAwait(false);
             return View("Responses", model);
         }
         [HttpGet]
@@ -141,8 +140,8 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult GetAnalyticsDataMonth()
         {
-            using var service = GetService();
-            var request = new GetReportsRequest
+            using AnalyticsReportingService service = GetService();
+            GetReportsRequest request = new()
             {
                 ReportRequests = new List<ReportRequest>
                 {
@@ -172,10 +171,10 @@ namespace BiblioMit.Controllers
                     }
                 }
             };
-            var batchRequest = service.Reports.BatchGet(request);
-            var response = batchRequest.Execute();
+            ReportsResource.BatchGetRequest batchRequest = service.Reports.BatchGet(request);
+            GetReportsResponse response = batchRequest.Execute();
 
-            var result = response.Reports.First().Data.Rows
+            IEnumerable<AmData> result = response.Reports.First().Data.Rows
                 .Select(r => new AmData
                 (
                     date: string.Join("-", r.Dimensions),
@@ -186,8 +185,8 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult GetAnalyticsData()
         {
-            using var service = GetService();
-            var request = new GetReportsRequest
+            using AnalyticsReportingService service = GetService();
+            GetReportsRequest request = new()
             {
                 ReportRequests = new List<ReportRequest>
                 {
@@ -212,15 +211,15 @@ namespace BiblioMit.Controllers
                     }
                 }
             };
-            var batchRequest = service.Reports.BatchGet(request);
-            var response = batchRequest.Execute();
-            var cnt = response.Reports.First().Data.Totals.First().Values.First();
+            ReportsResource.BatchGetRequest batchRequest = service.Reports.BatchGet(request);
+            GetReportsResponse response = batchRequest.Execute();
+            string cnt = response.Reports.First().Data.Totals.First().Values.First();
             return Json(cnt);
         }
 
         public static AnalyticsReportingService GetService()
         {
-            var credential = GetCredential();
+            GoogleCredential credential = GetCredential();
 
             return new AnalyticsReportingService(new BaseClientService.Initializer()
             {
@@ -231,19 +230,10 @@ namespace BiblioMit.Controllers
 
         public static GoogleCredential GetCredential()
         {
-            using var stream = new FileStream("BiblioMit-cb7f4de3a209.json", FileMode.Open, FileAccess.Read);
+            using FileStream stream = new("BiblioMit-cb7f4de3a209.json", FileMode.Open, FileAccess.Read);
             return GoogleCredential.FromStream(stream)
 .CreateScoped(AnalyticsReportingService.Scope.AnalyticsReadonly);
         }
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //[ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        //public string Translate(string text, string to)
-        //{
-        //    var translated = _nodeService.Run("./wwwroot/js/translate.js", new string[] { text, to });
-        //    return translated;
-        //}
 
         [HttpGet]
         public IActionResult Search()
@@ -256,10 +246,9 @@ namespace BiblioMit.Controllers
             return View();
         }
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var model = await _banner.GetCarouselAsync().ConfigureAwait(false);
-            return View(model);
+            return View(_banner.ReadCarousel(true, true, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName));
         }
 
         [HttpGet]
@@ -270,15 +259,15 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Forum()
         {
-            var model = BuildHomeIndexModel();
+            HomeIndexModel model = BuildHomeIndexModel();
             return View(model);
         }
         [HttpGet]
         public IActionResult Results(string searchQuery)
         {
-            var posts = _postService.GetFilteredPosts(searchQuery);
-            var noResults = (!string.IsNullOrEmpty(searchQuery) && !posts.Any());
-            var postListings = posts.Select(p => new PostListingModel
+            IEnumerable<Post> posts = _postService.GetFilteredPosts(searchQuery);
+            bool noResults = (!string.IsNullOrEmpty(searchQuery) && !posts.Any());
+            IEnumerable<PostListingModel> postListings = posts.Select(p => new PostListingModel
             {
                 Id = p.Id,
                 AuthorId = p.UserId,
@@ -290,7 +279,7 @@ namespace BiblioMit.Controllers
                 Forum = BuildForumListing(p)
             });
 
-            var model = new SearchResultModel
+            SearchResultModel model = new()
             {
                 Posts = postListings,
                 SearchQuery = searchQuery,
@@ -340,7 +329,7 @@ namespace BiblioMit.Controllers
 
         private static ForumListingModel GetForumListingForPost(Post post)
         {
-            var forum = post.Forum;
+            Forum forum = post.Forum;
             return new ForumListingModel
             {
                 Name = forum?.Title,

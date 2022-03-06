@@ -18,9 +18,9 @@ namespace BiblioMit.Controllers
 
         // GET: Excels
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.InputFiles.Include(e => e.Registries).ToListAsync().ConfigureAwait(false));
+            return View((IQueryable<InputFile>)_context.InputFiles.Include(e => e.Registries));
         }
 
         // GET: Excels/Details/5
@@ -32,7 +32,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var excel = await _context.InputFiles
+            InputFile? excel = await _context.InputFiles
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (excel == null)
             {
@@ -75,7 +75,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var excel = await _context.InputFiles.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            InputFile? excel = await _context.InputFiles.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (excel == null)
             {
                 return NotFound();
@@ -128,7 +128,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var excel = await _context.InputFiles
+            InputFile? excel = await _context.InputFiles
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (excel == null)
             {

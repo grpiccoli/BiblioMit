@@ -1,4 +1,5 @@
-@model IEnumerable<BiblioMit.Models.VM.AgendaVM>
+@using BiblioMit.Models.VM
+@model IEnumerable<AgendaVM>
 
 @{
     ViewData["Title"] = "Agenda de Ciencia y Tecnología";
@@ -19,47 +20,52 @@
                 tabindex="-98" data-actions-box="true" value="@ViewData["fund"]" title="Seleccionar Fondos …"
                 data-selected-text-format="count > 4" data-size="5">
             <optgroup label="Fondos CONICYT &mdash; Comisión Nacional de Investigación Científica y Tecnológica">
-                @foreach (var item in ((Dictionary<string, Uri>)ViewData["conicyt1"]).Keys)
+                @{
+                    Dictionary<string, Uri>.KeyCollection? items = ((Dictionary<string, Uri>?)ViewData["conicyt1"])?.Keys;
+                    Dictionary<string, Uri>.KeyCollection? conicyt2items = ((Dictionary<string, Uri>?)ViewData["conicyt2"])?.Keys;
+                    IEnumerable<BiblioMit.Models.Region>? regions = (IEnumerable<BiblioMit.Models.Region>?)ViewData["regiones"];
+                }
+                @if (items is not null) foreach (string item in items)
                 {
-                    <option data-icon="bib-conicyt-mono" data-tokens="conicyt" selected="@(((string[])ViewData["fund"]).Contains(item))" 
+                    <option data-icon="bib-conicyt-mono" data-tokens="conicyt" selected="@(((string[]?)ViewData["fund"])?.Contains(item))" 
                             data-subtext="@item" value="@item">@item.ToUpper()</option>
                 }
-                @foreach (var item in ((Dictionary<string, Uri>)ViewData["conicyt2"]).Keys)
+                @if(conicyt2items is not null) foreach (string item in conicyt2items)
                 {
-                    <option data-icon="bib-conicyt-mono" data-tokens="conicyt" selected="@(((string[])ViewData["fund"]).Contains(item))" 
+                    <option data-icon="bib-conicyt-mono" data-tokens="conicyt" selected="@(((string[]?)ViewData["fund"])?.Contains(item))" 
                             data-subtext="@item" value="@item">@item.ToUpper()</option>
                 }
             </optgroup>
             <optgroup label="Fondos CORFO &mdash; Coorporación de Fomento a la Producción">
-                @foreach (var region in (IEnumerable<BiblioMit.Models.Region>)ViewData["regiones"])
+                @if (regions is not null) foreach (Region region in regions)
                 {
-                    <option data-icon="bib-corfo-mono" data-tokens="corfo" selected="@(((string[])ViewData["fund"]).Contains("corfo" + region.Id))"
+                    <option data-icon="bib-corfo-mono" data-tokens="corfo" selected="@(((string[]?)ViewData["fund"])?.Contains("corfo" + region.Id))"
                             value="@("corfo"+region.Id)">@((region.Id == 0) ? "Nacional" : region.GetFullName())</option>
                 }
             </optgroup>
         </select>
         <select id="estado" name="stt" class="selectpicker form-control show-tick" tabindex="-98" value="@ViewData["stt"]" title="Elegir estado de concurso …">
-            <option selected="@((string)ViewData["stt"] == "abierto")" 
+            <option selected="@((string?)ViewData["stt"] == "abierto")" 
                     class="alert alert-success" data-icon="far fa-edit" value="abierto">Abiertos</option>
-            <option selected="@((string)ViewData["stt"] == "evaluacion")" 
+            <option selected="@((string?)ViewData["stt"] == "evaluacion")" 
                     class="alert alert-info" data-icon="far fa-eye fa-fw" value="evaluacion">En evaluaci&oacute;n</option>
-            <option selected="@((string)ViewData["stt"] == "adjudicado")" 
+            <option selected="@((string?)ViewData["stt"] == "adjudicado")" 
                     class="alert alert-warning" data-icon="fas fa-award" value="adjudicado">Adjudicados</option>
-            <option selected="@((string)ViewData["stt"] == "proximo")" 
+            <option selected="@((string?)ViewData["stt"] == "proximo")" 
                     class="alert alert-danger" data-icon="fa fa-calendar" value="proximo">Pr&oacute;ximos</option>
         </select>
         <button type="submit" value="Buscar" class="btn btn-primary btn-block" onclick="return empty();"><i class="fas fa-search"></i>  Buscar</button>
     </div>
 </form>
 
-@if ((ViewData["fund"] as string[]).Count() > 0)
+@if (((string[]?)ViewData["fund"])?.Count() > 0)
 {
     <button type="button" class="stat btn btn-block btn-link">
-        <i class="fa fa-globe"></i> <strong>@String.Format("{0:n0}", Model.Count())</strong> Resultados en <strong>@((ViewData["fund"] as string[]).Count())</strong> Reps.
+        <i class="fa fa-globe"></i> <strong>@String.Format("{0:n0}", Model.Count())</strong> Resultados en <strong>@(((string[]?)ViewData["fund"])?.Count())</strong> Reps.
     </button>
 }
 
-@if ((bool)ViewData["any"])
+@if ((bool?)ViewData["any"] ?? false)
 {
     <table class="table">
         <thead>
@@ -77,18 +83,18 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (AgendaVM item in Model)
             {
                 <tr>
                     <td>
                         <div class="img-with-text" style="float: left;padding-right:1vw;">
-                            <a style="font-size:small" asp-controller="Companies" asp-action="Details" asp-route-id="@item.Company.Id">
-                                <span style="font-size:70px;" class="bib-@item.Company.Acronym">
+                            <a style="font-size:small" asp-controller="Companies" asp-action="Details" asp-route-id="@item.Company?.Id">
+                                <span style="font-size:70px;" class="bib-@item.Company?.Acronym">
                                     <span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span><span class="path6"></span>
                                 </span>
                             </a>
                             <p style="font-size:smaller;">
-                                <strong>@item.Company.Acronym</strong>
+                                <strong>@item.Company?.Acronym</strong>
                             </p>
                         </div>
                         <div>
@@ -99,7 +105,7 @@
                                 <br />
                                 @Html.DisplayFor(modelItem => item.Fund)
                                 <br />
-                                @item.Company.Acronym (@Html.DisplayFor(modelItem => item.Company.BusinessName))
+                                @item.Company?.Acronym (@if (item.Company is not null) Html.DisplayFor(modelItem => item.Company.BusinessName);)
                                 <br />
                                 @item.Description
                             </p>

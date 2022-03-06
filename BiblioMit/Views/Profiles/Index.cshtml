@@ -1,4 +1,5 @@
-﻿@model BiblioMit.Models.ProfileViewModels.ProfileListModel
+﻿@using BiblioMit.Models.ProfileViewModels
+@model ProfileListModel
 
 @{
     ViewData["Title"] = "Index";
@@ -19,7 +20,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach(var profile in Model.Profiles)
+                @foreach(ProfileModel profile in Model.Profiles)
                 {
                     <tr class="userRow">
                         <td>

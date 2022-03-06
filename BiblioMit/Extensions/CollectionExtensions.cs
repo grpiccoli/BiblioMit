@@ -8,12 +8,7 @@ namespace BiblioMit.Extensions
     {
         public static IList<T> Shuffle<T>(this IList<T> list)
         {
-            using var randomNumberGenerator = RandomNumberGenerator.Create();
-            if (list is null)
-            {
-                throw new ArgumentNullException(nameof(list));
-            }
-
+            using RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
             int n = list.Count;
             while (n > 1)
             {
@@ -25,9 +20,7 @@ namespace BiblioMit.Extensions
                 while (!(box[0] < n * (byte.MaxValue / n)));
                 int k = (box[0] % n);
                 n--;
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
+                (list[n], list[k]) = (list[k], list[n]);
             }
             return list;
         }
@@ -68,7 +61,7 @@ namespace BiblioMit.Extensions
 
             if (dates.Any(d => d.SernapescaDeclarationId == date.SernapescaDeclarationId && d.Date == date.Date))
             {
-                var old = await dates
+                DeclarationDate old = await dates
                     .FirstAsync(d => d.SernapescaDeclarationId == date.SernapescaDeclarationId && d.Date == date.Date)
                     .ConfigureAwait(false);
                 old.Weight = date.Weight;
@@ -136,7 +129,7 @@ namespace BiblioMit.Extensions
         {
             if (source != null && action != null)
             {
-                foreach (var item in source)
+                foreach (T item in source)
                 {
                     action(item);
                 }
@@ -146,7 +139,7 @@ namespace BiblioMit.Extensions
         {
             if (source != null && func != null)
             {
-                foreach (var item in source)
+                foreach (T item in source)
                 {
                     bool result = func(item);
                     if (result)

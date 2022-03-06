@@ -43,26 +43,29 @@
 		<PackageReference Include="AngleSharp" Version="0.16.1" />
 		<PackageReference Include="Boxed.AspNetCore.TagHelpers" Version="6.0.0" />
 		<PackageReference Condition="'$(OS)' == 'Windows_NT'" Include="BuildWebCompiler" Version="1.12.405" />
-		<PackageReference Include="EPPlus" Version="5.8.4" />
+		<PackageReference Include="EPPlus" Version="5.8.7" />
 		<PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
-		<PackageReference Include="Google.Apis.AnalyticsReporting.v4" Version="1.55.0.2484" />
+		<PackageReference Include="Google.Apis.AnalyticsReporting.v4" Version="1.56.0.2484" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.Abstractions" Version="2.2.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.1" />
-		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.2" />
 		<PackageReference Include="Microsoft.Build.Framework" Version="17.0.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1" />
-		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.5.3">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.2">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.6.2">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.2" />
 		<PackageReference Include="NWebsec.AspNetCore.Middleware" Version="3.0.0" />
-		<PackageReference Include="PuppeteerSharp" Version="6.1.0" />
-		<PackageReference Include="Schema.NET" Version="11.0.0" />
-		<PackageReference Include="SendGrid" Version="9.25.1" />
+		<PackageReference Include="PuppeteerSharp" Version="6.2.0" />
+		<PackageReference Include="Schema.NET" Version="11.0.1" />
+		<PackageReference Include="SendGrid" Version="9.25.3" />
 		<PackageReference Include="UAParser" Version="3.1.47" />
 	</ItemGroup>
 	<ItemGroup>
@@ -83,6 +86,7 @@
 		<EmbeddedResource Include="Pwa\ServiceWorker\Files\CacheFirstSafe.js" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Include="..\.editorconfig" Link=".editorconfig" />
 	  <None Include="Views\Softs\Create.cshtml" />
 	  <None Include="Views\Softs\Delete.cshtml" />
 	  <None Include="Views\Softs\Details.cshtml" />

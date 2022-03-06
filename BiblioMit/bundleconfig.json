@@ -286,12 +286,6 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/js/translate.min.js",
-    "inputFiles": [
-      "wwwroot/js/translate.js"
-    ]
-  },
-  {
     "outputFileName": "wwwroot/js/validation.min.js",
     "inputFiles": [
       "wwwroot/js/validate-localization.js"

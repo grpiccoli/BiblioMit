@@ -28,7 +28,7 @@
         {
             if (headers != null)
             {
-                foreach (var reg in headers)
+                foreach (string reg in headers)
                 {
                     (int, int) np = dic.GetFromHeader(reg).Key;
                     if (np != (0, 0))

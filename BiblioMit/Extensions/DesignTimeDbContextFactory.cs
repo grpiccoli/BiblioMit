@@ -12,9 +12,9 @@ namespace BiblioMit.Extensions
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json")
                 .Build();
-            var builder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            DbContextOptionsBuilder<ApplicationDbContext> builder = new ();
             string os = Environment.OSVersion.Platform.ToString();
-            var connectionString = configuration.GetConnectionString(os + "Connection");
+            string connectionString = configuration.GetConnectionString(os + "Connection");
             builder.UseSqlServer(connectionString);
             return new ApplicationDbContext(builder.Options);
         }

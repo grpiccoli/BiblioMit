@@ -1,4 +1,5 @@
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using BiblioMit.Extensions;
 using Microsoft.Extensions.Localization;
@@ -22,7 +23,7 @@ namespace BiblioMit.Services
         private int ColumnIndex;
         public async Task<ExcelPackage> ProcessAsync(string filePath)
         {
-            using var stream = File.OpenRead(filePath);
+            using FileStream stream = File.OpenRead(filePath);
             return await ProcessAsync(stream).ConfigureAwait(false);
         }
         public async Task<ExcelPackage> ProcessAsync(Stream html)
@@ -30,11 +31,11 @@ namespace BiblioMit.Services
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             ExcelPackage excel = new();
             sheet = excel.Workbook.Worksheets.Add("sheet1");
-            var parser = new HtmlParser();
-            var document = await parser.ParseDocumentAsync(html).ConfigureAwait(false);
-            var elements = document.All.Where(e => (e.LocalName == "tr" && !e.InnerHtml.Contains("<tr", StringComparison.InvariantCultureIgnoreCase))
+            HtmlParser parser = new ();
+            IHtmlDocument document = await parser.ParseDocumentAsync(html).ConfigureAwait(false);
+            IEnumerable<IElement> elements = document.All.Where(e => (e.LocalName == "tr" && !e.InnerHtml.Contains("<tr", StringComparison.InvariantCultureIgnoreCase))
             || e.LocalName == "br");
-            foreach (var e in elements)
+            foreach (IElement e in elements)
             {
                 ProcessRows(e);
             }
@@ -69,7 +70,7 @@ namespace BiblioMit.Services
             }
 
             colIndex = 1;
-            foreach (var td in row.QuerySelectorAll("td"))
+            foreach (IElement td in row.QuerySelectorAll("td"))
             {
                 sheet.Cells[rowIndex, colIndex].Value = Regex.Replace(td.TextContent, @"\r\n|\r|\n", "").Trim();
                 ++colIndex;
@@ -82,16 +83,16 @@ namespace BiblioMit.Services
         }
         public async Task<Dictionary<(int, int), string>> HtmlTable2Matrix(string filePath)
         {
-            using var stream = File.OpenRead(filePath);
+            using FileStream stream = File.OpenRead(filePath);
             return await HtmlTable2Matrix(stream).ConfigureAwait(false);
         }
         public async Task<Dictionary<(int, int), string>> HtmlTable2Matrix(Stream html)
         {
             Matrix = new();
             RowIndex = 1;
-            var parser = new HtmlParser();
-            var document = await parser.ParseDocumentAsync(html).ConfigureAwait(false);
-            var elements = document.All.Where(e => (e.LocalName.Equals("tr", StringComparison.Ordinal)
+            HtmlParser parser = new ();
+            IHtmlDocument document = await parser.ParseDocumentAsync(html).ConfigureAwait(false);
+            IEnumerable<IElement> elements = document.All.Where(e => (e.LocalName.Equals("tr", StringComparison.Ordinal)
             && !e.InnerHtml.Contains("<tr", StringComparison.Ordinal))
             || e.LocalName.Equals("br", StringComparison.Ordinal));
             if (!elements.Any())
@@ -99,7 +100,7 @@ namespace BiblioMit.Services
                 throw new FormatException(_localizer["El archivo ingresado no contiene registros ni tablas de ningún tipo"]);
             }
 
-            foreach (var e in elements)
+            foreach (IElement e in elements)
             {
                 ProcessRowsString(e);
             }
@@ -110,7 +111,7 @@ namespace BiblioMit.Services
         {
             ColumnIndex = 1;
             IHtmlCollection<IElement> tds = row.QuerySelectorAll("td");
-            foreach (var td in tds)
+            foreach (IElement td in tds)
             {
                 string content = td.TextContent.CleanCell();
                 if (!string.IsNullOrWhiteSpace(content))

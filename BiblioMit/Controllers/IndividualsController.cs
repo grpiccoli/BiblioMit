@@ -20,12 +20,11 @@ namespace BiblioMit.Controllers
 
         // GET: Samplings
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var individuals = await _context.Individuals
+            IQueryable<Individual> individuals = _context.Individuals
                     .Include(s => s.Sampling)
-                        .ThenInclude(s => s.Centre)
-                .ToListAsync().ConfigureAwait(false);
+                        .ThenInclude(s => s.Centre);
             return View(individuals);
         }
 
@@ -38,7 +37,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var individual = await _context.Individuals
+            Individual? individual = await _context.Individuals
                 .Include(s => s.Sampling)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (individual == null)
@@ -89,7 +88,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var individual = await _context.Individuals.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Individual? individual = await _context.Individuals.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (individual == null)
             {
                 return NotFound();
@@ -144,7 +143,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var individual = await _context.Individuals
+            Individual? individual = await _context.Individuals
                 .Include(s => s.Sampling)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (individual == null)

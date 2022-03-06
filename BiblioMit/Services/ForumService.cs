@@ -21,7 +21,7 @@ namespace BiblioMit.Services
 
         public async Task Delete(int forumId)
         {
-            var forum = GetbyId(forumId);
+            Forum forum = GetbyId(forumId);
             _context.Remove(forum);
             await _context.SaveChangesAsync().ConfigureAwait(false);
         }
@@ -62,7 +62,7 @@ namespace BiblioMit.Services
         public bool HasRecentPost(int id)
         {
             const int hoursAgo = 78;
-            var window = DateTime.Now.AddHours(-hoursAgo);
+            DateTime window = DateTime.Now.AddHours(-hoursAgo);
             return GetbyId(id).Posts.Any(p => p.Created > window);
         }
 

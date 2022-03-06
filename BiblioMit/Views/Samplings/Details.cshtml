@@ -1,10 +1,10 @@
-@model IEnumerable<BiblioMit.Models.Individual>
+@model IEnumerable<Individual>
 
 <partial name="_Libs" model='new List<string> { "sampligs" }' />
 
 @{
     ViewData["Title"] = Localizer["Details"];
-    var subject = (Model.Count() != 0) ? Model.First() : null;
+    Individual? subject = (Model.Count() != 0) ? Model.First() : null;
 }
 
 @if (subject == null)
@@ -127,9 +127,9 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var individual in Model)
+                @foreach (Individual individual in Model)
                 {
-                    var type = new Dictionary<int, bool[]>
+                    Dictionary<int, bool[]> type = new()
             {
                 {1, new bool[]{false,false,false}},
                 {2, new bool[]{false,true,false}},
@@ -138,7 +138,7 @@ else
                 {5, new bool[]{true,false,false}}
             };
                     //Dictionary SoftType vs ViewType: 1) Tissues? 2) Count? 3) Degree?
-                    var editTissue = new Dictionary<SoftType, int>
+                    Dictionary<SoftType, int> editTissue = new()
             {
                 {SoftType.HaemocyticInfiltration, 5 },
                 {SoftType.RLO, 3 },
@@ -165,10 +165,10 @@ else
                 <td>
                     @individual.Maturity.GetAttrName()
                 </td>
-                @foreach (var dictSoft in editTissue)
+                @foreach (KeyValuePair<SoftType, int> dictSoft in editTissue)
                 {
-                    var ind = individual.Softs.Where(s => s.SoftType == dictSoft.Key);
-                    var item = ind.FirstOrDefault();
+                    IEnumerable<Soft> ind = individual.Softs.Where(s => s.SoftType == dictSoft.Key);
+                    Soft? item = ind.FirstOrDefault();
                     bool any = (item != null);
                     if (type[dictSoft.Value][0])
                     {
@@ -190,7 +190,7 @@ else
                             </span>
                             <span class="nameArea">
                                 @{
-                                    foreach (var itm in ind)
+                                    foreach (Soft itm in ind)
                                     {
                                         <text>
                                             @itm.Count @Html.DisplayFor(modelItem => itm.Degree) @itm.Tissue.GetAttrName(),
@@ -214,7 +214,7 @@ else
                                asp-route-count="@type[dictSoft.Value][1]"
                                asp-route-degree="@type[dictSoft.Value][2]"
                                class="btn btn-@(any ? "warning" : "success") btn-xs">
-                                @(any ? item.Count.ToString() : "")
+                                @(item != null ? item.Count.ToString() : "")
                                 <i class="fas fa-@(any ? "check" : "times")"></i>
                             </a>
                         </td>

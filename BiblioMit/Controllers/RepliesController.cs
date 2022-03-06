@@ -26,10 +26,10 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int id)
         {
-            var post = _postService.GetById(id);
-            var user = await _userManager.FindByNameAsync(User.Identity?.Name).ConfigureAwait(false);
+            Post post = _postService.GetById(id);
+            ApplicationUser user = await _userManager.FindByNameAsync(User.Identity?.Name).ConfigureAwait(false);
 
-            var model = new PostReplyModel
+            PostReplyModel model = new()
             {
                 PostContent = post.Content,
                 PostTitle = post.Title,
@@ -58,8 +58,8 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var userId = _userManager.GetUserId(User);
-            var user = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+            string userId = _userManager.GetUserId(User);
+            ApplicationUser user = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
 
             PostReply reply = BuildReply(model, user);
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using System.Collections.ObjectModel;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace BiblioMit.Views.Components.Nav
 {
@@ -17,7 +18,7 @@ namespace BiblioMit.Views.Components.Nav
         }
         public IViewComponentResult Invoke()
         {
-            var links = new NavDDwnVM
+            NavDDwnVM links = new ()
             {
                 Logo = "fas fa-link",
                 Title = _localizer["Links"],
@@ -91,7 +92,7 @@ namespace BiblioMit.Views.Components.Nav
                     Icon = "fas fa-water"
                 }
             };
-            var identity = User.Identity;
+            IIdentity? identity = User.Identity;
             if (identity == null)
             {
                 throw new UnauthorizedAccessException();
@@ -126,7 +127,7 @@ namespace BiblioMit.Views.Components.Nav
                 Name = _localizer["Research Centres"],
                 Icon = "fas fa-microscope"
             });
-            var producers = new NavDDwnVM
+            NavDDwnVM producers = new ()
             {
                 Logo = "fas fa-map-marker-alt",
                 Title = _localizer["Maps"],
@@ -139,7 +140,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            var boletin = new NavDDwnVM
+            NavDDwnVM boletin = new ()
             {
                 Logo = "fas fa-chart-line",
                 Title = _localizer["Reports"],
@@ -189,7 +190,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            var publications = new NavDDwnVM
+            NavDDwnVM publications = new ()
             {
                 Logo = "fas fa-search",
                 Title = _localizer["Search"],
@@ -233,7 +234,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            var gallery = new NavDDwnVM
+            NavDDwnVM gallery = new ()
             {
                 Logo = "fas fa-images",
                 Title = _localizer["Images"],
@@ -258,7 +259,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 }
             };
-            var forum = new NavDDwnVM
+            NavDDwnVM forum = new ()
             {
                 Logo = "far fa-comment-dots",
                 Title = _localizer["Networking"],
@@ -459,14 +460,14 @@ namespace BiblioMit.Views.Components.Nav
                 });
             }
 
-            var model = new List<NavDDwnVM>
+            List<NavDDwnVM> model = new ()
             {
                 links, producers, boletin, publications, gallery, forum
             };
 
             if (claims.Contains(UserClaims.Banners))
             {
-                var services = new NavDDwnVM
+                NavDDwnVM services = new ()
                 {
                     Logo = "fas fa-concierge-bell",
                     Title = _localizer["Services"]
@@ -575,7 +576,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 });
             }
-            var result = new DefaultModel(new ReadOnlyCollection<NavDDwnVM>(model));
+            DefaultModel result = new (new ReadOnlyCollection<NavDDwnVM>(model));
             return View(result);
         }
     }

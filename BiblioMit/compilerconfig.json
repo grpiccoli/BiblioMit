@@ -84,10 +84,6 @@
     "inputFile": "src/styles/psmbs.scss"
   },
   {
-    "outputFile": "wwwroot/css/banners.css",
-    "inputFile": "src/styles/banners.scss"
-  },
-  {
     "outputFile": "wwwroot/css/homeAbout.css",
     "inputFile": "src/styles/homeAbout.scss"
   },

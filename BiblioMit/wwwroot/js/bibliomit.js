@@ -8,21 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 function translate(text) {
+    var text;
     return __awaiter(this, void 0, void 0, function* () {
         var lang = document.querySelector("html").getAttribute("lang");
-        var token = document.querySelector("input[name='__RequestVerificationToken']");
-        if (lang && token) {
-            var data = {
-                text: text.replace(/[\n\r]+/g, " ").replace(/&nbsp;/g, " "),
-                to: lang,
-                '__RequestVerificationToken': token.value
-            };
-            return yield fetch('/home/translate', {
-                method: 'post',
-                headers: new Headers({ 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }),
-                body: JSON.stringify(data),
-            }).then(r => r.text());
-        }
+        text = text.replace(/[\n\r]+/g, " ").replace(/&nbsp;/g, " ");
+        return yield fetch("https://libretranslate.com/translate", {
+            method: "POST",
+            body: JSON.stringify({
+                q: text,
+                source: "auto",
+                target: lang
+            }),
+            headers: { "Content-Type": "application/json" }
+        }).then(r => r.json())
+            .then(j => j.translatedText);
     });
 }
 $("#search").submit((_) => {

@@ -60,7 +60,7 @@ namespace BiblioMit.Services
             LibType = LibType.cssLocal;
         }
         public string? WgetArgs { get; set; }
-        public string? Href { get; set; }
+        public string Href { get; set; } = null!;
         public string? Hash { get; set; }
         public string? Fallback { get; set; }
         public string? Extension { get; set; }
@@ -87,7 +87,8 @@ namespace BiblioMit.Services
         private static SortedDictionary<string, HashSet<SourcesModel>> Libs { get; set; } = new();
         public static void LoadJson()
         {
-            using StreamReader r = new(_filename);
+            string filePath = Path.Combine("StaticFiles", "json", _filename);
+            using StreamReader r = new(filePath);
             string json = r.ReadToEnd();
             SortedDictionary<string, HashSet<SourcesModel>>? libhashes = JsonSerializer.Deserialize<SortedDictionary<string, HashSet<SourcesModel>>>(json);
             if (libhashes == null)
@@ -142,7 +143,7 @@ namespace BiblioMit.Services
                 {
                     foreach (SourcesModel file in lib)
                     {
-                        using var process = new Process
+                        using Process process = new ()
                         {
                             StartInfo = new ProcessStartInfo
                             {
@@ -153,8 +154,8 @@ namespace BiblioMit.Services
                                 RedirectStandardError = true
                             }
                         };
-                        var s = string.Empty;
-                        var e = string.Empty;
+                        string s = string.Empty;
+                        string e = string.Empty;
                         process.OutputDataReceived += (sender, data) => s += data.Data;
                         process.ErrorDataReceived += (sender, data) => e += data.Data;
                         process.Start();
@@ -183,7 +184,7 @@ namespace BiblioMit.Services
                     }
                     else
                     {
-                        var model = new SourcesModel(bundle);
+                        SourcesModel model = new (bundle);
                         if(!Libs[key].Any(l => l.Href == model.Href))
                         {
                             Libs[key].Add(model);
@@ -212,7 +213,7 @@ namespace BiblioMit.Services
                     }
                     else
                     {
-                        var model = new SourcesModel(compile);
+                        SourcesModel model = new (compile);
                         if (!Libs[key].Any(l => l.Href == model.Href))
                         {
                             Libs[key].Add(model);
@@ -220,7 +221,7 @@ namespace BiblioMit.Services
                     }
                 }
             }
-            using StreamWriter w = new(_filename);
+            using StreamWriter w = new(filePath);
             w.Write(JsonSerializer.Serialize(Libs));
         }
 #if DEBUG

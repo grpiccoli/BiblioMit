@@ -12,7 +12,7 @@ namespace BiblioMit.Extensions
                 .Contains(((string)c.Value).CleanCell()))?.Start.Column;
         public static int GetColumnByNames(this IList<string> headers, IEnumerable<string> columnNames)
         {
-            foreach (var name in columnNames)
+            foreach (string name in columnNames)
             {
                 int index = headers.IndexOf(name);
                 if (index != -1)

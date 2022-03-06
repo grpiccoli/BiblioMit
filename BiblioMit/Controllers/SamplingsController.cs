@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Localization;
 using System.Globalization;
 
@@ -29,17 +30,17 @@ namespace BiblioMit.Controllers
 
         // GET: Samplings
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var ApplicationDbContext = _context.Samplings
+            IIncludableQueryable<Sampling, Company> ApplicationDbContext = _context.Samplings
                 .Include(s => s.Centre)
                     .ThenInclude(c => c.Company);
-            return View(await ApplicationDbContext.ToListAsync().ConfigureAwait(false));
+            return View(ApplicationDbContext);
         }
 
         // GET: Samplings/Details/5
         [HttpGet]
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
@@ -47,15 +48,13 @@ namespace BiblioMit.Controllers
             }
             ViewData["SampleId"] = id;
 
-            return View(await _context.Individuals
+            return View(_context.Individuals
                 .Include(s => s.Sampling)
                     .ThenInclude(s => s.Centre)
                         .ThenInclude(c => c.Company)
                 .Include(s => s.Softs)
                 .Where(m => m.SamplingId == id)
-                .AsNoTracking()
-                .ToListAsync().ConfigureAwait(false));
-
+                .AsNoTracking());
         }
 
         // GET: Samplings/Create
@@ -100,7 +99,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var sampling = await _context
+            Sampling? sampling = await _context
                 .Samplings
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (sampling == null)
@@ -147,7 +146,7 @@ namespace BiblioMit.Controllers
                 if (_context.Individuals.Any(i => i.Id == individual.Id))
                 {
                     string msg = _localizer["The Subject"] + " " + individual.Number + " " + _localizer["of the Sample"] + " " + individual.SamplingId + " " + _localizer["already exists."];
-                    var model = new ErrorViewModel
+                    ErrorViewModel model = new()
                     {
                         Message = msg
                     };
@@ -164,7 +163,7 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult EditSoft(int id, int sample, SoftType softType, bool tissue, bool count, bool degree)
         {
-            var softs = _context.Softs
+            IQueryable<Soft> softs = _context.Softs
                 .Include(i => i.Individual)
                 .Where(m => m.IndividualId == id && m.SoftType == softType);
             var degrees = from Degree e in Enum.GetValues(typeof(Degree))
@@ -197,7 +196,7 @@ namespace BiblioMit.Controllers
                         Degree = softs.Any(s => s.Tissue == t) ? softs.First(s => s.Tissue == t).Degree : null,
                         Text = t.GetAttrName(),
                         Value = ((int)t).ToString(CultureInfo.InvariantCulture),
-                    }).ToList().ForEach(t => model.Tissues.Add(t));
+                    }).ForEach(t => model.Tissues.Add(t));
             }
 
             if (count && !tissue)
@@ -219,7 +218,7 @@ namespace BiblioMit.Controllers
                 {
                     if (individual.Configs["tissue"])
                     {
-                        var softs = _context.Softs
+                        IQueryable<Soft> softs = _context.Softs
                             .Where(m => m.IndividualId == individual.Id && m.SoftType == individual.SoftType);
 
                         if (individual.Configs["count"])
@@ -236,7 +235,7 @@ namespace BiblioMit.Controllers
                                 {
                                     if (individual.Tissues[i].Count == 0)
                                     {
-                                        var soft = await softs
+                                        Soft soft = await softs
                                                                 .SingleAsync(s =>
                                                                 s.IndividualId == individual.Id
                                                                 && s.SoftType == individual.SoftType
@@ -247,13 +246,13 @@ namespace BiblioMit.Controllers
                                     {
                                         if (softs.Any(s => s.Tissue == (Tissue)i))
                                         {
-                                            var soft = softs.Single(s => s.Tissue == (Tissue)i);
+                                            Soft soft = softs.Single(s => s.Tissue == (Tissue)i);
                                             soft.Count = individual.Tissues[i].Count;
                                             _context.Softs.Update(soft);
                                         }
                                         else
                                         {
-                                            var soft = new Soft
+                                            Soft soft = new ()
                                             {
                                                 IndividualId = individual.Id,
                                                 SoftType = individual.SoftType,
@@ -286,7 +285,7 @@ namespace BiblioMit.Controllers
                                         }
                                         else
                                         {
-                                            var soft = await softs
+                                            Soft soft = await softs
                                                             .SingleAsync(s =>
                                                             s.IndividualId == individual.Id
                                                             && s.SoftType == individual.SoftType
@@ -296,7 +295,7 @@ namespace BiblioMit.Controllers
                                     }
                                     else if (Options[c].Degree == null && individual.Tissues[c].Degree != Degree.d0)
                                     {
-                                        var soft = new Soft
+                                        Soft soft = new()
                                         {
                                             IndividualId = individual.Id,
                                             SoftType = individual.SoftType,
@@ -307,7 +306,7 @@ namespace BiblioMit.Controllers
                                     }
                                     else if (individual.Tissues[c].Degree != Options[c].Degree)
                                     {
-                                        var soft = softs.Single(s => s.Tissue == (Tissue)c);
+                                        Soft soft = softs.Single(s => s.Tissue == (Tissue)c);
                                         soft.Degree = individual.Tissues[c].Degree;
                                         _context.Softs.Update(soft);
                                     }
@@ -327,7 +326,7 @@ namespace BiblioMit.Controllers
                                     {
                                         if (individual.Tissues[i].Check)
                                         {
-                                            var soft = new Soft
+                                            Soft soft = new()
                                             {
                                                 IndividualId = individual.Id,
                                                 SoftType = individual.SoftType,
@@ -337,7 +336,7 @@ namespace BiblioMit.Controllers
                                         }
                                         else
                                         {
-                                            var soft = await softs
+                                            Soft soft = await softs
                                                                     .SingleAsync(s =>
                                                                     s.IndividualId == individual.Id
                                                                     && s.SoftType == individual.SoftType
@@ -351,7 +350,7 @@ namespace BiblioMit.Controllers
                     }
                     else
                     {
-                        var soft = _context.Softs
+                        Soft? soft = _context.Softs
                             .FirstOrDefault(
                             m =>
                             m.IndividualId == individual.Id &&
@@ -363,7 +362,7 @@ namespace BiblioMit.Controllers
                             {
                                 if (individual.Count > 0)
                                 {
-                                    var nuevo = new Soft
+                                    Soft nuevo = new ()
                                     {
                                         IndividualId = individual.Id,
                                         SoftType = individual.SoftType,
@@ -389,7 +388,7 @@ namespace BiblioMit.Controllers
                         {
                             if (soft == null && individual.Check)
                             {
-                                var nuevo = new Soft
+                                Soft nuevo = new ()
                                 {
                                     IndividualId = individual.Id,
                                     SoftType = individual.SoftType
@@ -429,7 +428,7 @@ namespace BiblioMit.Controllers
             {
                 return NotFound();
             }
-            var individual = await _context.Individuals.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Individual? individual = await _context.Individuals.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (individual == null)
             {
                 return NotFound();
@@ -524,7 +523,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var sampling = await _context.Samplings
+            Sampling? sampling = await _context.Samplings
                 .Include(s => s.Centre)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (sampling == null)
@@ -541,7 +540,7 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sampling = await _context.Samplings.SingleAsync(m => m.Id == id).ConfigureAwait(false);
+            Sampling sampling = await _context.Samplings.SingleAsync(m => m.Id == id).ConfigureAwait(false);
             _context.Samplings.Remove(sampling);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");

@@ -21,17 +21,17 @@ namespace BiblioMit.Extensions
         private const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         public static async Task<string?> CheckSRI(this string local, Uri url)
         {
-            var path = Directory.GetCurrentDirectory();
-            var file = Path.Combine(path, "wwwroot", local);
+            string path = Directory.GetCurrentDirectory();
+            string file = Path.Combine(path, "wwwroot", local);
             using FileStream fileStream = File.OpenRead(file);
-            using var sha = SHA384.Create();
-            var localHash = sha.ComputeHash(fileStream);
+            using SHA384 sha = SHA384.Create();
+            byte[] localHash = sha.ComputeHash(fileStream);
             using HttpClient client = new();
             Stream urlStream = await client.GetStreamAsync(url).ConfigureAwait(false);
 
             //var req = WebRequest.Create(url);
             //Stream urlStream = req.GetResponse().GetResponseStream();
-            var urlHash = sha.ComputeHash(urlStream);
+            byte[] urlHash = sha.ComputeHash(urlStream);
             if (urlHash == localHash)
             {
                 return Convert.ToBase64String(localHash);
@@ -44,10 +44,10 @@ namespace BiblioMit.Extensions
             const string tagWhiteSpace = @"(>|$)(\W|\n|\r)+<";//matches one or more (white space or line breaks) between '>' and '<'
             const string stripFormatting = @"<[^>]*(>|$)";//match any character between '<' and '>', even when end tag is missing
             const string lineBreak = @"<(br|BR)\s{0,1}\/{0,1}>";//matches: <br>,<br/>,<br />,<BR>,<BR/>,<BR />
-            var lineBreakRegex = new Regex(lineBreak, RegexOptions.Multiline);
-            var stripFormattingRegex = new Regex(stripFormatting, RegexOptions.Multiline);
-            var tagWhiteSpaceRegex = new Regex(tagWhiteSpace, RegexOptions.Multiline);
-            var text = html;
+            Regex lineBreakRegex = new (lineBreak, RegexOptions.Multiline);
+            Regex stripFormattingRegex = new (stripFormatting, RegexOptions.Multiline);
+            Regex tagWhiteSpaceRegex = new (tagWhiteSpace, RegexOptions.Multiline);
+            string text = html;
             //Decode html specific characters
             text = WebUtility.HtmlDecode(text);
             //Remove tag whitespace/line breaks
@@ -63,7 +63,7 @@ namespace BiblioMit.Extensions
         }
         public static string GetColumn(this int index)
         {
-            var value = string.Empty;
+            string value = string.Empty;
             if (index >= letters.Length)
             {
                 value += letters[index / letters.Length - 1];
@@ -86,7 +86,7 @@ namespace BiblioMit.Extensions
 
             int startIndex = cell.IndexOfAny("0123456789".ToCharArray());
             string column = cell[..startIndex];
-            var rowParsed = int.TryParse(cell[startIndex..], out int row);
+            bool rowParsed = int.TryParse(cell[startIndex..], out int row);
             return rowParsed ? $"{(column.GetColumn() + columns).GetColumn()}{row + rows}" : null;
         }
         public static Collection<int>? AllIndexesOf(this string str, string value)
@@ -111,11 +111,11 @@ namespace BiblioMit.Extensions
         }
         public static string ToRomanNumeral(this int number)
         {
-            var romanNumeral = string.Empty;
+            string romanNumeral = string.Empty;
             while (number > 0)
             {
                 // find biggest numeral that is less than equal to number
-                var index = numerals.FindIndex(x => x <= number);
+                int index = numerals.FindIndex(x => x <= number);
                 // subtract it's value from your number
                 number -= numerals[index];
                 // tack it onto the end of your roman numeral
@@ -152,7 +152,7 @@ namespace BiblioMit.Extensions
             //    return resultado;
             //}).Result;
 
-            var url = new Uri(string.Format(CultureInfo.InvariantCulture,
+            Uri url = new (string.Format(CultureInfo.InvariantCulture,
                 "http://www.google.com/translate_t?hl={0}&ie=UTF8&text={1}&langpair={2}", targetLanguage, input, languagePair));
             using HttpClient hc = new();
             HttpResponseMessage result = hc.GetAsync(url).Result;
@@ -173,11 +173,11 @@ namespace BiblioMit.Extensions
                 return text;
             }
 
-            var normalizedString = text.Normalize(NormalizationForm.FormD);
-            var stringBuilder = new StringBuilder();
-            foreach (var c in normalizedString)
+            string normalizedString = text.Normalize(NormalizationForm.FormD);
+            StringBuilder stringBuilder = new ();
+            foreach (char c in normalizedString)
             {
-                var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
                 if (unicodeCategory != UnicodeCategory.NonSpacingMark)
                 {
                     stringBuilder.Append(c);
@@ -187,7 +187,7 @@ namespace BiblioMit.Extensions
         }
         public static string FirstCharToUpper(this string input)
         {
-            var textInfo = new CultureInfo("en-GB").TextInfo;
+            TextInfo textInfo = new CultureInfo("en-GB").TextInfo;
             return string.IsNullOrWhiteSpace(input) ? input :
             input[0].ToString(CultureInfo.InvariantCulture).ToUpperInvariant() + textInfo.ToLower(input[1..]);
         }

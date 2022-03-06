@@ -16,8 +16,8 @@
         {
             LogSeedStarted(_logger);
 
-            using var scope = Services.CreateScope();
-            var scopedProcessingService = scope.ServiceProvider.GetRequiredService<ISeed>();
+            using IServiceScope scope = Services.CreateScope();
+            ISeed scopedProcessingService = scope.ServiceProvider.GetRequiredService<ISeed>();
 
             try
             {
@@ -32,8 +32,10 @@
         // noop
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
         [LoggerMessage(31, LogLevel.Information, "Consume Scoped Service Hosted Service is working.")]
+#pragma warning disable IDE0060 // Remove unused parameter
         static partial void LogSeedStarted(ILogger logger);
         [LoggerMessage(32, LogLevel.Error, "{message}.")]
         static partial void LogError(ILogger logger, string message);
+#pragma warning restore IDE0060 // Remove unused parameter
     }
 }

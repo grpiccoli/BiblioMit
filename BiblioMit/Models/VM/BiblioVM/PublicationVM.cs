@@ -20,7 +20,7 @@ namespace BiblioMit.Models.VM
     public class PublicationVM
     {
         //Parent
-        public Company? Company { get; set; }
+        public Company Company { get; set; } = null!;
         //Attributes
         [Display(Name = "Type")]
         public Typep Typep { get; set; }
@@ -28,7 +28,7 @@ namespace BiblioMit.Models.VM
         public string? Source { get; set; }
         public Uri? Uri { get; set; }
         [Display(Name = "Title")]
-        public string? Title { get; set; }
+        public string Title { get; set; } = null!;
         [Display(Name = "Abstract")]
         public string? Abstract { get; set; }
         [Display(Name = "Journal")]

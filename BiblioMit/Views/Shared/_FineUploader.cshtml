@@ -1,5 +1,5 @@
 ﻿@{ 
-    var scriptNonce = Hash.Nonce();
+    string scriptNonce = Hash.Nonce();
     BiblioMit.Models.VM.CSPTag.ScriptSrcElem.Add($"'nonce-{scriptNonce}'");
 }
 

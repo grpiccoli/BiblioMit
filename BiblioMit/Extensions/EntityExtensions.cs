@@ -18,11 +18,11 @@ namespace BiblioMit.Extensions
         {
             if (val1 != null && val2 != null)
             {
-                var fi = val1.GetType().GetProperties(BindingFlags).Where(f => !f.PropertyType.IsClass && !f.PropertyType.IsInterface);
-                foreach (var f in fi)
+                IEnumerable<PropertyInfo> fi = val1.GetType().GetProperties(BindingFlags).Where(f => !f.PropertyType.IsClass && !f.PropertyType.IsInterface);
+                foreach (PropertyInfo f in fi)
                 {
-                    var var1 = f.GetValue(val1);
-                    var var2 = f.GetValue(val2);
+                    object? var1 = f.GetValue(val1);
+                    object? var2 = f.GetValue(val2);
                     if ((var1 == null && var2 != null) || (var1 != null && !var1.Equals(var2)))
                     {
                         val1[f.Name] = val2[f.Name];

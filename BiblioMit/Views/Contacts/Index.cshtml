@@ -20,9 +20,12 @@
                         data-live-search="true" data-actions-box="true" tabindex="-98"
                         value="@ViewData["c"]" title="Filtrar por Región, Provincia o Comuna">
                     <optgroup label="Comunas">
-                        @foreach (ContactCommune u in (IQueryable<ContactCommune>)ViewData["comunas"])
+                        @{
+                            IQueryable<ContactCommune>? comunas = (IQueryable<ContactCommune>?)ViewData["comunas"];
+                        }
+                        @if (comunas is not null) foreach (ContactCommune u in comunas)
                         {
-                        <option selected="@((ViewData["c"] as string[]).Contains(Convert.ToString(u.Id)))" 
+                        <option selected="@(((string[]?)ViewData["c"])?.Contains(Convert.ToString(u.Id)))" 
                                 data-subtext="@u.Province"
                                 value="@u.Id">@u.Commune</option>
                         }
@@ -67,19 +70,19 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (Contact item in Model)
         {
-            var acr = "bibliomit";
-            var rut = item.ConsessionOrResearch.Company?.GetRUT();
-            var companyId = item.ConsessionOrResearch.CompanyId;
-            var url = "#";
-            var type = item.ConsessionOrResearch?.Discriminator;
-            var businessName = item.ConsessionOrResearch.Company.BusinessName;
-            var ext = "svg";
-            if (!string.IsNullOrWhiteSpace(item.ConsessionOrResearch.Company?.Acronym))
+            string acr = "bibliomit";
+            string rut = item.ConsessionOrResearch.Company.GetRUT();
+            int? companyId = item.ConsessionOrResearch.CompanyId;
+            string url = "#";
+            PsmbType type = item.ConsessionOrResearch.Discriminator;
+            string? businessName = item.ConsessionOrResearch.Company.BusinessName;
+            string ext = "svg";
+            if (!string.IsNullOrWhiteSpace(item.ConsessionOrResearch.Company.Acronym))
                 acr = item.ConsessionOrResearch.Company.Acronym;
             if (type == PsmbType.ResearchCentre)
-                url = ((ResearchCentre)item.ConsessionOrResearch).Url.ToString();
+                url = ((ResearchCentre)item.ConsessionOrResearch).Url?.ToString() ?? string.Empty;
             if (acr == "AMICHILE" || acr == "INPESCA")
                 ext = "min.png";
             <tr>

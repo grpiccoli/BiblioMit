@@ -16,7 +16,7 @@ namespace BiblioMit.Services
         {
             string[] scopes = { AnalyticsReportingService.Scope.AnalyticsReadonly }; //Read-only access to Google Analytics
             GoogleCredential credential;
-            using (var stream = new FileStream(keyFileName, FileMode.Open, FileAccess.Read))
+            using (FileStream stream = new (keyFileName, FileMode.Open, FileAccess.Read))
             {
                 credential = GoogleCredential.FromStream(stream).CreateScoped(scopes);
             }
@@ -41,7 +41,7 @@ namespace BiblioMit.Services
                 throw new MissingFieldException($"missing KeyFileName entry in csproj config file");
             }
 
-            using var analyticsService = GetAnalyticsReportingServiceInstance(config);
+            using AnalyticsReportingService analyticsService = GetAnalyticsReportingServiceInstance(config);
             return analyticsService.Reports.BatchGet(getReportsRequest).Execute();
         }
     }

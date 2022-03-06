@@ -22,7 +22,7 @@ namespace BiblioMit.Controllers
                 throw new ArgumentNullException($"argument name {name} cannot be null");
             }
 
-            var invariant = name.ToUpperInvariant();
+            string invariant = name.ToUpperInvariant();
             if (invariant.Contains("FARM", StringComparison.Ordinal)
                 || invariant.Contains("PSMB", StringComparison.Ordinal)
                 || invariant.Contains("SPECIE", StringComparison.Ordinal)
@@ -34,7 +34,7 @@ namespace BiblioMit.Controllers
                     throw new AuthenticationException($"Please log in to view this content {name}");
                 }
             }
-            var file = Path.Combine(
+            string file = Path.Combine(
                 _env.ContentRootPath,
                 "StaticFiles",
                 "json", lang, name);
@@ -56,7 +56,7 @@ namespace BiblioMit.Controllers
                 throw new AuthenticationException($"Please log in to view this content {name}");
             }
 
-            var file = Path.Combine(_env.ContentRootPath, "StaticFiles", "html", name);
+            string file = Path.Combine(_env.ContentRootPath, "StaticFiles", "html", name);
             //var physical = System.IO.File.Exists(file) ? file
             //    : Path.Combine(Directory.GetCurrentDirectory(), DefaultStaticMiddleware.DefaultImagePath);
             return PhysicalFile(file, "text/html");

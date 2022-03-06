@@ -47,12 +47,12 @@
                         <option value="">@Localizer["Variables"]</option>
                     </select>
                 </div>
-                <div class="col-12 @(User.Identity.IsAuthenticated ? "" : "d-none")">
+                <div class="col-12 @(User.Identity?.IsAuthenticated ?? false ? "" : "d-none")">
                     <select id="variables" class="choice" multiple>
                         <option value="">@Localizer["Custom variables"]</option>
                     </select>
                 </div>
-                <div id="semaforo" class="col @(User.Identity.IsAuthenticated ? "" : "d-none")">
+                <div id="semaforo" class="col @(User.Identity?.IsAuthenticated ?? false ? "" : "d-none")">
                     <div class="row">
                         <div class="col-12">
                             <select class="choice" id="tl" multiple>
@@ -101,7 +101,7 @@
         </div>
     </div>
     <br />
-    @if (User.Identity.IsAuthenticated)
+    @if (User.Identity?.IsAuthenticated ?? false)
     {
         <div class="row">
             <div class="col-11">

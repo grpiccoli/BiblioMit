@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace BiblioMit.Controllers
 {
@@ -19,10 +20,10 @@ namespace BiblioMit.Controllers
 
         // GET: Samplings
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var ApplicationDbContext = _context.Valves.Include(s => s.Individual);
-            return View(await ApplicationDbContext.ToListAsync().ConfigureAwait(false));
+            IIncludableQueryable<Valve, Individual> ApplicationDbContext = _context.Valves.Include(s => s.Individual);
+            return View(ApplicationDbContext);
         }
 
         // GET: Samplings/Details/5
@@ -34,7 +35,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var valve = await _context.Valves
+            Valve? valve = await _context.Valves
                 .Include(s => s.Individual)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (valve == null)
@@ -84,7 +85,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var valve = await _context.Valves.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Valve? valve = await _context.Valves.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (valve == null)
             {
                 return NotFound();
@@ -139,7 +140,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var valve = await _context.Valves
+            Valve? valve = await _context.Valves
                 .Include(s => s.Individual)
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (valve == null)

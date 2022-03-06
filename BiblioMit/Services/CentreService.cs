@@ -16,7 +16,7 @@ namespace BiblioMit.Services
         {
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                var normalized = searchQuery.ToUpperInvariant();
+                string normalized = searchQuery.ToUpperInvariant();
                 return (_context.Psmbs
                     .Where(c =>
                     (c.Address != null && c.Address.Contains(normalized, StringComparison.Ordinal)) ||

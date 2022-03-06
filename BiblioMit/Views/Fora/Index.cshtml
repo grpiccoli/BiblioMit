@@ -1,4 +1,5 @@
-﻿@model BiblioMit.Models.ForumViewModels.ForumIndexModel
+﻿@using BiblioMit.Models.ForumViewModels
+@model ForumIndexModel
 
 <partial name="_Libs" model='new List<string> { "background" }' />
 
@@ -13,7 +14,7 @@
             <p>Bienvenido a <strong>Foros BiblioMit</strong>. Las publicaciones han sido ampliamente categorizadas por &aacute;rea de inter&eacute;s.</p>
             <p>
                 Por favor lea las reglas del foro antes de crear una nueva publicaci&oacute;n.
-                @if (!User.Identity.IsAuthenticated)
+                @if (!(User.Identity?.IsAuthenticated ?? false))
                 {
                     <span>Debes ser <a asp-controller="Account" asp-action="Register">Miembro registrado</a> para crear una nueva publicaci&oacute;n.</span>
                 }
@@ -23,7 +24,7 @@
     <div class="row" id="forumIndexContent">
         <table class="table table-hover" id="forumIndexTable">
             <tbody>
-                @foreach (var forum in Model.ForumListing)
+                @foreach (ForumListingModel forum in Model.ForumListing)
                 {
                     <tr>
                         <td>

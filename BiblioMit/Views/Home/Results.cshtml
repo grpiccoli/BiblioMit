@@ -1,4 +1,5 @@
-﻿@model BiblioMit.Models.HomeViewModels.SearchResultModel
+﻿@using BiblioMit.Models.PostViewModels
+@model BiblioMit.Models.HomeViewModels.SearchResultModel
 
 <partial name="_Libs" model='new List<string> { "background" }' />
 
@@ -26,7 +27,7 @@
         {
             <table class="table table-hover table-boredered" id="forumIndexTable">
                 <tbody>
-                    @foreach (var post in Model.Posts)
+                    @foreach (PostListingModel post in Model.Posts)
                     {
                         <tr>
                             <td>

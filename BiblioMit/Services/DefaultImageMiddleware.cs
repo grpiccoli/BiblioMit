@@ -16,7 +16,7 @@ namespace BiblioMit.Services
             await _next(context).ConfigureAwait(false);
             if (context?.Response.StatusCode == 404)
             {
-                var contentType = context.Request.Headers["accept"].ToString().ToUpperInvariant();
+                string contentType = context.Request.Headers["accept"].ToString().ToUpperInvariant();
                 if (contentType.StartsWith("IMAGE", StringComparison.InvariantCulture))
                 {
                     await SetDefaultImage(context).ConfigureAwait(false);

@@ -13,7 +13,7 @@ namespace BiblioMit.Models
         public int Id { get; set; }
         [DisallowNull]
         [Required]
-        public string? Name { get; private set; }
+        public string Name { get; private set; } = null!;
         public void SetName([DisallowNull] string value)
         {
             Name = value;

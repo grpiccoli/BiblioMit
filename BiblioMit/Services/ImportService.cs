@@ -889,7 +889,7 @@ namespace BiblioMit.Services
                 object? id = await GetValue(matrix, d).ConfigureAwait(false);
                 if (id == null)
                 {
-                    throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Id {string.Join("; ", Tdatas[d].Q)}"]);
+                    throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Id {string.Join("; ", Tdatas?[d]?.Q ?? Enumerable.Empty<string>())}"]);
                 }
 
                 item.Id = (int)id;
@@ -898,19 +898,22 @@ namespace BiblioMit.Services
                 object? samplingDate = await GetValue(matrix, d).ConfigureAwait(false);
                 if (samplingDate == null)
                 {
-                    throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Fecha de Muestreo en {id} {string.Join("; ", Tdatas[d].Q)}"]);
+                    throw new FormatException(_localizer[$"Archivo presenta errores no se encontró Fecha de Muestreo en {id} {string.Join("; ", Tdatas?[d]?.Q ?? Enumerable.Empty<string>())}"]);
                 }
 
                 item.SamplingDate = (DateTime)samplingDate;
                 //get other values
+                if(Tdatas is not null)
                 for (d++; d < Tdatas.Count; d++)
                 {
                     object? value = await GetValue(matrix, d, item).ConfigureAwait(false);
-                    if (value != null)
+                    if (value != null && Tdatas[d] is not null)
                     {
-                        item[Tdatas[d].Name] = value;
+#pragma warning disable CS8602 // This cannot be null here.
+                            item[Tdatas[d].Name] = value;
+#pragma warning restore CS8602 // This cannot be null here.
+                        }
                     }
-                }
                 //check db for centre || psmb
                 item.Psmb = await ParsePsmb(item).ConfigureAwait(false);
                 if (item.PsmbId == 0 && item.Psmb is null)
@@ -1109,8 +1112,8 @@ namespace BiblioMit.Services
 
             if (toUpdate[1])
             {
-                InSet[nameof(Email)].AddRangeNewOnly(item.Emails.Select(s => new { s.Email.Address, s.EmailId })
-                    .ToDictionary(v => v.Address, v => v.EmailId));
+                InSet[nameof(Email)].AddRangeNewOnly(item.Emails.Select(s => new { s.Email?.Address, s.EmailId })
+                    .ToDictionary(v => v.Address ?? string.Empty, v => v.EmailId));
             }
 
             if (toUpdate[2])
@@ -1125,8 +1128,9 @@ namespace BiblioMit.Services
 
             if (toUpdate[4])
             {
-                InSet[nameof(SpeciesPhytoplankton)].AddRangeNewOnly(item.Phytoplanktons.Select(s => new { s.Species.NormalizedName, s.SpeciesId })
-                    .ToDictionary(v => v.NormalizedName, v => v.SpeciesId));
+                InSet[nameof(SpeciesPhytoplankton)].AddRangeNewOnly(
+                    item.Phytoplanktons.Select(s => new { s.Species.NormalizedName, s.SpeciesId })
+                    .ToDictionary(v => v.NormalizedName ?? string.Empty, v => v.SpeciesId));
             }
 
             if (toUpdate[5])
@@ -1155,7 +1159,8 @@ namespace BiblioMit.Services
             }
         }
         private static string GetKey<T>(T? item, string key) where T : IHasBasicIndexer => item?[key]?.ToString() ?? string.Empty;
-        private async Task<TEntity?> FindParsedAsync<TEntity>(Indexed? item, string attribute, string normalized) where TEntity : class?, IHasBasicIndexer?
+        private async Task<TEntity?> FindParsedAsync<TEntity>
+            (Indexed? item, string attribute, string normalized) where TEntity : class?, IHasBasicIndexer?
         {
             //return null if arguments null
             if (string.IsNullOrWhiteSpace(normalized))
@@ -1188,19 +1193,22 @@ namespace BiblioMit.Services
 
             if (firstOrDefaultAsyncMethod != null)
             {
-                TEntity? element = (TEntity?)await firstOrDefaultAsyncMethod.InvokeAsync(null!, new object[] { dbSet, predicate, default }).ConfigureAwait(false);
+                TEntity? element = (TEntity?)await firstOrDefaultAsyncMethod.InvokeAsync(null!, new object[] { dbSet, predicate, null! }).ConfigureAwait(false);
 
                 if (element == null)
                 {
-                    element = Activator.CreateInstance<TEntity>();
-                    element[attribute] = normalized;
+                    element = Activator.CreateInstance<TEntity?>();
+                    if (element is not null) element[attribute] = normalized;
                     return element;
                 }
                 else
                 {
-                    int id = (int)element["Id"];
-                    InSet[name].Add(normalized, id);
-                    item[$"{name}Id"] = id;
+                    int? id = (int?)element["Id"];
+                    if (id is not null && item is not null)
+                    {
+                        InSet[name].Add(normalized, id.Value);
+                        item[$"{name}Id"] = id.Value;
+                    }
                     return null;
                 }
             }
@@ -1376,8 +1384,8 @@ namespace BiblioMit.Services
         }
         private async Task<object?> GetValue(ExcelWorksheet worksheet, int d, int row, Indexed item)
         {
-            Tdata data = Tdatas[d];
-            if (worksheet == null || !data.Q.Any())
+            Tdata? data = Tdatas[d];
+            if (worksheet == null || data is null || !data.Q.Any() )
             {
                 return null;
             }
@@ -1400,8 +1408,8 @@ namespace BiblioMit.Services
             await GetValue(matrix, d, new PlanktonAssay()).ConfigureAwait(false);
         private async Task<object?> GetValue(Dictionary<(int, int), string> matrix, int d, PlanktonAssay item)
         {
-            Tdata data = Tdatas[d];
-            if (matrix == null || !data.Q.Any())
+            Tdata? data = Tdatas[d];
+            if (matrix == null || data is null || !data.Q.Any() )
             {
                 return null;
             }

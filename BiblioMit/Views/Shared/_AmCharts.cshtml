@@ -27,12 +27,11 @@ else if(Model == 3)
     @<script src="https://www.amcharts.com/lib/@Model/plugins/dataloader/dataloader.min.js"></script>,
     @<script src="https://www.amcharts.com/lib/@Model/plugins/export/export.js"></script>);
 
-    var lang = Localizer["en"].Value;
-    if(lang != "en")
+    string lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    if(lang != Statics.DefaultCulture)
     {
-    @this.Blocks("TOPScripts",
-    @<script src="https://www.amcharts.com/lib/@Model/lang/@(Localizer["en"]).js"></script>);
-
+        @this.Blocks("TOPScripts",
+        @<script src="https://www.amcharts.com/lib/@Model/lang/@(lang).js"></script>);
     }
 
 }

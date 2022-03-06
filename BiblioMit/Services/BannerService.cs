@@ -3,121 +3,112 @@ using BiblioMit.Extensions;
 using BiblioMit.Models.Entities.Ads;
 using BiblioMit.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
+using System.Globalization;
+using System.Text.Json;
 
 namespace BiblioMit.Services
 {
     public class BannerService : IBannerService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IStringLocalizer<BannerService> _localizer;
         private const string _carouselId = "introCarousel";
         public BannerService(
-            IStringLocalizer<BannerService> localizer,
             ApplicationDbContext context
             )
         {
             _context = context;
-            _localizer = localizer;
         }
-        public IQueryable<Banner> GetBanners() =>
+        public Dictionary<string,string> ReadCarousel(bool activeOnly, bool shuffle, string lang)
+        {
+            string which = activeOnly ? "Active" : "All";
+            string shuffled = shuffle ? "Shuffled" : string.Empty;
+            using StreamReader r = new(Path.Combine("StaticFiles", "json", $"carousel{which}{shuffled}.{lang}.json"));
+            string json = r.ReadToEnd();
+            Dictionary<string, string>? model = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            if (model == null) throw new FileLoadException();
+            return model;
+        }
+        public void UpdateJsons()
+        {
+            foreach(CultureInfo culture in Statics.SupportedCultures)
+            {
+                string lang = culture.TwoLetterISOLanguageName;
+                Carousel carousel = GetCarousel(false, false, lang);
+                //Banners Index
+                using StreamWriter w = new(Path.Combine("StaticFiles", "json", $"carouselAll.{lang}.json"));
+                w.Write(JsonSerializer.Serialize(carousel));
+
+                Carousel carouselHome = GetCarousel(true, true, lang);
+                //Home Index
+                using StreamWriter wHome = new(Path.Combine("StaticFiles", "json", $"carouselActiveShuffled.{lang}.json"));
+                wHome.Write(JsonSerializer.Serialize(carouselHome));
+            }
+        }
+        private IQueryable<Banner> GetBanners() =>
             _context.Banners
             .Include(b => b.Imgs)
             .Include(b => b.Texts)
                 .ThenInclude(b => b.Btns)
             .Include(b => b.Rgbs)
             .Include(b => b.Payments);
-        public async Task<List<Banner>> GetBannersAsync() =>
-            await GetBanners()
-            .ToListAsync()
-            .ConfigureAwait(false);
-        public async Task<IList<Banner>> GetBannersShuffledAsync() =>
-            (await GetBannersAsync().ConfigureAwait(false)).Shuffle();
-        public async Task<Carousel> GetCarouselAsync(bool activeOnly, bool shuffle)
+        private IQueryable<Banner> GetBannersShuffled() =>
+            GetBanners().OrderBy(_ => Guid.NewGuid());
+        private Carousel GetCarousel(bool activeOnly, bool shuffle, string lang)
         {
-            var model = shuffle ? await GetBannersShuffledAsync().ConfigureAwait(false)
-                : await GetBannersAsync().ConfigureAwait(false);
+            string active = "active";
+            IQueryable<Banner> model = shuffle ? GetBannersShuffled() : GetBanners();
 
             if (activeOnly)
             {
-                var active = model.Where(b => b.Active()).ToList();
-                if (active.Count != 0)
-                {
-                    model = active;
-                }
-            }
-            else
-            {
-                //.Where(b => b.Payments.Any())
-                model = model.ToList();
+                model = model
+                    .Where(b => !b.Payments.Any(p => p.DueDate < DateTime.Today && p.PaidDate == null));
             }
 
-            var modelo = new Carousel();
-
-            foreach (var item in model.Select((value, i) => new { i, value }))
+            Carousel modelo = new();
+            int i = 0;
+            foreach (Banner value in model)
             {
-                var mask = "background-color: rgba(0, 0, 0, 0.6)";
-                var active = item.i == 0 ? "active" : "";
-                var lang = _localizer["en"].Value;
-                var text = item?.value.Texts?.FirstOrDefault(t => t.Lang.ToString() == lang);
-                if (text == null)
+                string mask = "background-color: rgba(0, 0, 0, 0.6)";
+                Caption text = value.Texts.FirstOrDefault(t => t.Lang.ToString() == lang) ?? new();
+                modelo.Indicators += GetCarouselButton(i, active);
+                if (value.Rgbs.Any())
                 {
-                    continue;
-                }
-
-                if (item != null)
-                {
-                    modelo.Indicators.Add(GetCarouselButton(item.i, active));
-                }
-
-                string btns = string.Empty;
-                if (item != null && item.value.Rgbs != null && item.value.Rgbs.Any())
-                {
-                    if (item.value.Rgbs.Count > 1 && string.IsNullOrWhiteSpace(item.value.MaskAngle))
+                    if (value.Rgbs.Count > 1 && string.IsNullOrWhiteSpace(value.MaskAngle))
                     {
-                        var rgbas = string.Join(",", item.value.Rgbs.Select(r => $"rgba({r.R}, {r.G}, {r.B}, 0.6)"));
-                        mask = $"background: linear-gradient({item.value.MaskAngle}, {rgbas})";
+                        string rgbas = string.Join(",", value.Rgbs.Select(r => $"rgba({r.R}, {r.G}, {r.B}, 0.6)"));
+                        mask = $"background: linear-gradient({value.MaskAngle}, {rgbas})";
                     }
                     else
                     {
-                        var first = item.value.Rgbs.First();
+                        Rgb first = value.Rgbs.First();
                         mask = $"background-color: rgba({first.R}, {first.G}, {first.B}, 0.6)";
                     }
                 }
-                if (text.Btns != null && text.Btns.Any())
-                {
-                    btns = string.Join("", text.Btns.Select(b => @$"<a id=""{b.Id}"" class=""btn-banner btn btn-outline-light btn-lg m-2"" href=""{b.Uri}""
-role=""button"" rel=""nofollow"" target=""_blank"">{b.Title}</a>"));
-                }
-                mask = $@".banner-{item?.i} .mask{{{mask};}}";
+                mask = $@".banner-{i} .mask {{ {mask}; }}";
                 if (!string.IsNullOrWhiteSpace(text.Color))
-                {
-                    mask += $@"[id=""{text.Id}""]{{color:{text.Color} !important}}";
-                }
+                    mask += $@"[id=""{text.Id}""] {{ color:{text.Color} !important }}";
 
-                modelo.Styles.Add(string.Join(" ", item?.value.Imgs is null ? new List<string>() : item.value.Imgs.Select(i => $@"@media (max-width: {(int)i.Size}px){{ 
-.banner-{item.i}{{background-image: url('../Home/GetBanner?f={i.FileName}');}}}}")) + mask);
-                modelo.Items.Add(@$"<div class=""carousel-item banner-{item?.i} {active}"">
-                     <div class=""mask"">
-                           <div class=""d-flex justify-content-center align-items-center h-100"">
-                                <div id=""{text.Id}"" data-lang=""{text.Lang}"" data-position=""{text.Position.GetAttrName()}"" class=""caption text-white text-center {text.Position.GetAttrDescription()} d-none d-md-block"">
-                                     <h1 class=""mb-3"">{text.Title}</h1>
-                                     <h5 class=""mb-4"">{text.Subtitle}</h5>
-                                        {btns}
-                                </div>
-                           </div>
-                      </div>
-                   </div>");
+                modelo.Styles += string.Join(" ", value.Imgs.Select(img => 
+$@"@media (max-width: {(int)img.Size}px) {{ .banner-{i} {{ background-image: url('../Home/GetBanner?f={img.FileName}'); }} }}")) + mask;
+                string btns = text.Btns.Any() ?
+                    string.Join("", text.Btns.Select(b =>
+@$"<a id=""{b.Id}"" class=""btn-banner btn btn-outline-light btn-lg m-2"" href=""{b.Uri}"" role=""button"" rel=""nofollow"" target=""_blank"">{b.Title}</a>"))
+                    : string.Empty;
+                modelo.Items += GetCarouselItems(i, active, lang, text, btns);
+                i++;
+                active = string.Empty;
             }
             return modelo;
         }
+        public string GetCarouselItems(int i, string active, string lang, Caption text, string btns) =>
+@$"<div class=""carousel-item banner-{i} {active}""><div class=""mask""><div class=""d-flex justify-content-center align-items-center h-100""><div id=""{text.Id}"" data-lang=""{lang}"" data-position=""{text.Position.GetAttrName()}"" class=""caption text-white text-center {text.Position.GetAttrDescription()} d-none d-md-block""><h1 class=""mb-3"">{text.Title}</h1><h5 class=""mb-4"">{text.Subtitle}</h5>{btns}</div></div></div></div>";
         public string GetCarouselButton(int id, string active) =>
-            @$"<button type=""button"" data-bs-target=""#{_carouselId}"" data-bs-slide-to=""{id}"" class=""{active}""></button>";
+@$"<button type=""button"" data-bs-target=""#{_carouselId}"" data-bs-slide-to=""{id}"" class=""{active}""></button>";
     }
     public class Carousel
     {
-        public ICollection<string> Indicators { get; internal set; } = new List<string>();
-        public ICollection<string> Items { get; internal set; } = new List<string>();
-        public ICollection<string> Styles { get; internal set; } = new List<string>();
+        public string Indicators { get; internal set; } = null!;
+        public string Items { get; internal set; } = null!;
+        public string Styles { get; internal set; } = null!;
     }
 }

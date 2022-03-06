@@ -60,8 +60,7 @@ namespace BiblioMit.Controllers
             IDictionary<string, List<string>> Filters = ViewData["Filters"] as IDictionary<string, List<string>> ?? new Dictionary<string, List<string>>();
 
             IEnumerable<SernapescaEntry> preList = pre
-                .Include(e => e.ApplicationUser)
-                .ToList();
+                .Include(e => e.ApplicationUser);
 
             if (sort != null)
             {
@@ -80,7 +79,7 @@ namespace BiblioMit.Controllers
             ViewData[nameof(DeclarationType)] = DeclarationType.Supply.Enum2MultiSelect();
 
             ViewData["Date"] = string.Format(CultureInfo.CurrentCulture, "'{0}'",
-                string.Join("','", _context.SernapescaEntries.Select(v => v.Date.Date.ToString("yyyy-M-d", CultureInfo.CurrentCulture)).Distinct().ToList()));
+                string.Join("','", _context.SernapescaEntries.Select(v => v.Date.Date.ToString("yyyy-M-d", CultureInfo.CurrentCulture)).Distinct()));
 
             return View(preList);
         }
@@ -170,7 +169,7 @@ namespace BiblioMit.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (entry?.InputFile == null)
+                if (entry.InputFile == null)
                 {
                     return View(nameof(Create));
                 }
@@ -198,9 +197,9 @@ namespace BiblioMit.Controllers
                 };
                 return RedirectToAction(nameof(Index), new { id = entry.Id });
             }
-            Dictionary<string, List<string>> Filters = new()
+            Dictionary<string, IEnumerable<string>> Filters = new()
             {
-                ["Tipo"] = DeclarationType.Supply.Enum2ListNames().ToList()
+                ["Tipo"] = DeclarationType.Supply.Enum2ListNames()
             };
 
             ViewData[nameof(DeclarationType)] = DeclarationType.Supply.Enum2MultiSelect(Filters[typeof(DeclarationType).ToString()], "Name");

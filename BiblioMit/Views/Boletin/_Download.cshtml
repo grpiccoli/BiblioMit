@@ -7,10 +7,10 @@
             <select name="src"
                     class="form-control"
                     title="Seleccione uno o más repositorios …">
-                @foreach (var yr in Model)
+                @foreach (KeyValuePair<int, List<string>> yr in Model)
                 {
                     <optgroup label="Boletines @yr.Key">
-                        @foreach (var u in yr.Value)
+                        @foreach (string u in yr.Value)
                         {
                             <option data-tokens="@yr.Key @u" data-icon="fas fa-map fa-tw" data-subtext="(@Localizer["Descargar"])" value="@u-@yr.Key">Boletín del período @u del año @yr.Key</option>
                         }

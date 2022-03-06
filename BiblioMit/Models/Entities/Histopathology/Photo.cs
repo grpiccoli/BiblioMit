@@ -12,7 +12,7 @@ namespace BiblioMit.Models
         [AllowNull]
         public virtual Individual Individual { get; set; }
         //ATT
-        public string? Key { get; set; }
+        public string Key { get; set; } = null!;
         public string? Comment { get; set; }
         public Magnification Magnification { get; set; }
     }

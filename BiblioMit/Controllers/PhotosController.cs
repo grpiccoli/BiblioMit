@@ -33,9 +33,9 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult GetImg(string f, string d)
         {
-            var name = Regex.Replace(f, ".*/", "");
+            string name = Regex.Replace(f, ".*/", "");
 
-            var full = Path.Combine(Directory.GetCurrentDirectory(),
+            string full = Path.Combine(Directory.GetCurrentDirectory(),
                                     d, name);
 
             return PhysicalFile(full, "image/jpg");
@@ -54,7 +54,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var photo = await _context.Photos
+            Photo? photo = await _context.Photos
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (photo == null)
             {
@@ -157,7 +157,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var photo = await _context.Photos.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Photo? photo = await _context.Photos.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (photo == null)
             {
                 return NotFound();
@@ -212,7 +212,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var photo = await _context.Photos
+            Photo? photo = await _context.Photos
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (photo == null)
             {
@@ -228,7 +228,7 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var photo = await _context.Photos.SingleAsync(m => m.Id == id).ConfigureAwait(false);
+            Photo photo = await _context.Photos.SingleAsync(m => m.Id == id).ConfigureAwait(false);
             _context.Photos.Remove(photo);
             await _context.SaveChangesAsync().ConfigureAwait(false);
             return RedirectToAction("Index");

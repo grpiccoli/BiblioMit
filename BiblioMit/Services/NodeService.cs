@@ -6,7 +6,7 @@ namespace BiblioMit.Services
     {
         public string Run(string script, string[] args)
         {
-            using var process = new Process
+            using Process process = new ()
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -17,8 +17,8 @@ namespace BiblioMit.Services
                     RedirectStandardError = true
                 }
             };
-            var s = string.Empty;
-            var e = string.Empty;
+            string s = string.Empty;
+            string e = string.Empty;
             process.OutputDataReceived += (sender, data) => s += data.Data;
             process.ErrorDataReceived += (sender, data) => e += data.Data;
             process.Start();

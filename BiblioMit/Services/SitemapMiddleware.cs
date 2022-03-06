@@ -20,23 +20,23 @@ namespace BiblioMit.Services
         {
             if (context.Request.Path.Value != null && context.Request.Path.Value.Equals("/sitemap.xml", StringComparison.OrdinalIgnoreCase))
             {
-                var stream = context.Response.Body;
+                Stream stream = context.Response.Body;
                 context.Response.StatusCode = 200;
                 context.Response.ContentType = "application/xml";
                 string sitemapContent = "<urlset xmlns=\"https://www.sitemaps.org/schemas/sitemap/0.9\">";
-                var controllers = Assembly.GetExecutingAssembly().GetTypes()
+                IEnumerable<Type> controllers = Assembly.GetExecutingAssembly().GetTypes()
                     .Where(type => typeof(Controller).IsAssignableFrom(type)
-                    || type.Name.EndsWith("controller", StringComparison.CurrentCultureIgnoreCase)).ToList();
+                    || type.Name.EndsWith("controller", StringComparison.CurrentCultureIgnoreCase));
 
-                foreach (var controller in controllers)
+                foreach (Type controller in controllers)
                 {
-                    var cnt = 0;
-                    var methods = controller.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-                    foreach (var method in methods)
+                    int cnt = 0;
+                    MethodInfo[] methods = controller.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                    foreach (MethodInfo method in methods)
                     {
-                        var test1 = method.ReturnType.Name == "ActionResult"
+                        bool test1 = method.ReturnType.Name == "ActionResult"
                             || method.ReturnType.Name == "IActionResult" || method.ReturnType.Name == "Task`1";
-                        var test2 = method.CustomAttributes.Any(c => c.AttributeType == typeof(AllowAnonymousAttribute));
+                        bool test2 = method.CustomAttributes.Any(c => c.AttributeType == typeof(AllowAnonymousAttribute));
 
                         if (test1 && test2)
                         {
@@ -54,8 +54,8 @@ namespace BiblioMit.Services
                     }
                 }
                 sitemapContent += "</urlset>";
-                using var memoryStream = new MemoryStream();
-                var bytes = Encoding.UTF8.GetBytes(sitemapContent);
+                using MemoryStream memoryStream = new ();
+                byte[] bytes = Encoding.UTF8.GetBytes(sitemapContent);
                 await memoryStream.WriteAsync(bytes.AsMemory(0, bytes.Length), cancellationToken).ConfigureAwait(false);
                 memoryStream.Seek(0, SeekOrigin.Begin);
                 await memoryStream.CopyToAsync(stream, bytes.Length, cancellationToken).ConfigureAwait(false);

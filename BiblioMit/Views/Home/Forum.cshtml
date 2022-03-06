@@ -1,4 +1,6 @@
-﻿@model BiblioMit.Models.HomeIndexModel
+﻿@using BiblioMit.Models
+@using BiblioMit.Models.PostViewModels
+@model HomeIndexModel
 
 <partial name="_Libs" model='new List<string> { "background" }' />
 
@@ -19,7 +21,7 @@
         <h3 id="latestsPosts">Últimas publicaciones</h3>
         <table class="table table-hover" id="latestsPostsTable">
             <tbody>
-                @foreach (var post in Model.LatestPosts)
+                @foreach (PostListingModel post in Model.LatestPosts)
                 {
                     <tr>
                         <td>

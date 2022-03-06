@@ -10,9 +10,7 @@ namespace BiblioMit.Models.PostViewModels
         public int AuthorRating { get; set; }
         public string? AuthorId { get; set; }
         public string? DatePosted { get; set; }
-
-        public ForumListingModel? Forum { get; set; }
-
+        public ForumListingModel Forum { get; set; } = null!;
         public int RepliesCount { get; set; }
     }
 }

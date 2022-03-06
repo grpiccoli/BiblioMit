@@ -2,10 +2,10 @@
 @using BiblioMit.Models.ViewModels
 
 @{
-    Model.Srt = (string)ViewData["srt"];
+    Model.Srt = (string?)ViewData["srt"];
     //Model.Asc = (bool)ViewData["asc"];
-    Model.Val = ((IDictionary<string, List<string>>)ViewData["Filters"]).ContainsKey("FechaIngreso") ?
-        ((IDictionary<string, List<string>>)ViewData["Filters"])["FechaIngreso"].First() :
+    Model.Val = ((IDictionary<string, List<string>>?)ViewData["Filters"])?.ContainsKey("FechaIngreso") ?? false ?
+        ((IDictionary<string, List<string>>?)ViewData["Filters"])?["FechaIngreso"].First() :
         "Fecha";
 }
 
@@ -33,7 +33,7 @@
                 }
                 else
                 {
-                    Model.List = ViewData[Model.Id] as MultiSelectList;
+                    @if(Model.Id is not null) Model.List = (MultiSelectList?)ViewData[Model.Id];
                     <select id="@Model.Id"
                             title="@Model.Name"
                             class="selectpicker form-control show-tick tableFilter dropdownFilter"

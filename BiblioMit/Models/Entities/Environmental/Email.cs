@@ -7,7 +7,7 @@ namespace BiblioMit.Models
     {
         public int Id { get; set; }
         [Required, DisallowNull]
-        public string? Address { get; set; }
+        public string Address { get; set; } = null!;
         public virtual ICollection<PlanktonAssayEmail> PlanktonAssayEmails { get; } = new List<PlanktonAssayEmail>();
     }
 }

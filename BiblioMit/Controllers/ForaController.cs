@@ -28,7 +28,7 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var forums = _forumService.GetAll()
+            IEnumerable<ForumListingModel> forums = _forumService.GetAll()
                 .Select(f => new ForumListingModel
                 {
                     Id = f.Id,
@@ -40,7 +40,7 @@ namespace BiblioMit.Controllers
                     HasRecentPost = _forumService.HasRecentPost(f.Id)
                 });
 
-            var model = new ForumIndexModel
+            ForumIndexModel model = new()
             {
                 ForumListing = forums.OrderBy(f => f.Name)
             };
@@ -50,11 +50,11 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Topic(int id, string searchQuery)
         {
-            var forum = _forumService.GetbyId(id);
+            Forum forum = _forumService.GetbyId(id);
 
-            var posts = _postService.GetFilteredPosts(forum, searchQuery).ToList();
+            IEnumerable<Post> posts = _postService.GetFilteredPosts(forum, searchQuery);
 
-            var postListings = posts.Select(p => new PostListingModel
+            IEnumerable<PostListingModel> postListings = posts.Select(p => new PostListingModel
             {
                 Id = p.Id,
                 AuthorId = p.UserId,
@@ -66,7 +66,7 @@ namespace BiblioMit.Controllers
                 Forum = BuildForumListing(p)
             });
 
-            var model = new ForumTopicModel
+            ForumTopicModel model = new()
             {
                 Post = postListings,
                 Forum = BuildForumListing(forum)
@@ -87,7 +87,7 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var model = new AddForumModel();
+            AddForumModel model = new();
             return View(model);
         }
 
@@ -97,14 +97,14 @@ namespace BiblioMit.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public async Task<IActionResult> AddForum(AddForumModel model)
         {
-            var imageUri = "/images/ico/bibliomit.svg";
+            string imageUri = "/images/ico/bibliomit.svg";
 
             if (model?.ImageUpload != null)
             {
                 imageUri = UploadForumImage(model.ImageUpload);
             }
 
-            var forum = new Forum
+            Forum forum = new() 
             {
                 Title = model?.Title,
                 Description = model?.Description,
@@ -119,18 +119,18 @@ namespace BiblioMit.Controllers
 
         private static string UploadForumImage(IFormFile file)
         {
-            //var userId = _userManager.GetUserId(User);
+            //string userId = _userManager.GetUserId(User);
 
-            //var filePath = Path.GetTempFileName();
+            //string filePath = Path.GetTempFileName();
 
-            //var stream = new FileStream(filePath, FileMode.Create);
+            //FileStream stream = new(filePath, FileMode.Create);
 
-            //var accessKey = "AKIAISMYGSV5LKLHP25A";
-            //var secretKey = "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";
+            //string accessKey = "AKIAISMYGSV5LKLHP25A";
+            //string secretKey = "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";
 
             //var client = new AmazonS3Client(accessKey, secretKey, Amazon.RegionEndpoint.SAEast1);
 
-            //var request = new PutObjectRequest
+            //PutObjectRequest request = new()
             //{
             //    BucketName = "bucketmit",
             //    Key = userId,

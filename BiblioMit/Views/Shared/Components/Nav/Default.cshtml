@@ -1,4 +1,5 @@
-﻿@model BiblioMit.Views.Components.Nav.DefaultModel
+﻿@using BiblioMit.Views.Components.Nav
+@model DefaultModel
 
 <nav class="navbar navbar-expand-lg navbar-dark d-lg-block fixed-top m-0 p-0 @ViewData["navbar-bg"]">
     <div class="container-fluid justify-content-start m-0 p-0 p-lg-0">
@@ -21,7 +22,7 @@
         <!-- Collapsible wrapper -->
         <div class="collapse navbar-collapse sidebar" id="navbarMain">
             <ul class="navbar-nav me-auto mt-lg-0">
-                @foreach (var v in Model.Navs)
+                @foreach (NavDDwnVM v in Model.Navs)
                 {
                     <partial name="_NavDDwn" model='v' />
                 }

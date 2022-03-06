@@ -19,12 +19,15 @@ namespace BiblioMit.Services
         private readonly ApplicationDbContext _context;
         private readonly string _jsonPath;
         private readonly IStringLocalizer<UpdateJsons> _localizer;
+        private readonly IBannerService _banner;
         public UpdateJsons(
             IWebHostEnvironment environment,
             ApplicationDbContext context,
-            IStringLocalizer<UpdateJsons> localizer
+            IStringLocalizer<UpdateJsons> localizer,
+            IBannerService banner
             )
         {
+            _banner = banner;
             _localizer = localizer;
             _context = context;
             _environment = environment;
@@ -35,20 +38,22 @@ namespace BiblioMit.Services
         }
         public void SeedUpdate()
         {
-            WriteJson(nameof(CuencaData));
-            WriteJson(nameof(ComunaData));
-            WriteJson(nameof(OceanVarList));
-            WriteJson(nameof(CuencaList));
-            WriteJson(nameof(ComunaList));
-            WriteJson(nameof(CustomVarList));
-            WriteJson(nameof(TLList));
-
-            WriteJson(nameof(RegionList));
-
-            WriteJson(nameof(GetPhotos));
-
-            CenterUpdate();
-            PlanktonUpdate();
+            foreach (CultureInfo culture in Statics.SupportedCultures)
+            {
+                CultureInfo.CurrentUICulture = culture;
+                WriteJson(nameof(CuencaData));
+                WriteJson(nameof(ComunaData));
+                WriteJson(nameof(OceanVarList));
+                WriteJson(nameof(CuencaList));
+                WriteJson(nameof(ComunaList));
+                WriteJson(nameof(CustomVarList));
+                WriteJson(nameof(TLList));
+                WriteJson(nameof(RegionList));
+                WriteJson(nameof(GetPhotos));
+                CenterUpdate();
+                PlanktonUpdate();
+            }
+            _banner.UpdateJsons();
         }
         public void CenterUpdate()
         {
@@ -77,7 +82,7 @@ namespace BiblioMit.Services
             MethodInfo? magicMethod = magicType.GetMethod(function);
             if (magicMethod != null)
             {
-                var json = (string?)magicMethod.Invoke(this, Array.Empty<object>());
+                string? json = (string?)magicMethod.Invoke(this, Array.Empty<object>());
                 if (!string.IsNullOrWhiteSpace(json))
                 {
                     string name = CultureInfo.InvariantCulture.TextInfo.ToLower(function);
@@ -92,40 +97,35 @@ namespace BiblioMit.Services
         }
         private string GetPhotos()
         {
-            var photos = _context.Photos
+            IQueryable<Photo> photos = _context.Photos
                             .Include(p => p.Individual)
                                 .ThenInclude(i => i.Sampling)
-                            .AsNoTracking()
-                            .ToList();
+                            .AsNoTracking();
 
-            List<NanoGalleryElement> gallery = photos.Select(photo =>
+            IQueryable<NanoGalleryElement> gallery = photos.Select(photo =>
             new NanoGalleryElement(
-                $"Photos/GetImg?f={photo.Key}&d=DB",
-                $"Photos/GetImg?f={photo.Key}&d=DB/Thumbs",
+                "Photos/GetImg?f=" + photo.Key + "&d=DB",
+                "Photos/GetImg?f=" + photo.Key + "&d=DB/Thumbs",
                 photo.Comment,
-                $"{photo.IndividualId}{photo.Id}")
+                photo.IndividualId.ToString() + photo.Id.ToString())
             {
-                AlbumId = photo.IndividualId.ToString(CultureInfo.InvariantCulture)
-            }).ToList();
-
-            gallery.AddRange(photos.Select(p => p.Individual)
+                AlbumId = photo.IndividualId.ToString()
+            }).Concat(photos.Select(p => p.Individual)
             .Select(i => new NanoGalleryElement(
-                $"Photos/GetImg?f={i?.Photos.First().Key}&d=DB",
-                $"Photos/GetImg?f={i?.Photos.First().Key}&d=DB/Thumbs",
-                i?.Id.ToString(CultureInfo.InvariantCulture),
-                i?.Id.ToString(CultureInfo.InvariantCulture)
+                "Photos/GetImg?f=" + i.Photos.First().Key + "&d=DB",
+                "Photos/GetImg?f=" + i.Photos.First().Key + "&d=DB/Thumbs",
+                i.Id.ToString(),
+                i.Id.ToString()
                 )
             {
-                AlbumId = i?.SamplingId.ToString(CultureInfo.InvariantCulture),
+                AlbumId = i.SamplingId.ToString(),
                 Kind = "album"
-            }));
-
-            gallery.AddRange(photos.Select(p => p.Individual?.Sampling)
+            })).Concat(photos.Select(p => p.Individual.Sampling)
             .Select(s => new NanoGalleryElement(
-                $"Photos/GetImg?f={s?.Individuals.First().Photos.First().Key}&d=DB",
-                $"Photos/GetImg?f={s?.Individuals.First().Photos.First().Key}&d=DB/Thumbs",
-                s?.Id.ToString(CultureInfo.InvariantCulture),
-                s?.Id.ToString(CultureInfo.InvariantCulture)
+                "Photos/GetImg?f=" + s.Individuals.First().Photos.First().Key + "&d=DB",
+                "Photos/GetImg?f=" + s.Individuals.First().Photos.First().Key + "&d=DB/Thumbs",
+                s.Id.ToString(),
+                s.Id.ToString()
                 )
             {
                 Kind = "album"
@@ -135,7 +135,7 @@ namespace BiblioMit.Services
         }
         private string CuencaList()
         {
-            var singlabel = _localizer["Catchment Area"] + " ";
+            string singlabel = _localizer["Catchment Area"] + " ";
             ChoicesGroup data = new()
             {
                 Label = _localizer["Catchment Areas"],
@@ -173,13 +173,12 @@ namespace BiblioMit.Services
         }, JsonCase.CamelMin);
         private string ComunaList()
         {
-            var singlabel = _localizer["Catchment Area"] + " ";
+            string singlabel = _localizer["Catchment Area"] + " ";
             IQueryable<ChoicesGroup> data = Comuna(singlabel);
             return JsonSerializer.Serialize(data, JsonCase.CamelMin);
         }
         private IQueryable<ChoicesGroup> Comuna(string singlabel)
-            => _context.CatchmentAreas
-    .AsNoTracking()
+            => _context.CatchmentAreas.AsNoTracking()
     .Select(c => new ChoicesGroup
     {
         Label = singlabel + c.Name,
@@ -193,7 +192,7 @@ namespace BiblioMit.Services
         private string ProvinciaFarmList() => JsonSerializer.Serialize(Provincia(), JsonCase.CamelMin);
         private string ComunaFarmList()
         {
-            var singlabel = _localizer["Catchment Area"] + " ";
+            string singlabel = _localizer["Catchment Area"] + " ";
             return JsonSerializer.Serialize(Comuna(singlabel), JsonCase.CamelMin);
         }
         private string ProvinciaResearchList() => JsonSerializer.Serialize(_context.Regions
@@ -448,7 +447,7 @@ namespace BiblioMit.Services
     }, JsonCase.CamelMin);
         private string CuencaData()
         {
-            var title = _localizer["Catchment Area"] + " ";
+            string title = _localizer["Catchment Area"] + " ";
             IQueryable<GMapPolygon> data = _context.CatchmentAreas
                 .AsNoTracking()
                 .Select(c => new GMapPolygon
@@ -466,7 +465,7 @@ namespace BiblioMit.Services
         }
         private string ComunaData()
         {
-            var title = _localizer["Commune"] + " ";
+            string title = _localizer["Commune"] + " ";
             IQueryable<GMapMultiPolygon> data = _context.Communes
                 .AsNoTracking()
                 .Where(com => com.CatchmentAreaId.HasValue)
@@ -566,7 +565,7 @@ namespace BiblioMit.Services
         }), JsonCase.CamelMin);
         public string GroupVarList()
         {
-            var group = " (" + _localizer["Group"] + ")";
+            string group = " (" + _localizer["Group"] + ")";
             return JsonSerializer.Serialize(new ChoicesGroup
             {
                 Label = _localizer["Phylogenetic Groups (Cel/mL)"],
@@ -581,7 +580,7 @@ namespace BiblioMit.Services
         }
         public string GenusVarList()
         {
-            var genus = " (" + _localizer["Genus"] + ")";
+            string genus = " (" + _localizer["Genus"] + ")";
             return JsonSerializer.Serialize(new ChoicesGroup
             {
                 Label = _localizer["Genera (Cel/mL)"],
@@ -596,7 +595,7 @@ namespace BiblioMit.Services
         }
         public string SpeciesVarList()
         {
-            var sp = " (" + _localizer["Species"] + ")";
+            string sp = " (" + _localizer["Species"] + ")";
             return JsonSerializer.Serialize(new ChoicesGroup
             {
                 Label = _localizer["Species"] + " (Cel/mL)",

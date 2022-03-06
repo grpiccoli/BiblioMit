@@ -10,21 +10,21 @@
     </a>
     <a asp-action="Index"
        asp-route-q="@ViewData["q"]"
-       asp-route-pg="@((int)ViewData["pg"]) - 1)"
+       asp-route-pg="@((int?)ViewData["pg"]) - 1)"
        asp-route-src="@ViewData["srcs"]"
        asp-route-srt="@ViewData["srt"]"
        asp-route-asc="@ViewData["asc"]"
        class="paging btn btn-outline-secondary w-100 @ViewData["prevDisabled"]" role="button">
         &lsaquo;<text class="hidden-xs hidden-s hidden-sm"> @Localizer["Previous"]</text>
     </a>
-    @if ((int)ViewData["low"] > 1)
+    @if ((int?)ViewData["low"] > 1)
     {
         <a class="paging btn btn-outline-secondary w-100 disabled" role="button"><text>&hellip;</text></a>
     }
-    @for (int i = (int)ViewData["low"]; i <= (int)ViewData["high"]; i++)
+    @for (int? i = (int?)ViewData["low"]; i <= (int?)ViewData["high"]; i++)
     {
-        var disabled = "";
-        if (i == (int)ViewData["pg"])
+        string disabled = "";
+        if (i == (int?)ViewData["pg"])
         {
             disabled = "disabled";
         }
@@ -38,13 +38,13 @@
             @i
         </a>
     }
-    @if ((int)ViewData["NoPages"] > (int)ViewData["high"])
+    @if ((int?)ViewData["NoPages"] > (int?)ViewData["high"])
     {
         <a class="paging btn btn-outline-secondary w-100 disabled" role="button"><text>&hellip;</text></a>
     }
     <a asp-action="Index"
        asp-route-q="@ViewData["q"]"
-       asp-route-pg="@((int)ViewData["pg"]) + 1)"
+       asp-route-pg="@((int?)ViewData["pg"]) + 1)"
        asp-route-src="@ViewData["srcs"]"
        asp-route-srt="@ViewData["srt"]"
        asp-route-asc="@ViewData["asc"]"

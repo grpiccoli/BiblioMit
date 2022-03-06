@@ -54,7 +54,7 @@
 
         private static void CheckSameSite(HttpContext httpContext, CookieOptions options)
         {
-            var userAgent = httpContext.Request.Headers["User-Agent"].ToString();
+            string userAgent = httpContext.Request.Headers["User-Agent"].ToString();
             if (DisallowsSameSiteNone(userAgent))
             {
                 options.SameSite = Unspecified;

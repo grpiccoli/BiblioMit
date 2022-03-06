@@ -17,7 +17,7 @@ namespace BiblioMit.Extensions
             }
 
             StringBuilder sb = new();
-            foreach (var t in templates)
+            foreach (Func<dynamic, HelperResult> t in templates)
             {
                 sb.Append(webPage.Block(name, t));
             }

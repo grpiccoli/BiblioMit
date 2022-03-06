@@ -36,13 +36,13 @@ namespace BiblioMit.Extensions
 
             if (val != null && val.Length > 0)
             {
-                foreach (var filter in val)
+                foreach (string filter in val)
                 {
                     string[] method = filter.Split(':').Take(2).ToArray();
                     Filters[method[0]] = method[1].Split(',').ToList();
                 }
 
-                foreach (var filter in Filters)
+                foreach (KeyValuePair<string, List<string>> filter in Filters)
                 {
                     PropertyDescriptor? prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
                     if (prop != null)
@@ -57,7 +57,7 @@ namespace BiblioMit.Extensions
                 }
             }
 
-            var ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(),
+            ViewDataDictionary ViewData = new (new EmptyModelMetadataProvider(),
                 new ModelStateDictionary())
             { };
             ViewData["last"] = (int)Math.Ceiling((double)((decimal)contexto.Count() / rpp));
@@ -82,14 +82,14 @@ namespace BiblioMit.Extensions
 
             if (!string.IsNullOrEmpty(val))
             {
-                var filters = val.Split(';');
-                foreach (var filter in filters)
+                string[] filters = val.Split(';');
+                foreach (string filter in filters)
                 {
-                    var method = filter.Split(':').Take(2).ToArray();
+                    string[] method = filter.Split(':').Take(2).ToArray();
                     Filters[method[0]] = method[1].Split(',').ToList();
                 }
 
-                foreach (var filter in Filters)
+                foreach (KeyValuePair<string, List<string>> filter in Filters)
                 {
                     PropertyDescriptor? prop = TypeDescriptor.GetProperties(typeof(TSource)).Find(filter.Key, false);
                     if (prop != null)

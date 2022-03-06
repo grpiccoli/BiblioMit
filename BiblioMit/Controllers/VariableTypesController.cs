@@ -16,9 +16,9 @@ namespace BiblioMit.Controllers
 
         // GET: VariableTypes
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.VariableTypes.ToListAsync().ConfigureAwait(false));
+            return View(_context.VariableTypes);
         }
 
         // GET: VariableTypes/Details/5
@@ -30,7 +30,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var variableType = await _context.VariableTypes
+            VariableType? variableType = await _context.VariableTypes
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (variableType == null)
             {
@@ -73,7 +73,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var variableType = await _context.VariableTypes.FindAsync(id).ConfigureAwait(false);
+            VariableType? variableType = await _context.VariableTypes.FindAsync(id).ConfigureAwait(false);
             if (variableType == null)
             {
                 return NotFound();
@@ -126,7 +126,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var variableType = await _context.VariableTypes
+            VariableType? variableType = await _context.VariableTypes
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (variableType == null)
             {

@@ -80,9 +80,9 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var userId = _userManager.GetUserId(User);
-            var user = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
-            var post = BuildPost(model, user);
+            string userId = _userManager.GetUserId(User);
+            ApplicationUser user = await _userManager.FindByIdAsync(userId).ConfigureAwait(false);
+            Post post = BuildPost(model, user);
 
             await _postService.Add(post).ConfigureAwait(false);
 

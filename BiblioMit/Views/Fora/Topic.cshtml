@@ -1,4 +1,6 @@
-﻿@model BiblioMit.Models.ForumViewModels.ForumTopicModel
+﻿@using BiblioMit.Models.ForumViewModels
+@using BiblioMit.Models.PostViewModels
+@model ForumTopicModel
 
 <partial name="_Libs" model='new List<string> { "background" }' />
 
@@ -10,7 +12,7 @@
     <div class="row sectionHeader">
         <div class="sectionHeading">
             <span>Foro @Model.Forum.Name</span>
-            @if (Context.User.Identity.IsAuthenticated)
+            @if (Context.User.Identity?.IsAuthenticated ?? false)
             {
                 <span id="headingBtn">
                     <a asp-controller="Posts"
@@ -37,7 +39,7 @@
                 <br />
                 Por favor mantener las publicaciones amigables y relativo al tema del foro.
             </p>
-            @if (!User.Identity.IsAuthenticated)
+            @if (!(User.Identity?.IsAuthenticated ?? false))
             {
                 <p>
                     <span>
@@ -60,7 +62,7 @@
         {
             <table class="table table-hover table-boredered" id="forumIndexTable">
                 <tbody>
-                    @foreach (var post in Model.Post)
+                    @foreach (PostListingModel post in Model.Post)
                     {
                         <tr>
                             <td>

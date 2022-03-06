@@ -22,8 +22,8 @@ namespace BiblioMit.Services
 
         public static Task Execute(string apiKey, string subject, string message, string email)
         {
-            var client = new SendGridClient(apiKey);
-            var msg = new SendGridMessage()
+            SendGridClient client = new (apiKey);
+            SendGridMessage msg = new ()
             {
                 From = new EmailAddress("no-responder@email.bibliomit.cl", "BiblioMit"),
                 Subject = subject,

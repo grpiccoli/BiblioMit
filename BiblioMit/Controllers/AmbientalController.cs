@@ -108,7 +108,7 @@ namespace BiblioMit.Controllers
                 return null;
             }
 
-            var psmbs = new Dictionary<int, int>{
+            Dictionary<int, int> psmbs = new() {
                 //Quetalco
                 {20, 101990},
                 //Vilipulli
@@ -117,7 +117,7 @@ namespace BiblioMit.Controllers
                 {22, 103633}
             };
             //1 chorito, 2 cholga, 3 choro, 4 all
-            var sps = new Dictionary<int, int>{
+            Dictionary<int, int> sps = new() {
                 {31, 1},
                 {32, 2},
                 {33, 3}
@@ -132,8 +132,8 @@ namespace BiblioMit.Controllers
                 case 11:
                     if (v.HasValue)
                     {
-                        var range = v.Value % 10;
-                        var db = _context.Tallas as IQueryable<Talla>;
+                        int range = v.Value % 10;
+                        IQueryable<Talla> db = _context.Tallas;
                         if (range != 8)
                         {
                             db = db.Where(tl => tl.Range == (Range)range);
@@ -161,8 +161,8 @@ namespace BiblioMit.Controllers
                 case 12:
                     if (v.HasValue)
                     {
-                        var type = v.Value % 10;
-                        var db = _context.Larvas as IQueryable<Larva>;
+                        int type = v.Value % 10;
+                        IQueryable<Larva> db = _context.Larvas;
                         if (type != 3)
                         {
                             db = db.Where(tl => tl.LarvaType == (LarvaType)type);
@@ -190,7 +190,7 @@ namespace BiblioMit.Controllers
                 case 13:
                     if (v.HasValue)
                     {
-                        var db = _context.Spawnings as IQueryable<Spawning>;
+                        IQueryable<Spawning> db = _context.Spawnings;
                         if (psmb != 23)
                         {
                             db = db.Where(tl => tl.Farm != null && tl.Farm.Code == psmbs[psmb]);
@@ -208,7 +208,7 @@ namespace BiblioMit.Controllers
                 case 14:
                     if (true)
                     {
-                        var db = _context.SpecieSeeds as IQueryable<SpecieSeed>;
+                        IQueryable<SpecieSeed> db = _context.SpecieSeeds;
                         if (psmb != 23)
                         {
                             db = db.Where(tl => tl.Seed != null && tl.Seed.Farm != null && tl.Seed.Farm.Code == psmbs[psmb]);
@@ -231,8 +231,8 @@ namespace BiblioMit.Controllers
                 case 15:
                     if (v.HasValue)
                     {
-                        var stage = v.Value % 10;
-                        var db = _context.ReproductiveStages.Where(tl => tl.Stage == (Stage)stage);
+                        int stage = v.Value % 10;
+                        IQueryable<ReproductiveStage> db = _context.ReproductiveStages.Where(tl => tl.Stage == (Stage)stage);
                         if (psmb != 23)
                         {
                             db = db.Where(tl => tl.Spawning != null && tl.Spawning.Farm != null && tl.Spawning.Farm.Code == psmbs[psmb]);
@@ -250,7 +250,7 @@ namespace BiblioMit.Controllers
                 case 16:
                     if (v.HasValue)
                     {
-                        var db = _context.Spawnings as IQueryable<Spawning>;
+                        IQueryable<Spawning> db = _context.Spawnings;
                         if (psmb != 23)
                         {
                             db = db.Where(tl => tl.Farm != null && tl.Farm.Code == psmbs[psmb]);
@@ -268,7 +268,7 @@ namespace BiblioMit.Controllers
                 case 17:
                     if (true)
                     {
-                        var db = _context.SpecieSeeds as IQueryable<SpecieSeed>;
+                        IQueryable<SpecieSeed> db = _context.SpecieSeeds;
                         if (psmb != 23)
                         {
                             db = db.Where(tl => tl.Seed != null && tl.Seed.Farm != null && tl.Seed.Farm.Code == psmbs[psmb]);
@@ -294,9 +294,9 @@ namespace BiblioMit.Controllers
         public IActionResult BuscarInformes(int id, string start, string end)
         {
             int order = id / 99_996 + 24_998 / 24_999;
-            var i = Convert.ToDateTime(start, CultureInfo.InvariantCulture);
-            var f = Convert.ToDateTime(end, CultureInfo.InvariantCulture).AddDays(1);
-            var plankton = _context.PlanktonAssays.Where(p => p.SamplingDate >= i && p.SamplingDate <= f);
+            DateTime i = Convert.ToDateTime(start, CultureInfo.InvariantCulture);
+            DateTime f = Convert.ToDateTime(end, CultureInfo.InvariantCulture).AddDays(1);
+            IQueryable<PlanktonAssay> plankton = _context.PlanktonAssays.Where(p => p.SamplingDate >= i && p.SamplingDate <= f);
             plankton = order switch
             {
                 0 => plankton.Where(e => e.Psmb != null && e.Psmb.Commune != null && e.Psmb.Commune.CatchmentAreaId == id),
@@ -338,7 +338,7 @@ namespace BiblioMit.Controllers
 
             if (!(type == 'v' && id != 4))
             {
-                var phyto = _context.Phytoplanktons
+                IQueryable<Phytoplankton> phyto = _context.Phytoplanktons
                                 .AsNoTracking()
                     .Where(e => e.PlanktonAssay != null && e.PlanktonAssay.SamplingDate >= start && e.PlanktonAssay.SamplingDate <= end);
                 phyto = type switch
@@ -366,7 +366,7 @@ namespace BiblioMit.Controllers
             }
             else
             {
-                var assays = _context.PlanktonAssays
+                IQueryable<PlanktonAssay> assays = _context.PlanktonAssays
                     .AsNoTracking()
                     .Where(e => e.SamplingDate >= start && e.SamplingDate <= end);
                 assays = order switch
@@ -416,21 +416,21 @@ namespace BiblioMit.Controllers
         [HttpGet]
         public IActionResult Graph()
         {
-            var minplank = _context.PlanktonAssays
+            DateTime minplank = _context.PlanktonAssays
                 .AsNoTracking()
                 .Min(e => e.SamplingDate);
-            var maxplank = _context.PlanktonAssays
+            DateTime maxplank = _context.PlanktonAssays
                 .AsNoTracking()
                 .Max(e => e.SamplingDate);
             if (_context.Variables.Any())
             {
-                var mincustom = _context.Variables
+                DateTime mincustom = _context.Variables
                     .AsNoTracking()
                     .Min(e => e.Date);
-                var maxcustom = _context.Variables
+                DateTime maxcustom = _context.Variables
                     .AsNoTracking()
                     .Max(e => e.Date);
-                var plankNewer = minplank > mincustom;
+                bool plankNewer = minplank > mincustom;
                 ViewData["start"] = plankNewer ?
                     mincustom.ToString(_dateFormat, CultureInfo.InvariantCulture)
                     : minplank.ToString(_dateFormat, CultureInfo.InvariantCulture);

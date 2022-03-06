@@ -1,4 +1,6 @@
-﻿@model BiblioMit.Models.PostViewModels.PostIndexModel
+﻿@using BiblioMit.Models.PostViewModels
+@using BiblioMit.Models.ReplyViewModels
+@model PostIndexModel
 
 <partial name="_Libs" model='new List<string> { "background" }' />
 
@@ -49,7 +51,7 @@
 
     @if (Model.Replies.Any())
     {
-        foreach (var reply in Model.Replies)
+        foreach (PostReplyModel reply in Model.Replies)
         {
             <div class="row replyContent">
                 <div class="col-md-3 replyAuthorContainer">

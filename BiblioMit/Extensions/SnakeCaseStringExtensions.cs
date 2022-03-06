@@ -11,10 +11,10 @@ namespace BiblioMit.Extensions
                 return source;
             }
 
-            var sb = new StringBuilder();
-            var state = SnakeCaseState.Start;
+            StringBuilder sb = new();
+            SnakeCaseState state = SnakeCaseState.Start;
 
-            var nameSpan = source.AsSpan();
+            ReadOnlySpan<char> nameSpan = source.AsSpan();
 
             for (int i = 0; i < nameSpan.Length; i++)
             {

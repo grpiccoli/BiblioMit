@@ -24,8 +24,8 @@ namespace BiblioMit.Services
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var features = context.HttpContext.Features;
-            var formFeature = features.Get<IFormFeature>();
+            IFeatureCollection features = context.HttpContext.Features;
+            IFormFeature? formFeature = features.Get<IFormFeature>();
 
             if (formFeature == null || formFeature.Form == null)
             {

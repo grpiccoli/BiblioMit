@@ -1,14 +1,18 @@
-﻿@{ var Model = new BiblioMit.Models.ViewModels.FilterVM((string[])ViewData["val"])
+﻿@using BiblioMit.Models.ViewModels
+@{
+    string[]? val = (string[]?)ViewData["val"];
+    FilterVM Model = new(val)
     {
-        Controller = (string)ViewData["controller"],
-        Action = (string)ViewData["action"],
-        Srt = (string)ViewData["srt"],
-        Asc = (bool)ViewData["asc"],
-        Rpp = (int)ViewData["rpp"]
+        Controller = (string?)ViewData["controller"],
+        Action = (string?)ViewData["action"],
+        Srt = (string?)ViewData["srt"],
+        Asc = (bool?)ViewData["asc"] ?? false,
+        Rpp = (int?)ViewData["rpp"] ?? 20
     };
+    string dataVal = val is not null ? @$"data-val=""{string.Join(",", val)}""" : string.Empty;
 }
 
-<div id="filter" data-val="@string.Join(",",Model.Val)"
+<div id="filter" @dataVal
      data-url="@Html.Raw(Url.Action(Model.Action, Model.Controller,
                     new {
                         rpp = Model.Rpp,

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
+using System.Globalization;
 
 namespace BiblioMit.Controllers
 {
@@ -27,18 +28,9 @@ namespace BiblioMit.Controllers
 
         // GET: Banners
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var carousel = await _banner.GetCarouselAsync(false, false).ConfigureAwait(false);
-            return View(carousel);
-            //var lang = Request.Cookies[".AspNetCore.Culture"][^2..];
-            //var banners = await _context.Banners
-            //    .Include(b => b.Imgs)
-            //    .Include(b => b.Texts)
-            //        .ThenInclude(b => b.Btns)
-            //    .Include(b => b.Rgbs)
-            //    .ToListAsync().ConfigureAwait(false);
-            //return View((banners, lang));
+            return View(_banner.ReadCarousel(false, false, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName));
         }
 
         // GET: Banners/Details/5
@@ -50,7 +42,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var banner = await _context.Banners
+            Banner? banner = await _context.Banners
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (banner == null)
             {
@@ -79,6 +71,9 @@ namespace BiblioMit.Controllers
             {
                 _context.Add(banner);
                 await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                _banner.UpdateJsons();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(banner);
@@ -93,7 +88,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var banner = await _context.Banners.FindAsync(id).ConfigureAwait(false);
+            Banner? banner = await _context.Banners.FindAsync(id).ConfigureAwait(false);
             if (banner == null)
             {
                 return NotFound();
@@ -126,6 +121,8 @@ namespace BiblioMit.Controllers
                 {
                     _context.Update(banner);
                     await _context.SaveChangesAsync().ConfigureAwait(false);
+
+                    _banner.UpdateJsons();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -161,7 +158,7 @@ namespace BiblioMit.Controllers
             {
                 try
                 {
-                    var newCaption = new Caption
+                    Caption newCaption = new() 
                     {
                         Id = caption.Id,
                         Title = caption.Title,
@@ -232,7 +229,7 @@ namespace BiblioMit.Controllers
                 string uploadsFolder = Path.Combine(_environment.WebRootPath, "StaticFiles", "BannerImgs");
                 uniqueFileName = Guid.NewGuid().ToString() + "_" + model.FileName.FileName;
                 string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                using var fileStream = new FileStream(filePath, FileMode.Create);
+                using FileStream fileStream = new(filePath, FileMode.Create);
                 model.FileName.CopyTo(fileStream);
             }
             return uniqueFileName;
@@ -253,7 +250,7 @@ namespace BiblioMit.Controllers
                 {
                     string uniqueFileName = UploadedFile(img);
 
-                    var edit = _context.Imgs.FirstOrDefault(i => i.Size == img.Size);
+                    Img? edit = _context.Imgs.FirstOrDefault(i => i.Size == img.Size);
                     if (edit != null)
                     {
                         edit.FileName = uniqueFileName;
@@ -286,7 +283,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var banner = await _context.Banners
+            Banner? banner = await _context.Banners
                 .FirstOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (banner == null)
             {

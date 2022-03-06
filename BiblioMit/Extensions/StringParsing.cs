@@ -46,7 +46,7 @@ namespace BiblioMit.Extensions
                     return null;
                 }
 
-                var orders = text.Split(decimalSeparator.Value);
+                string[] orders = text.Split(decimalSeparator.Value);
                 if (orders.Length > 1)
                 {
                     num = double.Parse($"{string.Join("", orders.SkipLast(1))}.{orders.Last()}", CultureInfo.InvariantCulture);
@@ -78,7 +78,7 @@ namespace BiblioMit.Extensions
 
                 bool negative = text.First() == '-';
                 char sign = negative ? '-' : '+';
-                var orders = Regex.Matches(text, @"[0-9]+").Select(m => m.Value);
+                IEnumerable<string> orders = Regex.Matches(text, @"[0-9]+").Select(m => m.Value);
                 num = orders.Count() switch
                 {
                     1 => double.Parse($"{sign}{orders.First()}", CultureInfo.InvariantCulture),
@@ -142,8 +142,8 @@ namespace BiblioMit.Extensions
         }
         public static DateTime? ParseDateTime(this string text)
         {
-            var formats = new string[] { "yyyyMMdd", "yyyy-MM-dd", "dd-MM-yyyy HH:mm", "dd-MM-yyyy", "dd-MM-yyyy HH:mm'&nbsp;'", "dd-MM-yyyy HH:mm 'HRS.'" };
-            var parsed = DateTime.TryParseExact(text, formats, new CultureInfo("es-CL"), DateTimeStyles.None, out DateTime date);
+            string[] formats = new string[] { "yyyyMMdd", "yyyy-MM-dd", "dd-MM-yyyy HH:mm", "dd-MM-yyyy", "dd-MM-yyyy HH:mm'&nbsp;'", "dd-MM-yyyy HH:mm 'HRS.'" };
+            bool parsed = DateTime.TryParseExact(text, formats, new CultureInfo("es-CL"), DateTimeStyles.None, out DateTime date);
             if (parsed)
             {
                 return date;

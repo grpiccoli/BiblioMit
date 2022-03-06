@@ -21,15 +21,12 @@ namespace BiblioMit.Controllers
     public class PublicationsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly INodeService _node;
         private readonly TextInfo _TI;
 
         public PublicationsController(
-            ApplicationDbContext context,
-            INodeService node)
+            ApplicationDbContext context)
         {
             _context = context;
-            _node = node;
             _TI = new CultureInfo("es-CL", false).TextInfo;
         }
 
@@ -142,7 +139,7 @@ namespace BiblioMit.Controllers
                             break;
                     }
                     (IEnumerable<PublicationVM>, string, int)[]? pubs = await GetPubsAsync(src, q, rpp, pg, sort_by, order, srt_uach, ggl).ConfigureAwait(false);
-                    var Publications = pubs.SelectMany(x => x.Item1);
+                    IEnumerable<PublicationVM>  Publications = pubs.SelectMany(x => x.Item1);
                     //repositories where any results
                     Dictionary<Typep, Dictionary<string, int>> Results = pubs.Where(x => x.Item1.Any())
                         //group by type of result
@@ -151,16 +148,16 @@ namespace BiblioMit.Controllers
                         .Select(x => new KeyValuePair<Typep, Dictionary<string, int>>(x.Key, x.ToDictionary(x => x.Item2, x => x.Item3)))
                         .ToDictionary(x => x.Key, x => x.Value);
 
-                    var chartData = new List<List<ChartResultsItem>>();
+                    List<IEnumerable<ChartResultsItem>> chartData = new ();
                     Dictionary<Typep, int> counts = new();
-                    foreach (var r in Results)
+                    foreach (KeyValuePair<Typep, Dictionary<string, int>> r in Results)
                     {
                         IEnumerable<Color> gradient = GetGradients(Color.DarkGreen, Color.LightGreen, r.Value.Count);
                         counts.Add(r.Key, 0);
-                        var t = r.Value.Select((value, i) =>
+                        IEnumerable<ChartResultsItem> t = r.Value.Select((value, i) =>
                         {
                             counts[r.Key] += value.Value;
-                            var name = "";
+                            string name = "";
                             if (ues.ContainsKey(value.Key))
                             {
                                 name = ues[value.Key]
@@ -177,10 +174,10 @@ namespace BiblioMit.Controllers
                                 Resultados = value.Value,
                                 Color = ColorToHex(gradient.ElementAt(i))
                             };
-                        }).ToList();
+                        });
                         if (chartData.Any())
                         {
-                            chartData[0].AddRange(t);
+                            chartData[0] = chartData[0].Concat(t);
                         }
 
                         chartData.Add(t);
@@ -220,14 +217,6 @@ namespace BiblioMit.Controllers
             ViewData["interval"] = Convert.ToInt32(stopWatch.ElapsedMilliseconds / 500);
             return View(publications);
         }
-        [Authorize(Roles = nameof(RoleData.Administrator))]
-        [HttpGet]
-        public IActionResult Translate(string text, string lang)
-        {
-            var result = _node.Run("./wwwroot/js/translate.js", new string[] { text, lang });
-            return Json(result);
-        }
-
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Agenda(
@@ -262,11 +251,11 @@ namespace BiblioMit.Controllers
             ViewData[nameof(pg)] = pg;
             ViewData[nameof(trpp)] = trpp;
             ViewData["any"] = false;
-            var Agendas = new List<AgendaVM>();
+            List<AgendaVM> Agendas = new();
             #endregion
 
             //FIA //FIC //FOPA //FAP //FIP //FIPA
-            var conicyt1 = new Dictionary<string, Uri>()
+            Dictionary<string, Uri> conicyt1 = new()
             {
                 { "fondap", new Uri($"http://www.conicyt.cl/fondap/category/concursos/?estado={stt}") },
                 { "becasconicyt", new Uri($"http://www.conicyt.cl/becasconicyt/category/fichas-concursos/?estado={stt}") },
@@ -274,7 +263,7 @@ namespace BiblioMit.Controllers
                 { "fondequip", new Uri($"http://www.conicyt.cl/fondequip/category/concursos/?estado={stt}") }
             };
 
-            var conicyt2 = new Dictionary<string, Uri>()
+            Dictionary<string, Uri> conicyt2 = new()
             {
                 { "fondef", new Uri("http://www.conicyt.cl/fondef/") },
                 { "fonis", new Uri("http://www.conicyt.cl/fonis/") },
@@ -287,7 +276,7 @@ namespace BiblioMit.Controllers
             };
 
             // páginas CONICYT 1
-            var conicyt1_funds = fund.Intersect(conicyt1.Keys);
+            IEnumerable<string> conicyt1_funds = fund.Intersect(conicyt1.Keys);
             if (conicyt1_funds.Any())
             {
                 foreach (string fondo in conicyt1_funds)
@@ -298,7 +287,7 @@ namespace BiblioMit.Controllers
                         continue;
                     }
 
-                    var co = GetCo("conicyt");
+                    Company co = GetCo("conicyt");
                     Agendas.AddRange(from n in bc_doc.QuerySelectorAll("div.lista_concurso")
                                      let cells = n.Children
                                      let title = cells?.ElementAt(0)?.QuerySelector("a")
@@ -316,7 +305,7 @@ namespace BiblioMit.Controllers
             }
 
             //páginas CONICYT 2
-            var conicyt2_funds = fund.Intersect(conicyt2.Keys);
+            IEnumerable<string> conicyt2_funds = fund.Intersect(conicyt2.Keys);
             //$postParams = @{valtab='evaluacion';blogid='20'}
             //Invoke-WebRequest -UseBasicParsing http://www.conicyt.cl/fondef/wp-content/themes/fondef/ajax/getpostconcursos.php -Method POST -Body $postParams
 
@@ -324,18 +313,18 @@ namespace BiblioMit.Controllers
             {
                 foreach (string fondo in conicyt2_funds)
                 {
-                    var values = new Dictionary<string, string>
+                    Dictionary<string, string> values = new()
                             {
                                 { "valtab", stt },
                                 { "blogid", "20" }
                             };
-                    using var content = new FormUrlEncodedContent(values);
+                    using FormUrlEncodedContent content = new(values);
                     using HttpClient bc = new();
                     using HttpResponseMessage response = await bc
                         .PostAsync(new Uri($"{conicyt2[fondo]}wp-content/themes/fondef/ajax/getpostconcursos.php"), content).ConfigureAwait(false);
                     Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    var bc_doc = await GetDoc(stream).ConfigureAwait(false);
-                    var bc_entrys = bc_doc.QuerySelectorAll("div > a");
+                    IHtmlDocument bc_doc = await GetDoc(stream).ConfigureAwait(false);
+                    IHtmlCollection<IElement> bc_entrys = bc_doc.QuerySelectorAll("div > a");
 
                     if (bc_entrys is null) { continue; }
                     string Fund = "";
@@ -344,17 +333,17 @@ namespace BiblioMit.Controllers
                     string[] formats = { "yyyy", "yyyy-MM", "d-MM-yyyy" };
                     foreach (IElement entry in bc_entrys)
                     {
-                        var Entry = new AgendaVM()
+                        AgendaVM Entry = new ()
                         {
                             Company = _context.Companies.FirstOrDefault(c => c.Acronym == "CONICYT"),
                             Fund = Acrn + " (" + Fund + ")",
                             Title = entry.QuerySelector("h4")?.InnerHtml,
-                            MainUrl = GetUri(entry),
+                            MainUrl = GetUri(entry)
                         };
                         string? text = entry.QuerySelector("p")?.Text();
                         if (text != null)
                         {
-                            var parsed = DateTime.TryParseExact(ress1.Match(text).ToString(),
+                            bool parsed = DateTime.TryParseExact(ress1.Match(text).ToString(),
                                                     formats,
                                                     CultureInfo.InvariantCulture,
                                                     DateTimeStyles.None,
@@ -372,18 +361,18 @@ namespace BiblioMit.Controllers
 
             //CORFO DIVIdIR POR REGION Y ACTOR?
             Regex ress = new(@"corfo\d+");
-            var corfo_funds = fund.Where(item => ress.IsMatch(item));
+            IEnumerable<string> corfo_funds = fund.Where(item => ress.IsMatch(item));
             if (corfo_funds.Any())
             {
                 foreach (string fondo in corfo_funds)
                 {
-                    var corfo = "https://www.corfo.cl/sites/cpp/programas-y-convocatorias?p=1456407859853-1456408533016-1456408024098-1456408533181&at=&et=&e=&o=&buscar_resultado=&bus=&r=";
-                    var num = fondo.Replace("corfo", "", StringComparison.Ordinal);
+                    string corfo = "https://www.corfo.cl/sites/cpp/programas-y-convocatorias?p=1456407859853-1456408533016-1456408024098-1456408533181&at=&et=&e=&o=&buscar_resultado=&bus=&r=";
+                    string num = fondo.Replace("corfo", "", StringComparison.Ordinal);
                     using HttpClient bc = new();
                     using HttpResponseMessage bc_result = await bc.GetAsync(new Uri(corfo + num)).ConfigureAwait(false);
-                    var stream = await bc_result.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    var bc_doc = await GetDoc(stream).ConfigureAwait(false);
-                    var bc_entrys = bc_doc.QuerySelectorAll("div.col-sm-12.areas > a");
+                    Stream stream = await bc_result.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                    IHtmlDocument bc_doc = await GetDoc(stream).ConfigureAwait(false);
+                    IHtmlCollection<IElement> bc_entrys = bc_doc.QuerySelectorAll("div.col-sm-12.areas > a");
 
                     foreach (IElement entry in bc_entrys)
                     {
@@ -401,7 +390,7 @@ namespace BiblioMit.Controllers
                             }
                         }
 
-                        var Entry = new AgendaVM()
+                        AgendaVM Entry = new()
                         {
                             Company = _context.Companies.FirstOrDefault(c => c.Acronym == "CORFO"),
                             Fund = "CORFO",
@@ -415,7 +404,7 @@ namespace BiblioMit.Controllers
                         string? text = entry.QuerySelector("li:nth-child(3)")?.Text();
                         if (text != null)
                         {
-                            var parsed = DateTime.TryParseExact(ress2.Match(text).ToString(),
+                            bool parsed = DateTime.TryParseExact(ress2.Match(text).ToString(),
                                                     formats,
                                                     CultureInfo.InvariantCulture,
                                                     DateTimeStyles.None,
@@ -436,7 +425,7 @@ namespace BiblioMit.Controllers
             ViewData["conicyt1"] = conicyt1;
             ViewData["conicyt2"] = conicyt2;
             ViewData["stt"] = string.IsNullOrEmpty(stt) ? "" : stt.ToString(CultureInfo.InvariantCulture);
-            ViewData["regiones"] = _context.Regions.ToList();
+            ViewData["regiones"] = _context.Regions;
             //render
             stopWatch.Stop();
             ViewData["runtime"] = stopWatch.ElapsedMilliseconds.ToString(CultureInfo.InvariantCulture);
@@ -447,7 +436,7 @@ namespace BiblioMit.Controllers
         private Task<(IEnumerable<PublicationVM>, string, int)[]> GetPubsAsync(
             string[] src, string q, int rpp, int pg, string sortBy, string order, string srtUach, int ggl)
         {
-            var uchile = GetUchileAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> uchile = GetUchileAsync
                 (
                 src,
                 //23s
@@ -461,7 +450,7 @@ namespace BiblioMit.Controllers
                 "div.artifact-info > span.publisher-date > span.date"
                 );
 
-            var ula = GetUlaAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> ula = GetUlaAsync
                 (
                 src,
                 new Uri($"http://medioteca.ulagos.cl/biblioscripts/titulo_claves.idc?texto={q}"),
@@ -471,7 +460,7 @@ namespace BiblioMit.Controllers
                 pg, rpp
                 );
 
-            var umag = GetUmagAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> umag = GetUmagAsync
                 (
                 src,
                 new Uri($"http://www.bibliotecadigital.umag.cl/discover?query={q}&rpp={rpp}&page={pg}"),
@@ -482,7 +471,7 @@ namespace BiblioMit.Controllers
                 "div.artifact-info > span.publisher-date > span.date"
                 );
 
-            var ucsc = GetUcscAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> ucsc = GetUcscAsync
                 (
                 src,
                 //24s
@@ -496,7 +485,7 @@ namespace BiblioMit.Controllers
                 "div.artifact-info > span.publisher-date.h4 > small > span.date"
                 );
 
-            var uct = GetUctAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> uct = GetUctAsync
                 (
                 src,
                 //31s
@@ -512,7 +501,7 @@ namespace BiblioMit.Controllers
                 "a[href*='img']"
                 );
 
-            var uach = GetUachAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> uach = GetUachAsync
                 (
                 src,
                 //14s
@@ -526,7 +515,7 @@ namespace BiblioMit.Controllers
                 "span.date"
                 );
 
-            var udec = GetUdecAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> udec = GetUdecAsync
             (
                 src,
                 //18s
@@ -541,7 +530,7 @@ namespace BiblioMit.Controllers
                 "div.artifact-info > span.publisher-date > span.date"
             );
 
-            var pucv = GetPucvAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> pucv = GetPucvAsync
                 (
                     src,
                     new Uri($"http://opac.pucv.cl/cgi-bin/wxis.exe/iah/scripts/?IsisScript=iah.xis&lang=es&base=BDTESIS&nextAction=search&exprSearch={q}&isisFrom={(pg - 1) * rpp + 1}"),
@@ -554,7 +543,7 @@ namespace BiblioMit.Controllers
                     rpp
                 );
 
-            var puc = GetPucAsync
+            Task<(IEnumerable<PublicationVM>, string, int)> puc = GetPucAsync
             (
                 src,
                 //15s
@@ -568,20 +557,20 @@ namespace BiblioMit.Controllers
                 ".//div[@class='artifact-info']/span[@class='author']/span"
             );
 
-            var fondecyt = GetConicyt(src, "FONDECYT", "108045", rpp, sortBy, order, pg, q);
-            var fondef = GetConicyt(src, "FONDEF", "108046", rpp, sortBy, order, pg, q);
-            var fondap = GetConicyt(src, "FONDAP", "108044", rpp, sortBy, order, pg, q);
-            var pia = GetConicyt(src, "PIA", "108042", rpp, sortBy, order, pg, q);
-            var regional = GetConicyt(src, "REGIONAL", "108050", rpp, sortBy, order, pg, q);
-            var becas = GetConicyt(src, "BECAS", "108040", rpp, sortBy, order, pg, q);
-            var conicyt = GetConicyt(src, "CONICYT", "108088", rpp, sortBy, order, pg, q);
-            var proyectos = GetConicyt(src, "PROYECTOS", "93475", rpp, sortBy, order, pg, q);
+            Task<(IEnumerable<PublicationVM>, string, int)> fondecyt = GetConicyt(src, "FONDECYT", "108045", rpp, sortBy, order, pg, q);
+            Task<(IEnumerable<PublicationVM>, string, int)> fondef = GetConicyt(src, "FONDEF", "108046", rpp, sortBy, order, pg, q);
+            Task<(IEnumerable<PublicationVM>, string, int)> fondap = GetConicyt(src, "FONDAP", "108044", rpp, sortBy, order, pg, q);
+            Task<(IEnumerable<PublicationVM>, string, int)> pia = GetConicyt(src, "PIA", "108042", rpp, sortBy, order, pg, q);
+            Task<(IEnumerable<PublicationVM>, string, int)> regional = GetConicyt(src, "REGIONAL", "108050", rpp, sortBy, order, pg, q);
+            Task<(IEnumerable<PublicationVM>, string, int)> becas = GetConicyt(src, "BECAS", "108040", rpp, sortBy, order, pg, q);
+            Task<(IEnumerable<PublicationVM>, string, int)> conicyt = GetConicyt(src, "CONICYT", "108088", rpp, sortBy, order, pg, q);
+            Task<(IEnumerable<PublicationVM>, string, int)> proyectos = GetConicyt(src, "PROYECTOS", "93475", rpp, sortBy, order, pg, q);
 
-            var fipa = GetFipaAsync(src,
+            Task<(IEnumerable<PublicationVM>, string, int)> fipa = GetFipaAsync(src,
                 new Uri($"http://subpesca-engine.newtenberg.com/mod/find/cgi/find.cgi?action=query&engine=SwisheFind&rpp={rpp}&cid=514&stid=&iid=613&grclass=&pnid=&pnid_df=&pnid_tf=&pnid_search=678,682,683,684,681,685,510,522,699,679&limit=200&searchon=&channellink=w3:channel&articlelink=w3:article&pvlink=w3:propertyvalue&notarticlecid=&use_cid_owner_on_links=&show_ancestors=1&show_pnid=1&cids=514&keywords={q}&start={(pg - 1) * rpp}&group=0&expanded=1&searchmode=undefined&prepnidtext=&javascript=1"),
                 "p.PP", 2, "li > a");
 
-            var corfo = GetCorfoAsync(src,
+            Task<(IEnumerable<PublicationVM>, string, int)> corfo = GetCorfoAsync(src,
                 //order     DESC            ASC
                 //sort_by   dc.title_sort
                 //group_by=none
@@ -593,7 +582,7 @@ namespace BiblioMit.Controllers
                 "span.date", "div.abstract"
                 );
 
-            var gscholar = GetGscholarAsync(src,
+            Task<(IEnumerable<PublicationVM>, string, int)> gscholar = GetGscholarAsync(src,
                 new Uri($"https://scholar.google.com/scholar?q={q}&start={rpp * (pg - 1) + 1}&scisbd={ggl}"),
                 "div.gs_ab_mdw:has(> b)",
                 "div.gs_ri",
@@ -602,7 +591,7 @@ namespace BiblioMit.Controllers
                 "div.gs_a", rpp, "gscholar"
                 );
 
-            var gpatents = GetGscholarAsync(src,
+            Task<(IEnumerable<PublicationVM>, string, int)> gpatents = GetGscholarAsync(src,
                 new Uri($"https://scholar.google.cl/scholar?as_q={q}" +
                     "&as_epq=&as_oq=&as_eq=&as_occt=any&as_sauthors=&as_publication=Google+Patents&as_ylo=&as_yhi=&btnG=&hl=en&as_sdt=0%2C5&as_vis=1" +
                     $"&start={rpp * (pg - 1) + 1}&scisbd={ggl}"),
@@ -631,7 +620,7 @@ string dateSelect, int rpp, string acronym)
                     Regex resss = new(@"([0-9]+,)*[0-9]+");
                     Regex yr = new(@"[0-9]{4}");
                     Regex aut = new(@"\A(?:(?![0-9]{4}).)*");
-                    var co = new Company
+                    Company co = new()
                     {
                         Id = 55555555,
                         Address = "1600 Amphitheatre Parkway, Mountain View, CA"
@@ -645,12 +634,12 @@ string dateSelect, int rpp, string acronym)
                     }
 
                     return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
-                            let t = n?.QuerySelector(titleSelect)?.TextContent
+                            let t = n.QuerySelector(titleSelect)?.TextContent
                             select new PublicationVM()
                             {
                                 Source = acronym,
                                 Uri = GetUri(n.QuerySelector(quriSelect)),
-                                Title = t?[(t.LastIndexOf(']')
+                                Title = t[(t.LastIndexOf(']')
                                 + 1)..],
                                 Typep = Typep.Article,
                                 Company = co,
@@ -674,25 +663,25 @@ string dateSelect, int rpp, string acronym)
 Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string quriSelect,
 string authorSelect, string dateSelect, string abstractSelect)
         {
-            var acronym = "CORFO";
+            string acronym = "CORFO";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(60706000);
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    Company co = GetCo(60706000);
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
                         return (new List<PublicationVM>(), acronym, 0);
                     }
 
                     return (from n in doc.QuerySelectorAll(nodeSelect)
-                            let t = n?.QuerySelector(quriSelect)
+                            let t = n.QuerySelector(quriSelect)
                             select new PublicationVM()
                             {
                                 Source = acronym,
                                 Uri = GetUri(url, t),
-                                Title = t?.TextContent,
+                                Title = t.TextContent,
                                 Typep = Typep.Project,
                                 Company = co,
                                 Date = GetDate(n, dateSelect),
@@ -715,13 +704,13 @@ string authorSelect, string dateSelect, string abstractSelect)
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetFipaAsync(string[] src,
 Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect)
         {
-            var acronym = "FIPA";
+            string acronym = "FIPA";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(60719000);
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    Company co = GetCo(60719000);
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
                         return (new List<PublicationVM>(), acronym, 0);
@@ -782,15 +771,15 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect)
         }
 
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetConicyt(string[] src,
-string acronym, string parameter, int rpp, string sortBy, string order, int? pg, string q)
+string acronym, string parameter, int rpp, string sortBy, string order, int pg, string q)
         {
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(60915000);
-                    var url = new Uri($"http://repositorio.conicyt.cl/handle/10533/{parameter}/discover?query={q}&page={pg - 1}&rpp={rpp}&sort_by={sortBy}&order={order}");
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    Company co = GetCo(60915000);
+                    Uri url = new($"http://repositorio.conicyt.cl/handle/10533/{parameter}/discover?query={q}&page={pg - 1}&rpp={rpp}&sort_by={sortBy}&order={order}");
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
                         return (new List<PublicationVM>(), acronym, 0);
@@ -800,7 +789,7 @@ string acronym, string parameter, int rpp, string sortBy, string order, int? pg,
 .Select(n => new PublicationVM()
 {
     Source = acronym,
-    Title = n.QuerySelector("h4.title-list")?.Text(),
+    Title = n.QuerySelector("h4.title-list")?.Text() ?? string.Empty,
     Typep = Typep.Project,
     Uri = GetUri(url, n.QuerySelector("div.artifact-description > a")),
     Authors = GetAuthors(n, "span.ds-dc_contributor_author-authority"),
@@ -825,19 +814,19 @@ string acronym, string parameter, int rpp, string sortBy, string order, int? pg,
 Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string quriSelect,
 string dateSelect, string authorSelect)
         {
-            var acronym = "puc";
+            string acronym = "puc";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
-                    var doc = await GetDocStream(url).ConfigureAwait(false);
+                    Company co = GetCo(acronym);
+                    IHtmlDocument doc = await GetDocStream(url).ConfigureAwait(false);
                     return (from n in doc.QuerySelectorAll(nodeSelect)
-                            let t = n?.QuerySelector(quriSelect)
+                            let t = n.QuerySelector(quriSelect)
                             select new PublicationVM()
                             {
                                 Source = acronym,
-                                Title = t?.Text(),
+                                Title = t.Text(),
                                 Typep = Typep.Thesis,
                                 Uri = GetUri(url, t),
                                 Authors = GetAuthors(n, authorSelect),
@@ -861,20 +850,20 @@ string dateSelect, string authorSelect)
 Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string dateSelect,
 string quriSelect, string quriSelectAlt, string titleSelect, string authorSelect, int rpp)
         {
-            var acronym = "pucv";
+            string acronym = "pucv";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
-                    using var doc = await GetDocStream(url).ConfigureAwait(false);
+                    Company co = GetCo(acronym);
+                    using IHtmlDocument doc = await GetDocStream(url).ConfigureAwait(false);
                     return (from n in doc.QuerySelectorAll(nodeSelect).Take(rpp)
                             let date = n.QuerySelector(dateSelect)?.Text()
                             select new PublicationVM()
                             {
                                 Typep = Typep.Thesis,
                                 Source = acronym,
-                                Title = n.QuerySelector(titleSelect)?.TextContent,
+                                Title = n.QuerySelector(titleSelect)?.TextContent ?? string.Empty,
                                 Uri = GetUri(url, n.QuerySelector(quriSelect), n.QuerySelector(quriSelectAlt)),
                                 Authors = GetAuthors(n, authorSelect),
                                 Date = GetDate(date, date.Length - 4),
@@ -896,12 +885,12 @@ string quriSelect, string quriSelectAlt, string titleSelect, string authorSelect
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetUdecAsync(string[] src,
 Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string quriSelect, string authorSelect, string dateSelect)
         {
-            var acronym = "udec";
+            string acronym = "udec";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
+                    Company co = GetCo(acronym);
                     IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
@@ -915,7 +904,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
     {
         Typep = Typep.Thesis,
         Source = acronym,
-        Title = m?.TextContent,
+        Title = m?.TextContent ?? string.Empty,
         Uri = GetUri(url, m),
         Authors = GetAuthors(n, authorSelect),
         Company = co,
@@ -938,13 +927,13 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
     Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string titleSelect,
     string quriSelect, string authorSelect, string dateSelect)
         {
-            var acronym = "uach";
+            string acronym = "uach";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    Company co = GetCo(acronym);
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
                         return (new List<PublicationVM>(), acronym, 0);
@@ -953,7 +942,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                     return (doc.QuerySelectorAll(nodeSelect).Select(n => new PublicationVM()
                     {
                         Source = acronym,
-                        Title = n.QuerySelector(titleSelect)?.TextContent,
+                        Title = n.QuerySelector(titleSelect)?.TextContent ?? string.Empty,
                         Uri = GetUri(url, n.QuerySelector(quriSelect)),
                         Authors = GetAuthors(n, authorSelect),
                         Typep = Typep.Thesis,
@@ -976,14 +965,14 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetUctAsync(string[] src,
 Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string quriSelect, string journalSelect, string authorSelect, string dateSelect)
         {
-            var acronym = "uct";
+            string acronym = "uct";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
+                    Company co = GetCo(acronym);
                     Regex regex = new("[a-zA-Z]");
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
                         return (new List<PublicationVM>(), acronym, 0);
@@ -999,7 +988,7 @@ select new PublicationVM()
     //otros
     Typep = Typep.Thesis,
     Source = acronym,
-    Title = m?.TextContent,
+    Title = m?.TextContent ?? string.Empty,
     Uri = GetUri(url, m),
     Journal = j,
     Authors = GetAuthors(n, authorSelect, regex),
@@ -1022,13 +1011,13 @@ select new PublicationVM()
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetUcscAsync(string[] src,
 Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string quriSelect, string authorSelect, string dateSelect)
         {
-            var acronym = "ucsc";
+            string acronym = "ucsc";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    Company co = GetCo(acronym);
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
                         return (new List<PublicationVM>(), acronym, 0);
@@ -1040,7 +1029,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
     select new PublicationVM()
     {
         Source = acronym,
-        Title = m?.TextContent,
+        Title = m?.TextContent ?? string.Empty,
         Uri = GetUri(url, m),
         Authors = GetAuthors(n, authorSelect),
         Typep = Typep.Thesis,
@@ -1063,13 +1052,13 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetUmagAsync(string[] src,
     Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string quriSelect, string authorSelect, string dateSelect)
         {
-            var acronym = "umag";
+            string acronym = "umag";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    Company co = GetCo(acronym);
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
                         return (new List<PublicationVM>(), acronym, 0);
@@ -1080,7 +1069,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                             select new PublicationVM()
                             {
                                 Source = acronym,
-                                Title = m?.TextContent,
+                                Title = m?.TextContent ?? string.Empty,
                                 Uri = GetUri(url, m),
                                 Authors = GetAuthors(n, authorSelect),
                                 Typep = Typep.Thesis,
@@ -1103,13 +1092,13 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetUchileAsync(string[] src,
             Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string quriSelect, string authorSelect, string dateSelect)
         {
-            var acronym = "uchile";
+            string acronym = "uchile";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
-                    using var doc = await GetDoc(url).ConfigureAwait(false);
+                    Company co = GetCo(acronym);
+                    using IHtmlDocument? doc = await GetDoc(url).ConfigureAwait(false);
                     if (doc is null)
                     {
                         return (new List<PublicationVM>(), acronym, 0);
@@ -1140,22 +1129,18 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         }
 
         private async Task<(IEnumerable<PublicationVM>, string, int)> GetUlaAsync(string[] src,
-    Uri url, string nodeSelect, string quriSelect, string authorSelect, int? pg, int rpp)
+    Uri url, string nodeSelect, string quriSelect, string authorSelect, int pg, int rpp)
         {
             string acronym = "ula";
             if (src.Contains(acronym))
             {
                 try
                 {
-                    var co = GetCo(acronym);
-                    using var doc = await GetDocStream(url).ConfigureAwait(false);
-                    var num = doc.QuerySelectorAll(nodeSelect);
-                    if (pg == null)
-                    {
-                        pg = 1;
-                    }
+                    Company co = GetCo(acronym);
+                    using IHtmlDocument doc = await GetDocStream(url).ConfigureAwait(false);
+                    IHtmlCollection<IElement> num = doc.QuerySelectorAll(nodeSelect);
 
-                    return (num.Skip(rpp * (pg.Value - 1)).Take(rpp).Select(n => new PublicationVM()
+                    return (num.Skip(rpp * (pg - 1)).Take(rpp).Select(n => new PublicationVM()
                     {
                         Typep = Typep.Thesis,
                         Source = acronym,
@@ -1198,10 +1183,10 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
 
         public static string? GetJournalConicyt(IElement node)
         {
-            var items = node.QuerySelectorAll("#code");
+            IHtmlCollection<IElement> items = node.QuerySelectorAll("#code");
             if (items.Any())
             {
-                var journal = "N° de Proyecto: " + items[0].TextContent;
+                string journal = "N° de Proyecto: " + items[0].TextContent;
                 if (items.Length > 3)
                 {
                     return journal + " Institución Responsable: " + items[3].TextContent;
@@ -1247,7 +1232,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         {
             try
             {
-                var parser = new HtmlParser();
+                HtmlParser parser = new();
                 using HttpClient hc = new();
                 return await parser.ParseDocumentAsync(await hc.GetStringAsync(rep).ConfigureAwait(false)).ConfigureAwait(false);
             }
@@ -1264,13 +1249,13 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         }
         public static async Task<IHtmlDocument> GetDoc(Stream stream)
         {
-            var parser = new HtmlParser();
+            HtmlParser parser = new ();
             using HttpClient hc = new();
             return await parser.ParseDocumentAsync(stream).ConfigureAwait(false);
         }
         public static async Task<IHtmlDocument> GetDocStream(Uri rep)
         {
-            var parser = new HtmlParser();
+            HtmlParser parser = new ();
             using HttpClient hc = new();
             return await parser.ParseDocumentAsync(await hc.GetStreamAsync(rep).ConfigureAwait(false)).ConfigureAwait(false);
         }
@@ -1333,7 +1318,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
                 return new DateTime();
             }
 
-            var parsed = DateTime.TryParseExact(res.Match(match).Value,
+            bool parsed = DateTime.TryParseExact(res.Match(match).Value,
                                     formats,
                                     CultureInfo.InvariantCulture,
                                     DateTimeStyles.None,
@@ -1345,7 +1330,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         {
             string[] formats = { "dd 'de' MMMM 'de'  yyyy" };
             Regex ress1 = new(@"\d[\dA-Za-z\s]+\d");
-            var parsed = DateTime.TryParseExact(ress1.Match(node.TextContent).Value,
+            bool parsed = DateTime.TryParseExact(ress1.Match(node.TextContent).Value,
                 formats,
                 CultureInfo.GetCultureInfo("es-CL"),
                 DateTimeStyles.None,
@@ -1356,7 +1341,7 @@ Uri url, string NoResultsSelect, int NoResultsPos, string nodeSelect, string qur
         public static DateTime GetDate(string journal, int start)
         {
             string[] formats = { "yyyy" };
-            var parsed = DateTime.TryParseExact(journal.AsSpan(start, 4),
+            bool parsed = DateTime.TryParseExact(journal.AsSpan(start, 4),
                                     formats,
                                     CultureInfo.InvariantCulture,
                                     DateTimeStyles.None,

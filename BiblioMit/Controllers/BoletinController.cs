@@ -80,13 +80,8 @@ namespace BiblioMit.Views
             c.SernapescaDeclaration.OriginPsmb.Commune.Name)
             .OrderBy(g => g.Key);
         private IQueryable<IGrouping<string, DeclarationDate>> GetDatesProvinces(DeclarationType tp, Config config) =>
-            GetDates(tp, config).GroupBy<DeclarationDate, string>(c =>
-            c.SernapescaDeclaration != null
-            && c.SernapescaDeclaration.OriginPsmb != null
-            && c.SernapescaDeclaration.OriginPsmb.Commune != null
-            && c.SernapescaDeclaration.OriginPsmb.Commune.Province != null
-            && c.SernapescaDeclaration.OriginPsmb.Commune.Province.Name != null ?
-               c.SernapescaDeclaration.OriginPsmb.Commune.Province.Name : string.Empty)
+            GetDates(tp, config).GroupBy(c =>
+               c.SernapescaDeclaration.OriginPsmb.Commune.Province.Name)
             .OrderBy(g => g.Key);
         private IQueryable<IGrouping<int, DeclarationDate>> GetDatesMonths(DeclarationType tp, Config config) =>
             GetDates(tp, config).GroupBy(c => c.Date.Month).OrderBy(g => g.Key);
@@ -103,7 +98,7 @@ namespace BiblioMit.Views
         [AllowAnonymous]
         [ResponseCache(Duration = 60 * 60, VaryByQueryKeys = new string[] { "*" })]
         [HttpGet]
-        public async Task<JsonResult> GetXlsx(int year, int start, int end)
+        public JsonResult GetXlsx(int year, int start, int end)
         {
             Config config = new(year, start, end)
             {
@@ -117,7 +112,8 @@ namespace BiblioMit.Views
             List<object> temp = new();
             List<object> sal = new();
 
-            graphs.AddRange(Enumerable.Range(1, 4).Select(tipo => GetDatesCommunes((DeclarationType)tipo, config)
+            graphs.AddRange(Enumerable.Range(1, 4)
+                .Select(tipo => GetDatesCommunes((DeclarationType)tipo, config)
                     .Select(comuna =>
                         new Dictionary<string, object>
                     {
@@ -127,10 +123,10 @@ namespace BiblioMit.Views
                     { $"{pre} {year}", (int)Math.Round(comuna.Sum(a => a.Date.Year == year ? a.Weight : 0)) }
                     })));
 
-            List<PlanktonAssay> tmp = await GetAssays(config).ToListAsync().ConfigureAwait(false);
+            IQueryable<PlanktonAssay> tmp = GetAssays(config);
 
-            IEnumerable<IGrouping<Commune, PlanktonAssay>> comunas = tmp.GroupBy(c => c.Psmb == null || c.Psmb.Commune == null
-                    ? new Commune() : c.Psmb.Commune).OrderBy(o => o.Key.Name);
+            IOrderedQueryable<IGrouping<Commune, PlanktonAssay>> comunas = tmp
+                .GroupBy(c => c.Psmb.Commune).OrderBy(o => o.Key.Name);
 
             foreach (IGrouping<Commune, PlanktonAssay> comuna in comunas)
             {

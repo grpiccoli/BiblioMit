@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Localization;
 
 namespace BiblioMit.Controllers
@@ -26,11 +27,10 @@ namespace BiblioMit.Controllers
             RedirectToAction(nameof(Columnas), new { pg, rpp, srt, asc, val });
         // GET: Columnas
         [HttpGet]
-        public async Task<IActionResult> Columnas(
+        public IActionResult Columnas(
             string[] val, int pg = 1, int rpp = 20, bool asc = false, string srt = "ExcelId")
         {
             IQueryable<Registry> pre = _context.Registries.Pre();
-            //var sort = _context.Registries.FilterSort(srt);
             ViewData = _context.Registries.ViewData(pre, pg, rpp, srt, asc, val);
             ViewData["ExcelId"] = new MultiSelectList(
                 from InputFile e in _context.InputFiles
@@ -39,32 +39,23 @@ namespace BiblioMit.Controllers
                 ViewData["Filters"] is IDictionary<string, List<string>> Filters && Filters.ContainsKey("ExcelId") ?
                 Filters["ExcelId"] : null);
 
-            //var applicationDbContext = _asc ?
-            //    pre
-            //    .OrderBy(x => sort.GetValue(x))
-            //    //.Skip((pgNN - 1) * rppNN).Take(rppNN)
-            //    .Include(c => c.InputFile) :
-            //    pre
-            //    .OrderByDescending(x => sort.GetValue(x))
-            //    //.Skip((pgNN - 1) * rppNN).Take(rppNN)
-            //    .Include(c => c.InputFile);
+            IIncludableQueryable<Registry, ICollection<Header>> regs = 
+                _context.Registries.Include(r => r.InputFile).Include(r => r.Headers);
 
-            var regs = _context.Registries.Include(r => r.InputFile).Include(r => r.Headers);
-
-            var two2five = User.Claims.Any(c => c.Value == UserClaims.Digest.ToString());
-            var one = User.Claims.Any(c => c.Value == UserClaims.PSMB.ToString());
+            bool two2five = User.Claims.Any(c => c.Value == UserClaims.Digest.ToString());
+            bool one = User.Claims.Any(c => c.Value == UserClaims.PSMB.ToString());
 
             if (one && two2five)
             {
-                return View(await regs.Where(r => r.InputFileId < 6).ToListAsync().ConfigureAwait(false));
+                return View(regs.Where(r => r.InputFileId < 6));
             }
             else if (two2five)
             {
-                return View(await regs.Where(r => r.InputFileId > 1 && r.InputFileId < 6).ToListAsync().ConfigureAwait(false));
+                return View(regs.Where(r => r.InputFileId > 1 && r.InputFileId < 6));
             }
             else if (one)
             {
-                return View(await regs.Where(r => r.InputFileId == 1).ToListAsync().ConfigureAwait(false));
+                return View(regs.Where(r => r.InputFileId == 1));
             }
             return View();
         }
@@ -79,7 +70,7 @@ namespace BiblioMit.Controllers
                 throw new ArgumentException(_localizer["error"]);
             }
 
-            var separator = sep[0];
+            char separator = sep[0];
             Registry? model = await _context.Registries
                 .FindAsync(id).ConfigureAwait(false);
             if (model == null)
@@ -87,7 +78,7 @@ namespace BiblioMit.Controllers
                 throw new ArgumentOutOfRangeException(nameof(id));
             }
 
-            var heads = _context.Headers.Where(h => h.RegistryId == id);
+            IQueryable<Header> heads = _context.Headers.Where(h => h.RegistryId == id);
             model.Description = string.IsNullOrWhiteSpace(description) ? string.Empty : description;
             model.Operation = string.IsNullOrWhiteSpace(conversion) ? string.Empty : conversion;
             model.DecimalPlaces = places;
@@ -97,11 +88,11 @@ namespace BiblioMit.Controllers
             if (all.Any())
             {
                 _context.Headers.RemoveRange(heads);
-                var newh = all.Select(a => { var h = new Header { RegistryId = id }; h.SetName(a); return h; });
+                IEnumerable<Header> newh = all.Select(a => { Header h = new() { RegistryId = id }; h.SetName(a); return h; });
                 _context.Headers.AddRange(newh);
             }
             _context.Registries.Update(model);
-            var result = await _context.SaveChangesAsync().ConfigureAwait(false);
+            int result = await _context.SaveChangesAsync().ConfigureAwait(false);
 
             return Json(result);
         }

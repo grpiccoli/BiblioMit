@@ -25,7 +25,7 @@ namespace BiblioMit.Controllers
 
         // GET: Contacts
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             IQueryable<Contact> contacts = _context.Contacts
                 .Include(c => c.ConsessionOrResearch)
@@ -34,7 +34,7 @@ namespace BiblioMit.Controllers
             IQueryCollection q = Request.Query;
             string[] tmp = q["c"];
 
-            foreach (var c in tmp)
+            foreach (string c in tmp)
             {
                 if (int.TryParse(c, out int r))
                 {
@@ -44,10 +44,10 @@ namespace BiblioMit.Controllers
                 }
             }
 
-            var isAuthorized = User.IsInRole(RoleData.Administrator.ToString()) &&
+            bool isAuthorized = User.IsInRole(RoleData.Administrator.ToString()) &&
                                User.HasClaim(UserClaims.Contacts.ToString(), UserClaims.Contacts.ToString());
 
-            var currentUserId = _userManager.GetUserId(User);
+            string currentUserId = _userManager.GetUserId(User);
 
             // Only approved contacts are shown UNLESS you're authorized to see them
             // or you are the owner.
@@ -56,7 +56,6 @@ namespace BiblioMit.Controllers
                 contacts = contacts.Where(c => c.Status == ContactStatus.Approved
                                             || c.OwnerId == currentUserId);
             }
-            var modelAsync = contacts.ToListAsync();
 
             ViewData["c"] = tmp;
             ViewData["comunas"] = _context.Communes
@@ -67,7 +66,7 @@ namespace BiblioMit.Controllers
                 Province = c.Province.Name
             });
 
-            return View(await modelAsync.ConfigureAwait(false));
+            return View(contacts);
         }
 
         // GET: Contacts/Details/5
@@ -79,7 +78,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var contact = await _context.Contacts
+            Contact? contact = await _context.Contacts
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (contact == null)
             {
@@ -128,7 +127,7 @@ namespace BiblioMit.Controllers
                 return View(editModel);
             }
 
-            var contact = ViewModelToModel(new Contact(), editModel);
+            Contact contact = ViewModelToModel(new Contact(), editModel);
 
             contact.OwnerId = _userManager.GetUserId(User);
 
@@ -147,13 +146,13 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var contact = await _context.Contacts.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Contact? contact = await _context.Contacts.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (contact == null)
             {
                 return NotFound();
             }
 
-            var editModel = ModelToViewModel(contact);
+            ContactEditViewModel editModel = ModelToViewModel(contact);
 
             return View(editModel);
         }
@@ -173,7 +172,7 @@ namespace BiblioMit.Controllers
             }
 
             // Fetch Contact from DB to get OwnerId.
-            var contact = await _context.Contacts.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Contact? contact = await _context.Contacts.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (editModel == null || contact == null)
             {
                 return NotFound();
@@ -185,7 +184,7 @@ namespace BiblioMit.Controllers
             {
                 // If the contact is updated after approval, 
                 // and the user cannot approve set the status back to submitted
-                var canApprove = User.IsInRole(RoleData.Administrator.ToString()) && User.HasClaim(UserClaims.Contacts.ToString(), UserClaims.Contacts.ToString());
+                bool canApprove = User.IsInRole(RoleData.Administrator.ToString()) && User.HasClaim(UserClaims.Contacts.ToString(), UserClaims.Contacts.ToString());
 
                 if (!canApprove)
                 {
@@ -209,7 +208,7 @@ namespace BiblioMit.Controllers
                 return NotFound();
             }
 
-            var contact = await _context.Contacts
+            Contact? contact = await _context.Contacts
                 .SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (contact == null)
             {
@@ -226,7 +225,7 @@ namespace BiblioMit.Controllers
         [Authorize(Roles = nameof(RoleData.Administrator), Policy = nameof(UserClaims.Contacts))]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contact = await _context.Contacts.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Contact? contact = await _context.Contacts.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
             if (contact != null)
             {
                 _context.Contacts.Remove(contact);
@@ -241,7 +240,7 @@ namespace BiblioMit.Controllers
         [Authorize(Roles = nameof(RoleData.Administrator), Policy = nameof(UserClaims.Contacts))]
         public async Task<IActionResult> SetStatus(int id, ContactStatus status)
         {
-            var contact = await _context.Contacts.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
+            Contact? contact = await _context.Contacts.SingleOrDefaultAsync(m => m.Id == id).ConfigureAwait(false);
 
             if (contact != null)
             {
@@ -274,7 +273,7 @@ namespace BiblioMit.Controllers
         [Authorize(Roles = nameof(RoleData.Administrator), Policy = nameof(UserClaims.Contacts))]
         private static ContactEditViewModel ModelToViewModel(Contact contact)
         {
-            var editModel = new ContactEditViewModel()
+            ContactEditViewModel editModel = new()
             {
                 Id = contact.Id,
                 Last = contact.Last,

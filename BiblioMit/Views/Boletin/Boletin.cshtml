@@ -126,7 +126,7 @@
      data-urlgetfn="@Html.Raw(Url.Action("GetFN","Boletin",
     new { tipo = "TP", year = "YR", start = "STR", end = "END" }, Context.Request.Scheme))"
      data-urlgetattr="@Html.Raw(Url.Action("GetAttr","Boletin",
-    new { tp = "TP", lg = Localizer["en"].Value }, Context.Request.Scheme))"
+    new { tp = "TP", lg = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName }, Context.Request.Scheme))"
      data-disclaimer0="@Localizer["It is one of the objectives of the National Fisheries and Aquaculture Service to promote public access to information regarding the scope of its competences. In the context of the implementation of the &quot;Mitílidos Regional Strategic Program&quot;, supported by CORFO, the line of action is &quot;to generate productive bulletins to facilitate access to the industry, to the information currently in the field of public sector&quot;. In this sense it is necessary to point out the following:<br/><strong>a)</strong> The Productive Bulletin contains information of a general nature that does not address specific circumstances related to specific persons or bodies.<br/><strong>b)</strong> The Productive Bulletin is supported by the information provided by the owners of the centers of crops and processing plants, therefore, this information is of a declarative nature, and does not compromise any responsibility of the service for its content and dissemination.<br/><strong>c)</strong> The Production Bulletin contains information of a preliminary nature, therefore, it may be modified as long as its publication in the official yearbook is pending.<br/><strong>d)</strong> Additionally, Sernapesca is not responsible for the problems caused by technical errors, nor can it guarantee that this report is issued free of errors."]"
      data-disclaimer1="@Localizer["The mission of Intemit is to increase the competitiveness of Chilean mussel farming, strengthening its value chain from the supply, generating synergies of multidisciplinary-scientific-technological cooperation, through applied research, products and services, with emphasis on the development of solutions, to the main environmental and productive problems of the mitilicultor sector, to provide relevant information that allows making public-private decisions. In this sense it is necessary to point out the following:<br /><strong> a) </strong> The environmental data correspond to a segment of the biooceanographic data that Intemit manages according to the agreements for the use of the information signed by the holders of the area and intemit for the use and administration of the data associated with the bivalve mollusk program.<br /><strong> b) </strong> The environmental data is shown as reported without modification.<br /><strong> c) </strong> Additionally, Intemit is not responsible for problems caused by technical errors, nor can it guarantee that this report is issued free of errors."]"
      ></div>
@@ -318,7 +318,10 @@ role="tab" data-bs-toggle="tab" class="nav-link nav-item" name="Meses">@Localize
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var comuna in (IQueryable<CommuneList>)ViewData["Comunas"])
+                                    @{
+                                        IEnumerable<CommuneList>? comunas = (IEnumerable<CommuneList>?)ViewData["Comunas"];
+                                    }
+                                    @if(comunas != null) foreach (CommuneList comuna in comunas)
                                     {
                                         <tr>
                                             <td class="text-left">@comuna.Province</td>
@@ -391,18 +394,3 @@ role="tab" data-bs-toggle="tab" class="nav-link nav-item" name="Meses">@Localize
 </div>
 
 <partial name="_AmCharts" model="3"/>
-
-@*@section Scripts{
-    <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-    <script src="https://www.amcharts.com/lib/3/ammap.js"></script>
-    <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-    <script src="https://www.amcharts.com/lib/3/pie.js"></script>
-    <script src="https://www.amcharts.com/lib/3/xy.js"></script>
-    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
-    <script src="https://www.amcharts.com/lib/3/lang/es.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-    <script src="https://www.amcharts.com/lib/3/plugins/dataloader/dataloader.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alasql@0.4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.0/xlsx.core.min.js"></script>
-    <partial name="_BoletinJs" />
-}*@

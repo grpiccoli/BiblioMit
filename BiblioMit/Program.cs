@@ -19,15 +19,8 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
-using System.Globalization;
 using System.Text.Json.Serialization;
 
-string defaultCulture = "en";
-CultureInfo[] supportedCultures = new[]
-{
-    new CultureInfo(defaultCulture),
-    new CultureInfo("es")
-};
 string os = Environment.OSVersion.Platform.ToString();
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -77,9 +70,9 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     //This setting is in csproj
     //options.DefaultRequestCulture = new RequestCulture(defaultCulture);
     // Formatting numbers, dates, etc.
-    options.SupportedCultures = supportedCultures;
+    options.SupportedCultures = Statics.SupportedCultures;
     // UI strings that we have localized.
-    options.SupportedUICultures = supportedCultures;
+    options.SupportedUICultures = Statics.SupportedCultures;
 });
 
 builder.Services.AddResponseCaching();
