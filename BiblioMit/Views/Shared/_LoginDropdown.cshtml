@@ -61,7 +61,7 @@
             {
                 <li>
                 <form class="px-4 py-3" id="account" asp-controller="Home" asp-action="Login"
-                      asp-route-returnUrl="@Context.Request.Path"
+                      asp-route-returnUrl="@Context.Request.Path" asp-antiforgery="false"
                       method="post" autocomplete="on">
                     <div class="form-group">
                         <label asp-for="Email">@Localizer["Email"]</label>

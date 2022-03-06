@@ -32,7 +32,7 @@
     </a>
     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end m-0" aria-labelledby="Index">
         <li>
-            <form id="selectLanguage" asp-controller="Home"
+            <form id="selectLanguage" asp-controller="Home" asp-antiforgery="false"
                   asp-action="SetLanguage" asp-route-returnUrl="@returnUrl"
                   method="post" role="form" asp-route-culture="@Localizer["es"].Value">
                 <button type="submit" class="dropdown-item">

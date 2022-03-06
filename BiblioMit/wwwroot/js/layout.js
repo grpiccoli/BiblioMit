@@ -26,5 +26,13 @@ document.addEventListener("DOMContentLoaded", function () {
             clearInterval(interval);
         });
     }
+    fetch("antiforgery/get").then(r => r.json()).then(j => {
+        var input = document.createElement("input");
+        input.setAttribute("name", "__RequestVerificationToken");
+        input.setAttribute("type", "hidden");
+        input.value = j;
+        document.getElementById("selectLanguage").append(input.cloneNode(true));
+        document.getElementById("account").append(input);
+    });
 });
 //# sourceMappingURL=layout.js.map
