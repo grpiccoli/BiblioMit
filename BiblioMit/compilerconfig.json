@@ -4,6 +4,10 @@
     "inputFile": "src/styles/tableFilter.scss"
   },
   {
+    "outputFile": "wwwroot/css/homeIndex.css",
+    "inputFile": "src/styles/homeIndex.css"
+  },
+  {
     "outputFile": "wwwroot/css/contactsIndex.css",
     "inputFile": "src/styles/contactsIndex.scss"
   },
@@ -62,10 +66,6 @@
   {
     "outputFile": "wwwroot/css/gridPlanilla.css",
     "inputFile": "src/styles/gridPlanilla.scss"
-  },
-  {
-    "outputFile": "wwwroot/css/home.css",
-    "inputFile": "src/styles/home.scss"
   },
   {
     "outputFile": "wwwroot/css/prueba.css",

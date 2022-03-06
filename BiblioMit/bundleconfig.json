@@ -26,13 +26,6 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/css/homeIndex.min.css",
-    "inputFiles": [
-      "wwwroot/css/home.css",
-      "wwwroot/css/banners.css"
-    ]
-  },
-  {
     "outputFileName": "wwwroot/js/FlowPaperViewer.js",
     "inputFiles": [
       "src/scripts/flowpaper/FlowPaperViewer.js"
