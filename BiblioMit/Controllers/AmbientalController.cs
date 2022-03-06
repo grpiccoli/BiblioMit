@@ -6,25 +6,23 @@ using BiblioMit.Models.VM.AmbientalVM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Localization;
 using System.Globalization;
 using Range = BiblioMit.Models.Range;
 
 namespace BiblioMit.Controllers
 {
     [Authorize]
+    [ResponseCache(Duration = 60 * 60 * 24 * 365, VaryByQueryKeys = new string[] { "*" })]
     public class AmbientalController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IStringLocalizer<AmbientalController> _localizer;
         private readonly string _dateFormat;
         private readonly IWebHostEnvironment _environment;
         public AmbientalController(
             ApplicationDbContext context,
-            IWebHostEnvironment environment,
-            IStringLocalizer<AmbientalController> localizer)
+            IWebHostEnvironment environment
+            )
         {
-            _localizer = localizer;
             _context = context;
             _environment = environment;
             _dateFormat = "yyyy-MM-dd";
@@ -45,53 +43,6 @@ namespace BiblioMit.Controllers
             string[] htmlString = System.IO.File.ReadAllLines(file);
             return View("PullPlankton", string.Join("", htmlString));
         }
-        private IQueryable<ChoicesItem> CuencaChoices()
-        {
-            string singlabel = _localizer["Catchment Area"] + " ";
-            return _context.CatchmentAreas
-                .AsNoTracking()
-                .Select(c => new ChoicesItemSelected
-                {
-                    Value = c.Id,
-                    Label = singlabel + c.Name,
-                    Selected = c.Id == 1
-                });
-        }
-        private IQueryable<ChoicesItem> CommuneChoices() => _context.CatchmentAreas
-            .AsNoTracking()
-            .SelectMany(c => c.Communes
-            .Select(com => new ChoicesItem
-            {
-                Value = com.Id,
-                Label = com.Name + " " + c.Name
-            }));
-        private IQueryable<ChoicesItem> PsmbChoices() => _context.CatchmentAreas
-            .AsNoTracking()
-            .SelectMany(c => c.Communes
-        .SelectMany(com => com.Psmbs.Where(p => p.PolygonId.HasValue && p.PlanktonAssays.Any())
-        .Select(p => new ChoicesItem
-        {
-            Value = p.Id,
-            Label = p.Code + " " + p.Name + " " + c.Name
-        })));
-        private IQueryable<ChoicesItem> PublicAreaChoices() => CuencaChoices().Union(CommuneChoices());
-        private IQueryable<ChoicesItem> PrivateAreaChoices() => PublicAreaChoices().Union(PsmbChoices());
-        [HttpGet]
-        public IActionResult PublicAreasList() => Json(PublicAreaChoices());
-        [HttpGet]
-        public IActionResult PrivateAreasList() => Json(PrivateAreaChoices());
-        [HttpGet]
-        public IActionResult ProvinciaList()
-        {
-            string full = Path.Combine(
-                _environment.ContentRootPath,
-                "StaticFiles",
-                "json",
-                CultureInfo.CurrentUICulture.TwoLetterISOLanguageName,
-                "provinciafarmlist.json");
-            return PhysicalFile(full, "application/json");
-        }
-        [ResponseCache(Duration = 60 * 60, VaryByQueryKeys = new string[] { "*" })]
         [HttpGet]
         public JsonResult? TLData(int a, int psmb, int sp, int? v
             //, DateTime start, DateTime end
@@ -291,6 +242,7 @@ namespace BiblioMit.Controllers
             return Json(selection);
         }
         [HttpGet]
+        [ResponseCache(Duration = 60)]
         public IActionResult BuscarInformes(int id, string start, string end)
         {
             int order = id / 99_996 + 24_998 / 24_999;
@@ -305,8 +257,8 @@ namespace BiblioMit.Controllers
             };
             return Json(plankton.Select(p => new { p.Id, SamplingDate = p.SamplingDate.ToShortDateString(), p.Temperature, p.Oxigen, p.Ph, p.Salinity }));
         }
-        [ResponseCache(Duration = 60 * 60, VaryByQueryKeys = new string[] { "*" })]
         [HttpGet]
+        [ResponseCache(Duration = 60)]
         public IActionResult CustomData(int area, int typeid, DateTime start, DateTime end)
         {
             end = end.AddDays(1);
@@ -320,7 +272,7 @@ namespace BiblioMit.Controllers
             g.Average(p => p.Value))));
         }
         [AllowAnonymous]
-        [ResponseCache(Duration = 60 * 60, VaryByQueryKeys = new string[] { "*" })]
+        [ResponseCache(Duration = 60)]
         [HttpGet]
         public IActionResult Data(int area, char type, int id, DateTime start, DateTime end)
         {

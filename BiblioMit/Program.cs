@@ -260,27 +260,6 @@ app.UseRouting();
 
 app.UseResponseCaching();
 
-app.Use(async (context, next) =>
-{
-    context.Response.GetTypedHeaders().CacheControl =
-    new CacheControlHeaderValue()
-    {
-        Public = context.Request.Method == "GET",
-        MaxAge = TimeSpan.FromSeconds(60)
-    };
-    IResponseCachingFeature? responseCachingFeature = context.Features.Get<IResponseCachingFeature>();
-
-    if(responseCachingFeature != null)
-    {
-        responseCachingFeature.VaryByQueryKeys = new[] { "*" };
-    }
-
-    context.Response.Headers[HeaderNames.Vary] =
-        new string[] { "Accept-Encoding" };
-
-    await next();
-});
-
 IOptions<RequestLocalizationOptions>? localOptions = app.Services.GetService<IOptions<RequestLocalizationOptions>>();
 if (localOptions != null) app.UseRequestLocalization(localOptions.Value);
 

@@ -22,6 +22,7 @@ using System.Text.RegularExpressions;
 namespace BiblioMit.Controllers
 {
     [AllowAnonymous]
+    [ResponseCache(Duration = 60 * 60 * 24 * 365, VaryByQueryKeys = new string[] { "*" })]
     public class HomeController : Controller
     {
         private readonly IPuppet _puppet;
@@ -66,6 +67,7 @@ namespace BiblioMit.Controllers
             return View("Flowpaper", model);
         }
         [HttpGet]
+        [ResponseCache(Duration = 60)]
         public IActionResult GetBanner(string f)
         {
             string name = Regex.Replace(f, ".*/", "");
@@ -245,6 +247,7 @@ namespace BiblioMit.Controllers
             return View();
         }
         [HttpGet]
+        [ResponseCache(Duration = 60)]
         public IActionResult Index()
         {
             return View(_banner.ReadCarousel(true, true, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName));
