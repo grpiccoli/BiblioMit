@@ -61,6 +61,9 @@ namespace BiblioMit.Views.Components.Nav
                             {
                                 Controller = "Home",
                                 Action = "Flowpaper",
+                                Parameters = new Dictionary<string, string>{
+                                    { "n", "manual" }
+                                },
                                 Name = _localizer["User Manual"],
                                 Icon = "far fa-question-circle"
                             },
