@@ -5,7 +5,7 @@
   },
   {
     "outputFile": "wwwroot/css/homeIndex.css",
-    "inputFile": "src/styles/homeIndex.css"
+    "inputFile": "src/styles/homeIndex.scss"
   },
   {
     "outputFile": "wwwroot/css/contactsIndex.css",
