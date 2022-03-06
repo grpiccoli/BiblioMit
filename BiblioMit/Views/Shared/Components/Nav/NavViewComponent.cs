@@ -7,6 +7,7 @@ using System.Security.Principal;
 
 namespace BiblioMit.Views.Components.Nav
 {
+    [ResponseCache(Duration = 60 * 60 * 24 * 365)]
     public class NavViewComponent : ViewComponent
     {
         private readonly IStringLocalizer<NavViewComponent> _localizer;
@@ -213,13 +214,6 @@ namespace BiblioMit.Views.Components.Nav
                             },
                             new Link
                             {
-                                Controller = "Contacts",
-                                Action = "Index",
-                                Name = _localizer["Contacts"],
-                                Icon = "far fa-address-book"
-                            },
-                            new Link
-                            {
                                 Controller = "Publications",
                                 Action = "Agenda",
                                 Name = _localizer["Funding"],
@@ -273,13 +267,6 @@ namespace BiblioMit.Views.Components.Nav
                         Name = _localizer["Forums"],
                         Links = new Collection<Link>
                         {
-                            new Link
-                            {
-                                Controller = "Home",
-                                Action = "UserManage",
-                                Name = _localizer["Profile"],
-                                Icon = "fas fa-user-edit"
-                            },
                             new Link()
                             {
                                 Controller = "Home",
@@ -347,6 +334,20 @@ namespace BiblioMit.Views.Components.Nav
 
             if (admin && claims.Contains(UserClaims.PSMB))
             {
+                publications.Sections.Add(new Section
+                {
+                    Name = _localizer["Administration"],
+                    Links = new Collection<Link>
+                    {
+                        new Link
+                        {
+                            Controller = "Contacts",
+                            Action = "Index",
+                            Name = _localizer["Contacts"],
+                            Icon = "far fa-address-book"
+                        }
+                    }
+                });
                 boletin.Sections.Add(new Section
                 {
                     Name = _localizer["Administration"],
@@ -405,6 +406,13 @@ namespace BiblioMit.Views.Components.Nav
                     Name = _localizer["Administration"],
                     Links = new Collection<Link>
                         {
+                            new Link
+                            {
+                                Controller = "Home",
+                                Action = "UserManage",
+                                Name = _localizer["Profile"],
+                                Icon = "fas fa-user-edit"
+                            },
                             new Link
                             {
                                 Controller = "Fora",
