@@ -2,11 +2,11 @@
 @using BiblioMit.Models.PostViewModels
 @model HomeIndexModel
 
-<partial name="_Libs" model='new List<string> { "background" }' />
+<partial name="_Libs" model='new List<string> { "homeForum" }' />
 
 <div class="container body-content">
     <div class="row frontPageSplash">
-        <div class="col-md-6 frontPageLearn">
+        <div class="col frontPageLearn">
             <div class="frontPageHeading">Foro BiblioMit Aprende, Colabora, Comparte conocimiento</div>
             <p class="frontPageSubHeading">Primer foro de mitilicultura de Chile</p>
             <div>
@@ -15,29 +15,45 @@
                 </form>
             </div>
         </div>
-        <div class="col-md-6"></div>
     </div>
     <div class="row frontPageContent">
-        <h3 id="latestsPosts">Últimas publicaciones</h3>
-        <table class="table table-hover" id="latestsPostsTable">
+        <h3 id="latestsPosts" class="text-dark">Últimas publicaciones</h3>
+        <table class="table table-hover table-boredered" id="latestsPostsTable">
             <tbody>
                 @foreach (PostListingModel post in Model.LatestPosts)
                 {
                     <tr>
                         <td>
-                            <div class="forumLogo" data-url="@post.Forum.ImageUrl"></div>
-                            <div class="postTitle">
-                                <a asp-controller="Posts" asp-action="Index" asp-route-id="@post.Id">
-                                    @post.Title
-                                </a>
-                            </div>
-                            <div class="postSubTitle">
-                                <span>@post.RepliesCount Respuesta@(post.RepliesCount != 1 ? "s" : "")</span>
-                                <span class="postUser">
-                                    <a asp-controller="Profile" asp-action="Detail" asp-route-id="@post.AuthorId">
-                                        @post.AuthorName
+                            <a asp-controller="Fora" asp-action="Topic" asp-route-id="@post.Forum.Id">
+                                <div class="forumLogo" style="background-image:url(@post.Forum.ImageUrl)"></div>
+                            </a>
+                            <div class="postData">
+                                <div class="postTitle">
+                                    <a asp-controller="Posts" asp-action="Index" asp-route-id="@post.Id">
+                                        @post.Title
                                     </a>
-                                </span>
+                                </div>
+                                <div class="postSubTitle">
+                                    <span>@post.RepliesCount Respuesta@(post.RepliesCount != 1 ? "s" : "")</span>
+                                    <div class="postUser">
+                                        <a asp-controller="Profile" asp-action="Detail" asp-route-id="@post.AuthorId">
+                                            @post.AuthorName
+                                        </a>
+                                        <div class="stars">
+                                            <span class="star @(post.AuthorRating > 2 ? "on" : post.AuthorRating == 1 ? "half": "")"></span>
+                                            <span class="star @(post.AuthorRating > 4 ? "on" : post.AuthorRating == 3 ? "half": "")"></span>
+                                            <span class="star @(post.AuthorRating > 6 ? "on" : post.AuthorRating == 5 ? "half": "")"></span>
+                                            <span class="star @(post.AuthorRating > 8 ? "on" : post.AuthorRating == 7 ? "half": "")"></span>
+                                            <span class="star @(post.AuthorRating > 10 ? "on" : post.AuthorRating == 9 ? "half": "")"></span>
+                                        </div>
+                                        En:
+                                        <span class="postForum">
+                                            <a asp-controller="Profile" asp-action="Detail" asp-route-id="@post.AuthorId">
+                                                @post.Forum.Name
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </td>
                     </tr>

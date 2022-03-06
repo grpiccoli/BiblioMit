@@ -1,5 +1,9 @@
 ﻿[
   {
+    "outputFile": "wwwroot/css/homeForum.css",
+    "inputFile": "src/styles/homeForum.scss"
+  },
+  {
     "outputFile": "wwwroot/css/tableFilter.css",
     "inputFile": "src/styles/tableFilter.scss"
   },
@@ -38,10 +42,6 @@
   {
     "outputFile": "wwwroot/css/chat.css",
     "inputFile": "src/styles/chat.scss"
-  },
-  {
-    "outputFile": "wwwroot/css/background.css",
-    "inputFile": "src/styles/background.scss"
   },
   {
     "outputFile": "wwwroot/css/boletinBoletin.css",

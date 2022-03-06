@@ -1,4 +1,5 @@
-﻿@import url(https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono);
+﻿@import "background";
+@import url(https://fonts.googleapis.com/css?family=Roboto%7CRoboto+Mono);
 
 .sectionHeader {
     background-color: rgba(0,0,0,0.9);
@@ -55,14 +56,15 @@
 }
 
 .frontPageSplash {
-    background-image: url("../images/backgrounds/pexels-photo-212286-smo.jpeg");
+    background-image: url("../../wwwroot/images/backgrounds/87a36c4e7ac349ad932a71428ddb07a4_th.jpg");
     background-repeat: no-repeat;
-    background-size: 1300px;
+    background-size: 100%;
     background-position: left;
 }
 
 .frontPageLearn {
     font-family: 'Roboto';
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 12px 0 0 32px;
     height: 360px;
 }
@@ -110,14 +112,13 @@
     }
 
 .frontPageContent {
-    background-color: rgba(255,255,255,0.9);
+    background-color: rgba(207,207,207,0.9);
     padding: 16px;
 }
 
 #latestPosts {
     font-size: 1.2em;
     font-weight: bold;
-    color: #333;
     margin: 4px 0 16px 0;
 }
 
