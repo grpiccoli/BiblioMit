@@ -69,44 +69,19 @@
 		<PackageReference Include="UAParser" Version="3.1.47" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Remove="ServiceWorker\Files\CacheFingerprinted.js" />
-		<None Remove="ServiceWorker\Files\CacheFirst.js" />
-		<None Remove="ServiceWorker\Files\CacheFirstSafe.js" />
-		<None Remove="ServiceWorker\Files\Minimal.js" />
-		<None Remove="ServiceWorker\Files\NetworkFirst.js" />
-		<None Remove="ServiceWorker\Files\offline.html" />
-		<None Remove="src\scripts\background.ts" />
-	</ItemGroup>
-	<ItemGroup>
-		<EmbeddedResource Include="Pwa\ServiceWorker\Files\CacheFingerprinted.js" />
-		<EmbeddedResource Include="Pwa\ServiceWorker\Files\CacheFirst.js" />
-		<EmbeddedResource Include="Pwa\ServiceWorker\Files\Minimal.js" />
-		<EmbeddedResource Include="Pwa\ServiceWorker\Files\NetworkFirst.js" />
-		<EmbeddedResource Include="Pwa\ServiceWorker\Files\offline.html" />
-		<EmbeddedResource Include="Pwa\ServiceWorker\Files\CacheFirstSafe.js" />
+		<Compile Remove="Pwa\ServiceWorker\Files\**" />
+		<Content Remove="Pwa\ServiceWorker\Files\**" />
+		<EmbeddedResource Remove="Pwa\ServiceWorker\Files\**" />
+		<None Remove="Pwa\ServiceWorker\Files\**" />
+		<Content Include="Pwa\ServiceWorker\Files\**" CopyToPublishDirectory="PreserveNewest" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Include="..\.editorconfig" Link=".editorconfig" />
-	  <None Include="Views\Softs\Create.cshtml" />
-	  <None Include="Views\Softs\Delete.cshtml" />
-	  <None Include="Views\Softs\Details.cshtml" />
-	  <None Include="Views\Softs\Edit.cshtml" />
-	  <None Include="Views\Softs\Index.cshtml" />
-	  <None Include="Views\Variables\Create.cshtml" />
-	  <None Include="Views\Variables\Delete.cshtml" />
-	  <None Include="Views\Variables\Details.cshtml" />
-	  <None Include="Views\Variables\Edit.cshtml" />
-	  <None Include="Views\Variables\Index.cshtml" />
-	  <None Include="Views\VariableTypes\Create.cshtml" />
-	  <None Include="Views\VariableTypes\Delete.cshtml" />
-	  <None Include="Views\VariableTypes\Details.cshtml" />
-	  <None Include="Views\VariableTypes\Edit.cshtml" />
-	  <None Include="Views\VariableTypes\Index.cshtml" />
 	</ItemGroup>
 	<ItemGroup>
 		<ServiceWorker Include="wwwroot\serviceworker" PublishedContent="wwwroot\serviceworker" />
 	</ItemGroup>
 	<ItemGroup>
-	  <TypeScriptCompile Include="src\scripts\background.ts" />
+	  <TypeScriptCompile Include="src\scripts\**.ts" />
 	</ItemGroup>
 </Project>
