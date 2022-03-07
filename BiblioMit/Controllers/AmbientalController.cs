@@ -12,7 +12,6 @@ using Range = BiblioMit.Models.Range;
 namespace BiblioMit.Controllers
 {
     [Authorize]
-    [ResponseCache(Duration = 60 * 60 * 24 * 365, VaryByQueryKeys = new string[] { "*" })]
     public class AmbientalController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -244,7 +243,6 @@ namespace BiblioMit.Controllers
             return Json(selection);
         }
         [HttpGet]
-        [ResponseCache(Duration = 60)]
         public IActionResult BuscarInformes(int id, string start, string end)
         {
             int order = id / 99_996 + 24_998 / 24_999;
@@ -260,7 +258,6 @@ namespace BiblioMit.Controllers
             return Json(plankton.Select(p => new { p.Id, SamplingDate = p.SamplingDate.ToShortDateString(), p.Temperature, p.Oxigen, p.Ph, p.Salinity }));
         }
         [HttpGet]
-        [ResponseCache(Duration = 60)]
         public IActionResult CustomData(int area, int typeid, DateTime start, DateTime end)
         {
             end = end.AddDays(1);
@@ -274,7 +271,6 @@ namespace BiblioMit.Controllers
             g.Average(p => p.Value))));
         }
         [AllowAnonymous]
-        [ResponseCache(Duration = 60)]
         [HttpGet]
         public IActionResult Data(int area, char type, int id, DateTime start, DateTime end)
         {

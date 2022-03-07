@@ -240,7 +240,6 @@ namespace BiblioMit.Controllers
             return View();
         }
         [HttpGet]
-        [ResponseCache(Duration = 60)]
         public IActionResult Index()
         {
             return View(_banner.ReadCarousel(true, true, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName));
@@ -353,7 +352,7 @@ namespace BiblioMit.Controllers
             return View();
         }
         [HttpGet]
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = System.Diagnostics.Activity.Current?.Id ?? HttpContext.TraceIdentifier });
