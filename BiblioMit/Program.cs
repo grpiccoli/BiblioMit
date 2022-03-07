@@ -73,6 +73,7 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.SupportedCultures = Statics.SupportedCultures;
     // UI strings that we have localized.
     options.SupportedUICultures = Statics.SupportedCultures;
+    options.ApplyCurrentCultureToResponseHeaders = true;
 });
 
 builder.Services.AddResponseCaching();
@@ -274,6 +275,9 @@ app.MapFallbackToController("Index", "Home");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}").RequireAuthorization();
+app.MapControllerRoute(
+    name: "culture-route",
+    pattern: "{culture=es}/{controller=Home}/{action=Index}/{id?}").RequireAuthorization();
 
 app.MapHub<EntryHub>("/entryHub").RequireAuthorization();
 app.MapRazorPages();

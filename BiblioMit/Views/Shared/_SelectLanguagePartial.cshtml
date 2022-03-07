@@ -22,7 +22,7 @@
         <li>
             <form id="selectLanguage" asp-controller="Home" asp-antiforgery="false"
                   asp-action="SetLanguage" asp-route-returnUrl="@returnUrl"
-                  method="post" role="form" asp-route-culture="@Localizer["es"].Value">
+                  method="post" role="form" asp-route-lang="@Localizer["es"].Value">
                 <button type="submit" class="dropdown-item">
                     <span class="flag flag-@Localizer["cl"]">
                         <span class="path1"></span>

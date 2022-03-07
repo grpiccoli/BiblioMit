@@ -7,7 +7,6 @@ using System.Security.Principal;
 
 namespace BiblioMit.Views.Components.Nav
 {
-    [ResponseCache(Duration = 60 * 60 * 24 * 365)]
     public class NavViewComponent : ViewComponent
     {
         private readonly IStringLocalizer<NavViewComponent> _localizer;
@@ -18,6 +17,11 @@ namespace BiblioMit.Views.Components.Nav
             _localizer = localizer;
         }
         public IViewComponentResult Invoke()
+        {
+            DefaultModel result = new(new ReadOnlyCollection<NavDDwnVM>(NavBarElement()));
+            return View(result);
+        }
+        public List<NavDDwnVM> NavBarElement()
         {
             NavDDwnVM links = new()
             {
@@ -592,8 +596,7 @@ namespace BiblioMit.Views.Components.Nav
                     }
                 });
             }
-            DefaultModel result = new(new ReadOnlyCollection<NavDDwnVM>(model));
-            return View(result);
+            return model;
         }
     }
     public class DefaultModel

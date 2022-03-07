@@ -132,14 +132,23 @@
   <data name="A search engine for multiple sources of scientific literature for the mussel farming industry at a national level (downloadable in digital format), including" xml:space="preserve">
     <value>Un buscador de literatura científica con documentos recopilados desde múltiples fuentes para el sector Mitilicultor a nivel nacional (descargable en formato digital), incluyendo</value>
   </data>
+  <data name="A Tool of" xml:space="preserve">
+    <value>Una heramienta de</value>
+  </data>
   <data name="About" xml:space="preserve">
     <value>Nosotros</value>
+  </data>
+  <data name="and developed by" xml:space="preserve">
+    <value>y desarrollado por</value>
   </data>
   <data name="and developed by &lt;strong&gt;Guillermo Rodriguez Piccoli&lt;/strong&gt;" xml:space="preserve">
     <value>y desarrollado por &lt;strong&gt;Guillermo Rodríguez Piccoli&lt;/strong&gt;</value>
   </data>
   <data name="and managed by the &lt;strong&gt;Centre of Applied Research for Aquaculture and Fishery&lt;/strong&gt;" xml:space="preserve">
     <value>y administrado por el &lt;strong&gt;Centro Acuícola Pesquero de Investigación Aplicada&lt;/strong&gt;</value>
+  </data>
+  <data name="as part of the regional strategic program of mussels" xml:space="preserve">
+    <value>como parte del programa estratégico regional de mejillones</value>
   </data>
   <data name="at &lt;strong&gt;Epic Solutions Consulting&lt;/strong&gt;" xml:space="preserve">
     <value>desde la consultora &lt;strong&gt;Epic Solutions&lt;/strong&gt;</value>
@@ -156,8 +165,17 @@
   <data name="Digest" xml:space="preserve">
     <value>Boletín</value>
   </data>
+  <data name="Electronic Library and Platform for Digital Management of &lt;i&gt;Mytilus chilensis&lt;/i&gt; Resource." xml:space="preserve">
+    <value>Librería electrónica y plataforma de manejo digital del recurso &lt;i&gt;Mytilus chilensis&lt;/i&gt;.</value>
+  </data>
+  <data name="financed by" xml:space="preserve">
+    <value>financiada por</value>
+  </data>
   <data name="financed by the &lt;strong&gt;Production Development Coorporation of Chile&lt;/strong&gt;" xml:space="preserve">
     <value>financiado por la &lt;strong&gt;Corporación de Fomento de la Producción&lt;/strong&gt;</value>
+  </data>
+  <data name="for" xml:space="preserve">
+    <value>para</value>
   </data>
   <data name="for the &lt;strong&gt;Technological Institute of Mussel Farming&lt;/strong&gt;" xml:space="preserve">
     <value>para el &lt;strong&gt;Instituto Tecnológico de Mitilicultura&lt;/strong&gt;</value>
@@ -206,6 +224,9 @@
   </data>
   <data name="Technological Management Platform for Mussel Farming Sector" xml:space="preserve">
     <value>Plataforma de Gestión Tecnológica para el Sector Mitilicultor</value>
+  </data>
+  <data name="through" xml:space="preserve">
+    <value>por medio de</value>
   </data>
   <data name="within the framework of project &lt;i&gt;Code 16 Node 70434 &quot;Science and Technology Node for the Mussel Farming Industry&quot;&lt;/i&gt; of the &lt;strong&gt;Strategic Regional Program for the Mussel Indutry&lt;/strong&gt;" xml:space="preserve">
     <value>enmarcado en el proyecto &lt;i&gt;Código 16 NODO 70434 "Nodo Ciencia y Tecnología para la Industria Mitilicultora"&lt;/i&gt; del &lt;strong&gt;Programa Estratégico Regional Industria de la Mitilicultura&lt;/strong&gt;</value>

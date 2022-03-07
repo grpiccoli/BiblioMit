@@ -22,7 +22,6 @@ using System.Text.RegularExpressions;
 namespace BiblioMit.Controllers
 {
     [AllowAnonymous]
-    [ResponseCache(Duration = 60 * 60 * 24 * 365, VaryByQueryKeys = new string[] { "*" })]
     public class HomeController : Controller
     {
         private readonly IPuppet _puppet;
@@ -67,7 +66,6 @@ namespace BiblioMit.Controllers
             return View("Flowpaper", model);
         }
         [HttpGet]
-        [ResponseCache(Duration = 60)]
         public IActionResult GetBanner(string f)
         {
             string name = Regex.Replace(f, ".*/", "");
@@ -107,11 +105,6 @@ namespace BiblioMit.Controllers
                 }
             }
             return RedirectToPage("/Account/Login", new { ReturnUrl = returnUrl, area = "Identity" });
-        }
-        [HttpGet]
-        public IActionResult Manual()
-        {
-            return View();
         }
         [HttpGet]
         public IActionResult Survey()
@@ -368,13 +361,13 @@ namespace BiblioMit.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult SetLanguage(string culture, Uri returnUrl)
+        public IActionResult SetLanguage(string lang, Uri returnUrl)
         {
-            if (!string.IsNullOrWhiteSpace(culture))
+            if (!string.IsNullOrWhiteSpace(lang))
             {
                 Response.Cookies.Append(
                     CookieRequestCultureProvider.DefaultCookieName,
-                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
+                    CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(lang)),
                     new CookieOptions
                     {
                         Expires = DateTimeOffset.UtcNow.AddYears(1),
