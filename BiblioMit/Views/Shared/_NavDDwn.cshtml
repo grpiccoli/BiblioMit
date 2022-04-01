@@ -11,18 +11,12 @@
         <span class="small">@Model.Title</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-dark m-0 p-0" aria-labelledby="@Model.Title">
-        @foreach (var section in Model.Sections.Select((s, i) => new { s, i }))
+        @foreach (Section section in Model.Sections)
         {
-            if (section.i > 0)
-            {
-                <li>
-                    <hr class="dropdown-divider" />
-                </li>
-            }
             <li>
-                <div class="dropdown-header">@(section.s.Name):</div>
+                <div class="dropdown-header">@(section.Name):</div>
             </li>
-            @foreach (Link item in section.s.Links)
+            @foreach (Link item in section.Links)
             {
                 <li>
                     <a class="dropdown-item"
@@ -32,6 +26,9 @@
                     </a>
                 </li>
             }
+            <li>
+                <hr class="dropdown-divider" />
+            </li>
         }
     </ul>
 </li>

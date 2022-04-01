@@ -21,79 +21,27 @@ namespace BiblioMit.Extensions
         }
         public static double? ParseDouble(
             this string text,
-            int? decimalPlaces = null,
-            char? decimalSeparator = null,
-            bool? deleteAfter2ndNegative = null,
             string? operation = null)
         {
+            text = Regex.Replace(text, @"[^\d-\.,]", "");
+            text = Regex.Replace(text, @"([^^])\-.*", "$1");
+            text = Regex.Replace(text, @"\.+", ".");
+            text = Regex.Replace(text, @",+", ",");
+
             if (string.IsNullOrEmpty(text))
             {
                 return null;
             }
 
-            text = Regex.Replace(text, @"[^\d-\.,]", "");
-            if (deleteAfter2ndNegative.HasValue && deleteAfter2ndNegative.Value)
-            {
-                text = Regex.Replace(text, @"([^^])\-.*", "$1");
-            }
-
-            double? num = null;
-            if (decimalSeparator.HasValue)
-            {
-                text = Regex.Replace(text, @$"[^\d\{decimalSeparator.Value}]", "");
-                if (string.IsNullOrEmpty(text))
-                {
-                    return null;
-                }
-
-                string[] orders = text.Split(decimalSeparator.Value);
-                if (orders.Length > 1)
-                {
-                    num = double.Parse($"{string.Join("", orders.SkipLast(1))}.{orders.Last()}", CultureInfo.InvariantCulture);
-                }
-                else
-                {
-                    num = double.Parse($"{string.Join("", orders.First())}", CultureInfo.InvariantCulture);
-                }
-            }
-            else if (decimalPlaces.HasValue)
-            {
-                text = Regex.Replace(text, @"\D", "");
-                if (string.IsNullOrEmpty(text))
-                {
-                    return null;
-                }
-
-                text = $"{text[..^decimalPlaces.Value]}.{text[^decimalPlaces.Value..]}";
-                num = double.Parse(text, CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                text = Regex.Replace(text, @"\.+", ".");
-                text = Regex.Replace(text, @",+", ",");
-                if (string.IsNullOrEmpty(text))
-                {
-                    return null;
-                }
-
-                bool negative = text.First() == '-';
-                char sign = negative ? '-' : '+';
-                IEnumerable<string> orders = Regex.Matches(text, @"[0-9]+").Select(m => m.Value);
-                num = orders.Count() switch
-                {
-                    1 => double.Parse($"{sign}{orders.First()}", CultureInfo.InvariantCulture),
-                    2 => SolveDouble(sign, orders.First(), orders.Last()),
-                    _ => double.Parse($"{sign}{string.Join("", orders.SkipLast(1))}.{orders.Last()}", CultureInfo.InvariantCulture)
-                };
-            }
+            bool parsed = double.TryParse(text, NumberStyles.Any, new CultureInfo("es-CL"), out double num);
             if (operation != null)
             {
                 DataTable dt = new();
                 string? computed = dt.Compute($"{num}{operation}", null).ToString();
-                bool parsed = double.TryParse(computed, NumberStyles.Float, CultureInfo.InvariantCulture, out double result);
-                return parsed ? result : null;
+                bool opparsed = double.TryParse(computed, NumberStyles.Float, CultureInfo.InvariantCulture, out double result);
+                return opparsed ? result : null;
             }
-            return num;
+            return parsed ? num : null;
         }
         public static double? SolveDouble(char sign, string head, string tail)
         {

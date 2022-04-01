@@ -10,9 +10,11 @@
 
     if (!ViewData.Keys.Contains("Title"))
     {
-        ViewData["controller"] = this.ViewContext.RouteData.Values["controller"]?.ToString();
-        ViewData["action"] = this.ViewContext.RouteData.Values["action"]?.ToString();
-        ViewData["Title"] = ViewData["controller"] + " " + ViewData["action"];
+        string? controller = this.ViewContext.RouteData.Values["controller"]?.ToString();
+        string? action = this.ViewContext.RouteData.Values["action"]?.ToString();
+        ViewData["controller"] = controller;
+        ViewData["action"] = action;
+        ViewData["Title"] = controller + " " + action;
     }
     if (!ViewData.Keys.Contains("footer-text"))
     {

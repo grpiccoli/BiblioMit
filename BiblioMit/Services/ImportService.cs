@@ -940,9 +940,7 @@ namespace BiblioMit.Services
 
                     List<string> genusSp = fullName.SplitSpaces().ToList();
                     double? ce = matrix.GetValue(3, row)
-                        .ParseDouble(
-                        PhytoTData.DecimalPlaces, PhytoTData.DecimalSeparator,
-                        PhytoTData.DeleteAfter2ndNegative, PhytoTData.Operation);
+                        .ParseDouble(PhytoTData.Operation);
                     if (ce.HasValue)
                     {
                         if (ce == 0)
@@ -1444,8 +1442,7 @@ namespace BiblioMit.Services
             return data.FieldName switch
             {
                 nameof(Int32) => val.ParseInt(data.DeleteAfter2ndNegative, data.Operation),
-                nameof(Double) => val.ParseDouble(data.DecimalPlaces, data.DecimalSeparator,
-                    data.DeleteAfter2ndNegative, data.Operation),
+                nameof(Double) => val.ParseDouble(data.Operation),
                 nameof(Boolean) => !val.ToUpperInvariant()[0].Equals('N') || val.ToUpperInvariant()[0].Equals('F'),
                 nameof(DateTime) => val.ParseDateTime(),
                 nameof(ProductionType) => val.ParseProductionType(),
