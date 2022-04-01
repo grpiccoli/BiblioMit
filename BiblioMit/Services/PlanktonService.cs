@@ -1,20 +1,8 @@
 ﻿using BiblioMit.Data;
-//using BiblioMit.Extensions;
-//using BiblioMit.Models;
-//using BiblioMit.Models.Entities.Environmental.Plancton;
 using BiblioMit.Services.Interfaces;
-//using Microsoft.AspNetCore.Hosting;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.Extensions.Logging;
-//using System;
-//using System.Collections.Generic;
 using System.Globalization;
-//using System.IO;
 using System.Net;
-//using System.Net.Http;
 using System.Text.RegularExpressions;
-//using System.Threading;
-//using System.Threading.Tasks;
 using System.Web;
 
 namespace BiblioMit.Services

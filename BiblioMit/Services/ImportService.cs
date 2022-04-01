@@ -1158,7 +1158,7 @@ namespace BiblioMit.Services
         }
         private static string GetKey<T>(T? item, string key) where T : IHasBasicIndexer => item?[key]?.ToString() ?? string.Empty;
         private async Task<TEntity?> FindParsedAsync<TEntity>
-            (Indexed? item, string attribute, string normalized) where TEntity : class?, IHasBasicIndexer?
+            (Indexed? item, string attribute, string normalized) where TEntity : class, IHasBasicIndexer
         {
             //return null if arguments null
             if (string.IsNullOrWhiteSpace(normalized))
@@ -1375,7 +1375,7 @@ namespace BiblioMit.Services
                 {
                     PlanktonAssayId = id.Value
                 };
-                emailensayo.Email = await FindParsedAsync<Email?>(emailensayo, nameof(Email.Address), email).ConfigureAwait(false);
+                emailensayo.Email = await FindParsedAsync<Email>(emailensayo, nameof(Email.Address), email).ConfigureAwait(false);
                 results.Add(emailensayo);
             }
             return results;
@@ -1439,6 +1439,8 @@ namespace BiblioMit.Services
                 return null;
             }
 
+            Type? type = data.FieldName == nameof(Enum) ? DataTableExtensions.GetEnumType(data.FieldName) : null;
+
             return data.FieldName switch
             {
                 nameof(Int32) => val.ParseInt(data.DeleteAfter2ndNegative, data.Operation),
@@ -1447,7 +1449,7 @@ namespace BiblioMit.Services
                 nameof(DateTime) => val.ParseDateTime(),
                 nameof(ProductionType) => val.ParseProductionType(),
                 nameof(Item) => val.ParseItem(),
-                nameof(Enum) => Enum.Parse(DataTableExtensions.GetEnumType(data.FieldName), val),
+                nameof(Enum) => type is null ? null : Enum.Parse(type, val),
                 nameof(Station) => await ParseEstacion(val, item).ConfigureAwait(false),
                 nameof(Laboratory) => await ParseLaboratorio(val, item).ConfigureAwait(false),
                 nameof(SamplingEntity) => await ParseEntidadMuestreadora(val, item).ConfigureAwait(false),
