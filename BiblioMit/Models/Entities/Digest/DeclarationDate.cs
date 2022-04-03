@@ -12,6 +12,6 @@ namespace BiblioMit.Models.Entities.Digest
         public double Weight { get; set; }//2
         public Item? ItemType { get; set; }
         public ProductionType? ProductionType { get; set; }
-        public bool RawMaterial { get; set; }
+        public bool? RawMaterial { get; set; }
     }
 }
