@@ -1,5 +1,6 @@
 ﻿using BiblioMit.Data;
 using BiblioMit.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -72,9 +73,10 @@ namespace BiblioMit.Services
             };
             using HttpClient client = new(handler);
             List<UserQueryableModel> users = _context.PlanktonUsers
+                .Include(p => p.Assays)
                 .Where(p => p.Name != null && p.Password != null)
-                .Select(u => new UserQueryableModel(u.Name ?? string.Empty, u.Password ?? string.Empty, null
-                //u.Assays.Max(a => a.SamplingDate)
+                .Select(u => new UserQueryableModel(u.Name ?? string.Empty, u.Password ?? string.Empty, DateTime.Now.AddYears(-3)
+                //, u.Assays.Max(a => a.SamplingDate)
                 )).ToList();
             HashSet<string> assayIds = new(_context.PlanktonAssays.Select(p => p.Id.ToString()).ToList(), null);
             int dist = DateTime.Now.Year - 2003 + 1;
