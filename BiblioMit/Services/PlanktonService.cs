@@ -72,14 +72,11 @@ namespace BiblioMit.Services
                 CheckCertificateRevocationList = true
             };
             using HttpClient client = new(handler);
+            DateTime date = new(2022, 3, 28);
             List<UserQueryableModel> users = _context.PlanktonUsers
                 .Include(p => p.Assays)
                 .Where(p => p.Name != null && p.Password != null)
-                .Select(u => new UserQueryableModel(u.Name ?? string.Empty, u.Password ?? string.Empty
-                //, null
-                , DateTime.Now.AddYears(-1)
-                //, u.Assays.Max(a => a.SamplingDate)
-                )).ToList();
+                .Select(u => new UserQueryableModel(u.Name ?? string.Empty, u.Password ?? string.Empty, date )).ToList();
             HashSet<string> assayIds = new(_context.PlanktonAssays.Select(p => p.Id.ToString()).ToList(), null);
             int dist = 
                 //DateTime.Now.Year - 2003 +
