@@ -182,7 +182,7 @@ namespace BiblioMit.Services
                     await sw.WriteLineAsync("<br />").ConfigureAwait(false);
                     await sw.WriteLineAsync(HttpUtility.HtmlEncode($"ERROR: Inicio de sesión inválido, verificar credenciales"));
                     await sw.WriteLineAsync("<hr />").ConfigureAwait(false);
-                    LogCouldnotLogIn(_logger, user.Name);
+                    LogCouldnotLogIn(_logger, user.Name + " " + signinResponse.Headers.Location?.OriginalString);
                 }
             }
             sw.Close();
