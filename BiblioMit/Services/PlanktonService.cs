@@ -75,11 +75,15 @@ namespace BiblioMit.Services
             List<UserQueryableModel> users = _context.PlanktonUsers
                 .Include(p => p.Assays)
                 .Where(p => p.Name != null && p.Password != null)
-                .Select(u => new UserQueryableModel(u.Name ?? string.Empty, u.Password ?? string.Empty, DateTime.Now.AddYears(-3)
+                .Select(u => new UserQueryableModel(u.Name ?? string.Empty, u.Password ?? string.Empty
+                //, null
+                , DateTime.Now.AddYears(-1)
                 //, u.Assays.Max(a => a.SamplingDate)
                 )).ToList();
             HashSet<string> assayIds = new(_context.PlanktonAssays.Select(p => p.Id.ToString()).ToList(), null);
-            int dist = DateTime.Now.Year - 2003 + 1;
+            int dist = 
+                //DateTime.Now.Year - 2003 +
+                1;
             foreach (UserQueryableModel user in users)
             {
                 int yearRange = dist;
@@ -171,7 +175,7 @@ namespace BiblioMit.Services
                         }
                         else
                         {
-                            yearRange -= 1;
+                            //yearRange -= 1;
                             signinResponse = await SignIn(client, user, stoppingToken);
                         }
                     }
