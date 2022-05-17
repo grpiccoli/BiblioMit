@@ -187,7 +187,7 @@ namespace BiblioMit.Services
 
                 if (!_context.DeclarationDates.Any())
                 {
-                    await Insert<DeclarationDate>(tsvPath).ConfigureAwait(false);
+                    //await Insert<DeclarationDate>(tsvPath).ConfigureAwait(false);
                 }
 
                 if (!_context.Entries.Any())
