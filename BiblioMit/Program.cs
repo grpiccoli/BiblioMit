@@ -22,7 +22,7 @@ using Microsoft.Net.Http.Headers;
 using System.Text.Json.Serialization;
 
 string os = Environment.OSVersion.Platform.ToString();
-
+bool plankton = args.Any(a => a == "plankton");
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
@@ -39,6 +39,7 @@ builder.WebHost
 //builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
+//if(plankton) os = "Remote";
 string connectionString = builder.Configuration.GetConnectionString($"{os}Connection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString
@@ -163,7 +164,7 @@ builder.Services.AddScoped<IUrlHelper>(x =>
 });
 
 builder.Services.AddScoped<IPuppet, PuppetService>();
-builder.Services.AddSingleton(new PlanktonArguments { Run = args.Any(a => a == "plankton") });
+builder.Services.AddSingleton(new PlanktonArguments { Run = plankton });
 builder.Services.AddHostedService<PlanktonBackground>();
 builder.Services.AddScoped<IPlanktonService, PlanktonService>();
 
