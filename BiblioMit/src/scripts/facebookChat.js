@@ -1,10 +1,10 @@
 ﻿var chatbox = document.getElementById('fb-customer-chat');
 chatbox.setAttribute("page_id", "1350128371792150");
-chatbox.setAttribute("attribution", "page_inbox");
+chatbox.setAttribute("attribution", "biz_inbox");
 window.fbAsyncInit = function () {
     FB.init({
         xfbml: true,
-        version: 'v11.0'
+        version: 'v14.0'
     });
 };
 

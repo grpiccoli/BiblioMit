@@ -1,4 +1,4 @@
-﻿#sqlcmd
+﻿####sqlcmd
 sqlcmd="/opt/mssql-tools18/bin/sqlcmd -S 127.0.0.1 -U SA -P JGdtaStFe7LXf4A3 -d aspnet-BiblioMit-48C10787-909E-4820-8017-89D16304F692 -C -Q"
 #table / file names
 tables=(
