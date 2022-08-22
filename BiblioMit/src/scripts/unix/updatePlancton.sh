@@ -14,7 +14,7 @@ tables=(
 'PlanktonAssayEmails'
 #'SamplingEntities'
 #'SpeciesPhytoplanktons'
-'Stations'
+#'Stations'
 )
 # DELETE TABLES
 arg=$(printf "DELETE FROM dbo.%s;" "${tables[@]}")
@@ -30,3 +30,4 @@ arg=$(echo "${tables[@]}" | tr ' ' '\n' | awk '{printf "BULK INSERT dbo.%s FROM 
 cmd="$sqlcmd "'"'"$arg"'"'
 echo $cmd
 eval "$cmd"
+
