@@ -30,4 +30,3 @@ arg=$(echo "${tables[@]}" | tr ' ' '\n' | awk '{printf "BULK INSERT dbo.%s FROM 
 cmd="$sqlcmd "'"'"$arg"'"'
 echo $cmd
 eval "$cmd"
-
